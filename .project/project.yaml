@@ -109,9 +109,10 @@ delivery:
   mode: hub
   primary_artifact: index.html
   local_status: local-verified
-  repository: null
-  repository_status: none
-  branch: null
+  repository: "https://github.com/Marcolof/test-web-vortex"   # público; creado por la persona
+  repository_status: pushed                                   # commit inicial e390d50 en main (2026-10-26)
+  branch: main
+  repository_exclusions: [".claude/ (config local)", "mock-quickpass-a*.webp (email personal visible)"]
   public_url: null
   status: local-only
   last_verified: "2026-10-26"
