@@ -1,0 +1,232 @@
+schema_version: "0.5.0"
+last_updated: "2026-10-26"
+
+project:
+  name: "Vortex IT · Rediseño web"
+  client: "Vortex IT"
+  local_root: "."
+
+ux:
+  primary: redesign
+  secondary: [audit]
+  continuity: new
+  surface: web
+  client_decision: understand
+  research_mode: not-applicable
+
+origin:
+  mode: from-scratch          # carpeta vacía; la fuente es el sitio público
+  public_site:
+    url: "https://vortex-it.com/"
+    snapshot: modules/analisis/fuentes/snapshot-2026-10-26
+    captured_at: "2026-10-26"
+    pages: 16                 # 8 ES + 8 EN
+    access: read-only
+
+strategy:
+  current_focus: "Paso 2: propuesta 01, sólo la landing (estilo vidrio, hero three.js necesidad → red neuronal → propuesta de valor, barra flotante, bloques claros). Las demás secciones llevan a 'sitio en construcción'."
+  intervention: parallel-proposal
+  additional_scope:
+    - "Casos de éxito: contenido nuevo, no existe hoy (observación C4)."
+    - "Blog alojado en el sitio en lugar de LinkedIn (observación C1), si Vortex lo decide."
+  recommended_next:
+    - "Revisar la propuesta 01 con el cliente (hero, ritmo oscuro/claro, muro de logos)."
+    - "Documento de estilos de la propuesta (tokens, componentes) dentro de Análisis o de la propuesta."
+    - "Responder preguntas abiertas con Vortex (objetivo del sitio, analítica, blog, identidad, inglés)."
+    - "Diseñar las páginas internas que hoy muestran 'sitio en construcción'."
+  deferred: []
+
+knowledge:
+  confirmed:
+    - "El sitio tiene 8 páginas por idioma (ES/EN), sin subpáginas (recorrido de enlaces 2026-10-26)."
+    - "No existen sitemap.xml ni robots.txt (404)."
+    - "Los 21 artículos del blog enlazan a LinkedIn Pulse; en /en/blog.html se muestran en español."
+  assumptions:
+    - "La estructura a conservar listada en relevamiento-secciones es una propuesta de trabajo, no una decisión del cliente."
+  open_questions:
+    - "Objetivo principal del sitio y su prioridad (consultas, liderazgo de opinión, talento, productos)."
+    - "Disponibilidad de analítica."
+    - "Blog en LinkedIn o en el sitio."
+    - "Casos de éxito publicables."
+    - "Qué elementos de identidad visual y animación deben mantenerse."
+    - "Peso y alcance de la versión en inglés."
+  superseded: []
+
+decisions:
+  - { decision: "Entrega con Hub en la raíz del proyecto", basis: user, date: "2026-10-26" }
+  - { decision: "Módulo Propuestas visible con estado vacío (pedido explícito)", basis: user, date: "2026-10-26" }
+  - { decision: "Documentos de Análisis escritos directamente en HTML (fuente canónica), sin Markdown derivado", basis: recommended-default, date: "2026-10-26" }
+  - { decision: "Propuesta paralela: no se modifica el sitio original", basis: recommended-default, date: "2026-10-26" }
+  - { decision: "Propuesta 01: sólo landing; navegación hacia 'sitio en construcción'", basis: user, date: "2026-10-26" }
+  - { decision: "Hero con three.js r128 (misma versión que usa el sitio actual)", basis: recommended-default, date: "2026-10-26" }
+  - { decision: "Cifras movidas junto a Clientes (prueba social agrupada); en el sitio actual están en el cierre", basis: recommended-default, date: "2026-10-26" }
+  - { decision: "Logos sobre blanco en grises con color al hover; variantes *-light.svg para los logos blancos", basis: recommended-default, date: "2026-10-26" }
+  - { decision: "Footer reagrupado por intención (Oferta, Empresa, Contenidos, Contacto) y CTA de Rutex como 'Solicitar una demo'", basis: recommended-default, date: "2026-10-26" }
+  - { decision: "No usar fotos del equipo ni el mockup de QuickPass que muestra un email personal", basis: deduced, date: "2026-10-26" }
+  - { decision: "Sin eyebrows en toda la propuesta: cada sección queda con título y subtítulo", basis: user, date: "2026-10-26" }
+  - { decision: "Botón lima global con texto violeta noche (#1e0a3c); botones de la barra a 34px", basis: user, date: "2026-10-26" }
+  - { decision: "Hero de altura fija = ventana (mín. 560px) para que la animación entre sin scroll en escritorio", basis: user, date: "2026-10-26" }
+  - { decision: "Animación del hero en fases y en loop (~15 s): input se escribe y colapsa en un punto → la red nace esfera por esfera → ondas de datos → colapso con destello → output 'Propuesta de valor'", basis: user, date: "2026-10-26" }
+  - { decision: "Nodos como esferas de vidrio; fondo del hero más oscuro; sin reacción al puntero en el hero", basis: user, date: "2026-10-26" }
+  - { decision: "Barra de navegación con efecto glass (tinte translúcido, brillo superior y borde de luz)", basis: user, date: "2026-10-26" }
+  - { decision: "Parámetro ?t=segundos congela el hero en un momento del guion para revisar fases", basis: recommended-default, date: "2026-10-26" }
+  - { decision: "Hero v3: cámara que arranca pegada a la primera capa y se aleja mientras se arma la red; ondas de datos solapadas con el armado; los puntos de salida forman un núcleo de output", basis: user, date: "2026-10-26" }
+  - { decision: "Estallidos como nubes de 6.000 partículas (3.000 en móvil) con campo de ruido, animadas en GPU; rayos y destello sólo un instante", basis: user, date: "2026-10-26" }
+  - { decision: "Esferas vibran y se separan en RGB al recibir datos; loader geométrico en las píldoras", basis: user, date: "2026-10-26" }
+  - { decision: "Hero v4: nulo de cámara (rig) del que cuelga toda la escena y al que se anclan las píldoras; zoom sobre el loader del input, recorrido en arco por la red y zoom en arco al núcleo verde donde nace el output en grande", basis: user, date: "2026-10-26" }
+  - { decision: "Nube de partículas x2 (12.000 / 6.000 en móvil); esferas con 50% menos de vibración y brillo; 12 puntos por onda, ondas de 1,45 s", basis: user, date: "2026-10-26" }
+  - { decision: "Hero v6: horizonte fijo (red sin inclinación ni balanceo, foco vertical clavado); cámara entre la explosión y el output como una sola curva monótona (zoom logarítmico + foco horizontal); rebote elástico mínimo (~2 %) al estirarse las píldoras", basis: user, date: "2026-10-26" }
+  - { decision: "Hero v5: el loader del input explota en el punto de entrada de la red (de ahí salen conexiones y datos); cámara anclada a ese punto al alejarse, pausa breve y zoom continuo al núcleo verde; curvas seno en todos los movimientos", basis: user, date: "2026-10-26" }
+
+sources:
+  - type: public-website
+    location: "https://vortex-it.com/"
+    date: "2026-10-26"
+    used_for: "sitemap, mapa de contenido, relevamiento de secciones, observaciones"
+    reliability: "alta para lo publicado; no informa objetivos ni uso real"
+  - type: brand-assets
+    location: modules/analisis/fuentes/assets-2026-10-26
+    date: "2026-10-26"
+    used_for: "logos, íconos de vidrio, ilustraciones y mockups de la propuesta 01"
+    reliability: "oficial (scrapeado de vortex-it.com con autorización de Vortex según el usuario); excluidas fotos del equipo"
+  - type: style-reference
+    location: "https://styles.refero.design/style/e80231a2-e4d6-406a-a2c9-2e6109679690"
+    used_for: "estilo vidrio: hairlines, inset highlights, halos, eyebrows con líneas (Authkit)"
+  - type: style-reference
+    location: "https://styles.refero.design/style/75c06591-34d2-493a-bd49-70551b5e4a53"
+    used_for: "barra de navegación superior flotante (Perk)"
+  - type: style-reference
+    location: "https://styles.refero.design/style/cd723d5a-e7ea-4e4c-a3bb-6cf56e05057a"
+    used_for: "emblocado con bloques claros redondeados sobre fondo oscuro (Seed)"
+  - type: animation-reference
+    location: "https://claude.ai/artifact/XV8PjSpN6Rq4JgSa7HxA7B"
+    used_for: "técnica del hero: three.js, post-proceso con aberración cromática, glow y píldora de input"
+  - type: visual-reference
+    location: "imágenes aportadas por el usuario en el chat (red neuronal 4-6-6-2; esfera de vidrio violeta/lima)"
+    used_for: "estructura de la red y paleta del hero"
+
+delivery:
+  mode: hub
+  primary_artifact: index.html
+  local_status: local-verified
+  repository: null
+  repository_status: none
+  branch: null
+  public_url: null
+  status: local-only
+  last_verified: "2026-10-26"
+
+architecture:
+  build_root: "."
+  hub_route: index.html
+  deep_linking: static-files
+  module_style_isolation: required   # hub.css · modules/propuestas/propuestas.css · modules/analisis/assets/analisis.css
+
+documentation:
+  source_mode: prompt
+  module_path: modules/analisis
+  canonical_source: "HTML de cada documento en modules/analisis/"
+  external_sources: ["https://vortex-it.com/"]
+  change_log: null
+
+capabilities: {}
+
+tools:
+  python: { status: ready, checked_at: "2026-10-26" }   # servidor local de verificación
+
+modules:
+  propuestas:
+    path: modules/propuestas
+    landing: modules/propuestas/index.html
+    purpose: "Listado de propuestas de rediseño"
+    styles: modules/propuestas/propuestas.css
+    children:
+      - id: propuesta-01
+        type: prototype
+        path: modules/propuestas/propuesta-01/index.html
+        purpose: demo
+        fidelity: high
+        scope: "landing (inicio); el resto de las secciones → en-construccion.html#<seccion>"
+        audience: client
+        provider: fallback
+        stack: "HTML + CSS + JS estático; three.js r128 desde cdnjs"
+        assets: modules/propuestas/propuesta-01/assets (logos/CHANGES.md registra las variantes)
+        styles: modules/propuestas/propuesta-01/assets/css/landing.css
+        status: draft
+        freshness: current
+        evidence: assumption        # propuesta de diseño, sin validación con usuarios
+        verification: local-verified
+        extraction: { status: not-applicable, note: "se aplica al pasar a handoff" }
+        depends_on: [mapa-de-contenido, relevamiento-secciones, observaciones, assets-2026-10-26]
+  analisis:
+    path: modules/analisis
+    landing: modules/analisis/index.html
+    styles: modules/analisis/assets/analisis.css
+    children:
+      - id: sitemap
+        path: modules/analisis/sitemap.html
+        audience: client
+        provider: fallback
+        sources: ["vortex-it.com snapshot 2026-10-26"]
+        status: draft
+        freshness: current
+        evidence: observed
+        verification: local-verified
+        depends_on: [snapshot-2026-10-26]
+      - id: mapa-de-contenido
+        path: modules/analisis/mapa-de-contenido.html
+        audience: client
+        provider: fallback
+        sources: ["vortex-it.com snapshot 2026-10-26"]
+        status: draft
+        freshness: current
+        evidence: observed
+        verification: local-verified
+        depends_on: [snapshot-2026-10-26]
+      - id: relevamiento-secciones
+        path: modules/analisis/relevamiento-secciones.html
+        audience: client
+        provider: fallback
+        sources: ["vortex-it.com snapshot 2026-10-26"]
+        status: draft
+        freshness: current
+        evidence: observed      # la columna "Propuesta" es assumption
+        verification: local-verified
+        depends_on: [snapshot-2026-10-26, mapa-de-contenido]
+      - id: observaciones
+        path: modules/analisis/observaciones.html
+        audience: client
+        provider: fallback
+        sources: ["vortex-it.com snapshot 2026-10-26"]
+        status: draft
+        freshness: current
+        evidence: observed      # incluye hipótesis marcadas como tales
+        verification: local-verified
+        depends_on: [snapshot-2026-10-26]
+      - id: assets-2026-10-26
+        path: modules/analisis/fuentes/assets-2026-10-26
+        audience: internal
+        provider: fallback
+        status: draft
+        freshness: current
+        evidence: observed
+        verification: content-reviewed
+        depends_on: []
+      - id: snapshot-2026-10-26
+        path: modules/analisis/fuentes/snapshot-2026-10-26
+        audience: internal
+        provider: fallback
+        status: draft
+        freshness: current
+        evidence: observed
+        verification: content-reviewed
+        depends_on: []
+
+figma:
+  status: none
+  source: none
+  sync: not-required-yet
+
+design_system:
+  status: none
+  source: "https://vortex-it.com/ (a relevar en el paso 2)"

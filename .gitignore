@@ -1,0 +1,9 @@
+# Configuración local del equipo (rutas absolutas)
+.claude/
+
+# Mockups con datos personales reales (email visible en pantalla); no se usan en la propuesta
+modules/analisis/fuentes/assets-2026-10-26/mock-quickpass-a*.webp
+
+# Sistema
+.DS_Store
+Thumbs.db

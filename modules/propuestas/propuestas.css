@@ -1,0 +1,50 @@
+/* Estilos exclusivos del módulo Propuestas. */
+.prop {
+  --prop-bg: #0d0918;
+  --prop-surface: #17112a;
+  --prop-border: #2c2347;
+  --prop-text: #f2eff8;
+  --prop-muted: #a69fbd;
+  --prop-violet-soft: #c07df0;
+  --prop-lime: #a0d232;
+  margin: 0; min-height: 100vh;
+  background: var(--prop-bg); color: var(--prop-text);
+  font-family: 'Rubik', system-ui, sans-serif; line-height: 1.5;
+}
+.prop *, .prop *::before, .prop *::after { box-sizing: border-box; }
+.prop-wrap { max-width: 1040px; margin: 0 auto; padding: 40px 24px 80px; }
+.prop a { color: var(--prop-lime); }
+.prop a:focus-visible { outline: 3px solid var(--prop-lime); outline-offset: 3px; border-radius: 4px; }
+.prop-back { display: inline-block; margin-bottom: 32px; font-size: 15px; text-decoration: none; }
+.prop-back:hover { text-decoration: underline; }
+.prop-head { margin-bottom: 40px; }
+.prop-title { margin: 0; font-size: clamp(30px, 4.5vw, 42px); font-weight: 500; }
+.prop-lead { margin: 10px 0 0; color: var(--prop-muted); }
+
+.prop-empty {
+  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px;
+  padding: 64px 24px;
+  background: var(--prop-surface);
+  border: 1px dashed var(--prop-border); border-radius: 16px;
+}
+.prop-empty svg { width: 44px; height: 44px; color: var(--prop-violet-soft); margin-bottom: 8px; }
+.prop-empty h2 { margin: 0; font-size: 20px; font-weight: 500; }
+.prop-empty p { margin: 0 0 8px; color: var(--prop-muted); max-width: 420px; }
+
+@media (max-width: 480px) { .prop-wrap { padding: 28px 16px 56px; } }
+
+.prop-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.prop-item {
+  display: grid; grid-template-columns: 56px 1fr auto; gap: 18px; align-items: center;
+  padding: 22px 24px; border-radius: 16px;
+  background: var(--prop-surface); border: 1px solid var(--prop-border);
+  color: inherit; text-decoration: none; transition: border-color .2s, transform .2s;
+}
+.prop .prop-item { color: inherit; }
+.prop-item:hover { border-color: var(--prop-violet-soft); transform: translateY(-2px); }
+.prop-item-num { width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center; background: rgba(138, 60, 224, .18); color: var(--prop-violet-soft); font-weight: 500; font-size: 18px; }
+.prop-item-body { display: flex; flex-direction: column; gap: 4px; }
+.prop-item-title { font-size: 18px; font-weight: 500; }
+.prop-item-desc { font-size: 14.5px; color: var(--prop-muted); }
+.prop-tag { padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; background: rgba(160, 210, 50, .14); color: var(--prop-lime); white-space: nowrap; }
+@media (max-width: 600px) { .prop-item { grid-template-columns: 44px 1fr; } .prop-item-num { width: 44px; height: 44px; } .prop-tag { grid-column: 2; justify-self: start; } }

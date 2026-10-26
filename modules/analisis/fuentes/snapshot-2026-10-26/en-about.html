@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="alternate" hreflang="es" href="https://vortex-it.com/sobre-vortex.html">
+  <link rel="alternate" hreflang="en" href="https://vortex-it.com/en/about.html">
+  <link rel="alternate" hreflang="x-default" href="https://vortex-it.com/sobre-vortex.html">
+  <title>Vortex — About us</title>
+  <meta name="description" content="Who we are, what we believe and who leads Vortex IT: technology, artificial intelligence and business insight to support how organizations evolve.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+/* Móvil o cualquier cosa con dedo en vez de puntero */
+var ES_MOVIL = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
+var CPU_BAJA = (navigator.hardwareConcurrency || 4) <= 4;
+var CALIDAD  = ES_MOVIL ? (CPU_BAJA ? 0.18 : 0.3) : (CPU_BAJA ? 0.65 : 1);
+
+/* macOS resuelve el scroll y los sticky en el compositor con inercia,
+   mientras GSAP aplica los transform en el hilo principal: ese desfasaje
+   es lo que se ve como temblor. Se detecta para corregirlo. */
+var ES_MAC = /Mac|iPad|iPhone|iPod/.test(navigator.platform || '') ||
+             (navigator.userAgent.indexOf('Mac') !== -1);
+
+/* Safari (cualquier plataforma) entra al mismo perfil liviano: es el que
+   más sufre el backdrop-filter, el fondo fijo y el degradado animado. */
+var ES_SAFARI = /^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i
+                  .test(navigator.userAgent || '');
+if (ES_SAFARI) ES_MAC = true;
+
+/* Interruptor para probar sin tener una Mac:
+   ?perfil=mac    fuerza el modo Mac (para ver los cambios visuales)
+   ?perfil=normal lo desactiva aunque estés en Mac (para comparar) */
+var _perfilForzado = new URLSearchParams(location.search).get('perfil');
+if (_perfilForzado === 'mac')    ES_MAC = true;
+if (_perfilForzado === 'normal') ES_MAC = false;
+
+/* ── MODO LIGERO ──
+   Mac, Safari y las máquinas de pocos núcleos entran acá. Es el interruptor
+   que usan todos los canvas del sitio para bajar partículas, saltear frames
+   y evitar el desenfoque por frame. */
+var MODO_LIGERO = ES_MAC || CPU_BAJA;
+
+/* En pantallas Retina, dibujar los canvas al doble multiplica por cuatro el
+   trabajo por frame. En modo ligero se baja a 1.35x: sigue viéndose nítido
+   —a 1x los puntos quedaban gruesos— y cuesta la mitad que a 2x. */
+var DPR_MAX = ES_MOVIL ? 1 : (MODO_LIGERO ? 1.35 : (window.devicePixelRatio > 1.5 ? 1.5 : 2));
+
+/* Cuánto se recorta la cantidad de partículas de cada efecto. Con 0.6 el
+   orbe conserva su densidad; por debajo se empezaba a ver ralo. */
+var FACTOR_PART = MODO_LIGERO ? 0.6 : (ES_MOVIL ? 0.4 : 1);
+function cuantasPart(n) { return Math.max(3, Math.round(n * FACTOR_PART)); }
+
+/* La clase se pone en <html> y no en <body>, porque <body> todavía no
+   existe cuando esto corre. Es lo que apaga backdrop-filter, el degradado
+   animado y el encaje de scroll antes del primer pintado. */
+if (ES_MAC) document.documentElement.classList.add('es-mac');
+</script>
+  <link rel="stylesheet" href="/assets/vortex.css?v=23">
+  <style>
+    /* ============================================================
+       SOBRE VORTEX
+       Cuatro pantallas: portada, principios (constelación de seis
+       íconos), liderazgo y cierre. El orbe de partículas del fondo es
+       el mismo del hero de la home: se reposiciona según la sección.
+    ============================================================ */
+
+    html{scroll-snap-type:y mandatory}
+    /* El footer también tiene que ser punto de anclaje: si no, el encaje
+       devuelve al último bloque y no se llega a verlo */
+    .site-footer{scroll-snap-align:end;scroll-snap-stop:normal}
+    @media(max-width:900px),(pointer:coarse){html{scroll-snap-type:none}}
+
+    main,.site-footer{position:relative;z-index:1}
+
+    /* ── EL ORBE DE PARTÍCULAS ──
+       Es el mismo del hero de la home: una capa fija detrás de todo, que se
+       reposiciona según la sección que se esté mirando. */
+    #orbe-fondo{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+    /* ══════════ 1 · PORTADA ══════════ */
+    .sv-hero{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;
+      justify-content:center;
+      /* El bloque está centrado, así que la diferencia entre los dos rellenos
+         es lo que lo sube: abajo hay bastante más que arriba. */
+      padding:clamp(70px,7.8vh,96px) 48px clamp(100px,14vh,170px);
+      scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden}
+    .sv-hero-inner{position:relative;z-index:1;width:100%}
+
+    /* Misma grilla que la sección 7 de la home: 1080 de ancho, dos columnas
+       1fr / 0.95fr con 28 de separación, y el planeta en la segunda. */
+    .sv-hero-grid{width:min(980px,calc(100% - 110px));margin:0 auto;
+      display:grid;grid-template-columns:1fr .95fr;gap:24px;align-items:center}
+    /* La caja del orbe no dibuja nada: marca dónde y de qué tamaño va. El
+       canvas la mide y se acomoda ahí. Mismos valores que .globo-container. */
+    /* En la home el planeta puede medir 66vh porque no tiene título arriba.
+       Acá sí lo hay, así que el techo es 52vh: entra sin cortarse. */
+    .sv-hero-orbe{position:relative;width:100%;max-width:min(560px,52vh);
+      aspect-ratio:1;margin:0 auto}
+
+    .sv-hero-tit{text-align:center;margin-bottom:clamp(14px,2.4vh,32px)}
+    /* Mismo peso que los h1 de las otras páginas, pero en blanco y algo
+       más chico. "Vortex" no va escrito: es el logo.
+       --alto-logo es la altura de mayúscula de Rubik: así el logo mide lo
+       mismo que la palabra "SOBRE". Si hace falta afinarlo, es este número. */
+    .sv-hero-tit h1{--alto-logo:.72em;
+      display:flex;align-items:baseline;justify-content:center;gap:.28em;
+      font-size:clamp(2.6rem,min(5.6vw,7.4vh),4.6rem);font-weight:500;color:#fff;
+      text-transform:uppercase;line-height:1.05}
+    .sv-hero-tit h1 .sv-logo{height:var(--alto-logo);width:auto;display:block}
+    .sv-rotulo{font-family:'Rubik',sans-serif;font-size:clamp(1.1rem,min(2.4vw,3vh),1.9rem);
+      font-weight:500;text-transform:uppercase;letter-spacing:.04em;color:#a0d232;margin-top:6px}
+
+    .sv-hero-texto{max-width:430px;justify-self:end;text-align:left}
+    .sv-lead{font-size:clamp(1.3rem,min(2.4vw,3.1vh),2rem);font-weight:500;line-height:1.3;
+      color:#a0d232;margin-bottom:clamp(16px,2.6vh,26px)}
+    .sv-sub{font-size:clamp(1rem,min(1.55vw,2.1vh),1.25rem);font-weight:300;line-height:1.6;
+      color:rgba(255,255,255,.86)}
+    .sv-sub strong{font-weight:600;color:#fff}
+
+    /* El remate, con la barra lima a la izquierda */
+    .sv-remate{margin-top:clamp(20px,3.4vh,34px);padding-left:clamp(14px,1.4vw,20px);
+      border-left:2px solid #a0d232;text-transform:uppercase;line-height:1.35;
+      font-size:clamp(1.02rem,min(1.7vw,2.25vh),1.35rem)}
+    .sv-remate span{font-weight:300;color:rgba(255,255,255,.9)}
+    .sv-remate strong{display:block;font-weight:600;color:#a0d232}
+
+    /* ══════════ SECCIONES ══════════ */
+    /* El encaje va por el centro, no por el arranque: si la sección llegara a
+       medir más de una pantalla, al bajar se veía su borde de arriba y el
+       contenido quedaba corrido. Centrado se ve igual desde los dos lados. */
+    .sv-seccion{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;
+      justify-content:center;padding:clamp(120px,16vh,185px) 48px clamp(40px,6vh,70px);
+      scroll-snap-align:center;scroll-snap-stop:always;overflow:hidden}
+    .sv-inner{position:relative;z-index:1;max-width:1240px;margin:0 auto;width:100%}
+
+    .sv-titulo{font-family:'Rubik',sans-serif;font-size:clamp(2.2rem,min(5vw,6.4vh),4rem);
+      font-weight:400;color:#a0d232;text-transform:uppercase;line-height:1.05;text-align:center;
+      margin-bottom:clamp(14px,2.4vh,26px)}
+    .sv-lead-c{font-size:clamp(1.05rem,min(1.9vw,2.6vh),1.4rem);font-weight:600;color:#fff;
+      text-align:center;margin-bottom:clamp(14px,2.4vh,26px)}
+    .sv-bajada{font-size:clamp(.98rem,min(1.6vw,2.2vh),1.25rem);font-weight:300;line-height:1.6;
+      color:rgba(255,255,255,.8);text-align:center;max-width:min(760px,94%);margin:0 auto}
+
+    /* ══════════ 2 · CONSTELACIÓN DE PRINCIPIOS ══════════
+       Igual que "Cómo trabajamos" en la home: los íconos flotan a distintas
+       profundidades sobre un canvas que dibuja las líneas, la luz violeta y
+       las partículas. La posición, la escala, la opacidad y el desenfoque de
+       cada uno los calcula el motor, no el CSS. */
+    #principios{padding-top:clamp(120px,15vh,185px)}
+    #principios .sv-bajada{line-height:1.35;font-size:clamp(1.08rem,min(1.8vw,2.45vh),1.4rem)}
+
+    .sv-constel{position:relative;width:100%;max-width:1080px;
+      margin:clamp(24px,4.5vh,54px) auto 0;aspect-ratio:1080/380}
+    #sv-constel-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;
+      pointer-events:none}
+
+    .sv-nodo{position:absolute;left:0;top:0;z-index:2;
+      width:clamp(70px,min(8.6vw,12vh),112px);aspect-ratio:1;
+      display:block;cursor:pointer;opacity:0;
+      will-change:transform,opacity,filter}
+    .sv-nodo img{width:100%;height:100%;object-fit:contain;display:block}
+    /* La etiqueta va fuera de la caja del ícono: así el centro del nodo es
+       el centro del ícono, que es lo que usan las líneas y las partículas. */
+    .sv-nodo p{position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);
+      font-family:'Rubik',sans-serif;font-size:clamp(8.5px,.78vw,11px);font-weight:400;
+      line-height:1.35;letter-spacing:.05em;text-transform:uppercase;text-align:center;
+      color:rgba(255,255,255,.78);white-space:nowrap}
+    .sv-nodo p b{font-weight:500;color:#a0d232}
+
+    /* ── LA FICHA QUE SE ABRE AL CLICKEAR ── */
+    .sv-ficha{position:absolute;left:50%;top:50%;z-index:10;
+      transform:translate(-50%,-50%) scale(.94);width:min(660px,92%);
+      display:flex;gap:clamp(18px,2.2vw,30px);align-items:flex-start;text-align:left;
+      background:rgba(18,12,30,.92);border:1px solid rgba(163,116,245,.22);border-radius:18px;
+      padding:clamp(22px,3vh,34px) clamp(24px,2.6vw,38px);
+      backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+      box-shadow:0 0 44px 6px rgba(132,76,222,.22),0 0 120px 30px rgba(96,50,180,.14);
+      opacity:0;pointer-events:none;
+      transition:opacity .34s ease,transform .34s cubic-bezier(.22,.61,.36,1)}
+    .abierta .sv-ficha{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+    .sv-ficha img{width:clamp(70px,7vw,104px);height:auto;flex-shrink:0}
+    .sv-ficha-num{font-family:'Rubik',sans-serif;font-size:clamp(11px,1vw,13px);font-weight:400;
+      letter-spacing:.12em;color:rgba(160,210,50,.75);margin-bottom:6px}
+    .sv-ficha h3{font-family:'Rubik',sans-serif;font-size:clamp(1.1rem,min(1.8vw,2.4vh),1.5rem);
+      font-weight:500;color:#a0d232;text-transform:uppercase;line-height:1.2;margin-bottom:12px}
+    .sv-ficha p{font-size:clamp(.92rem,min(1.35vw,1.85vh),1.08rem);font-weight:300;line-height:1.6;
+      color:rgba(255,255,255,.86)}
+    .sv-ficha p b{font-weight:500;color:#fff}
+    .sv-cerrar{position:absolute;top:10px;right:14px;width:30px;height:30px;padding:0;
+      background:none;border:none;cursor:pointer;color:rgba(255,255,255,.45);
+      font-size:22px;line-height:1;transition:color .2s}
+    .sv-cerrar:hover{color:#a0d232}
+
+    /* Pista de uso: se va cuando hay una ficha abierta */
+    .sv-pista{position:relative;z-index:1;margin-top:clamp(30px,5vh,54px);text-align:center;
+      font-size:.85rem;font-weight:300;letter-spacing:.04em;color:rgba(255,255,255,.32);
+      transition:opacity .3s ease}
+    .abierta .sv-pista{opacity:0}
+
+    /* ══════════ 3 · LIDERAZGO ══════════ */
+    /* Arriba y abajo lo mismo: con rellenos distintos el bloque centrado
+       se corría hacia abajo y quedaba demasiado aire sobre el título. */
+    .sv-liderazgo{padding-top:clamp(96px,11vh,140px);padding-bottom:clamp(96px,11vh,140px)}
+
+    .sv-equipo{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(22px,3vw,52px);
+      max-width:1000px;margin:clamp(32px,5.5vh,64px) auto 0}
+    .sv-persona{display:flex;flex-direction:column;align-items:center;text-align:center;
+      opacity:0;transform:translateY(22px);
+      transition:opacity .7s cubic-bezier(.22,.61,.36,1),transform .7s cubic-bezier(.22,.61,.36,1)}
+    .visible .sv-persona{opacity:1;transform:none;transition-delay:calc(.25s + var(--i) * .12s)}
+
+    .sv-foto{width:clamp(112px,min(13vw,18vh),168px);height:auto;border-radius:50%;display:block;
+      margin-bottom:clamp(14px,2.4vh,24px);
+      box-shadow:0 0 0 1px rgba(163,116,245,.35),0 0 34px 4px rgba(132,76,222,.3)}
+
+    .sv-persona h3{font-family:'Rubik',sans-serif;font-size:clamp(.95rem,min(1.4vw,1.9vh),1.15rem);
+      font-weight:600;color:#a0d232;text-transform:uppercase;line-height:1.25;letter-spacing:.02em;
+      margin-bottom:clamp(8px,1.4vh,14px)}
+    .sv-cargo{font-family:'Rubik',sans-serif;font-size:clamp(.85rem,min(1.2vw,1.6vh),1rem);
+      font-weight:600;color:#fff;text-transform:uppercase;line-height:1.3}
+    .sv-cofu{font-size:clamp(.85rem,min(1.2vw,1.6vh),1rem);font-weight:400;font-style:italic;
+      color:rgba(255,255,255,.9);margin-bottom:6px}
+    .sv-est{font-size:clamp(.78rem,min(1.05vw,1.45vh),.92rem);font-weight:300;line-height:1.6;
+      color:rgba(255,255,255,.55)}
+
+    .sv-li{margin-top:clamp(12px,1.8vh,20px);display:inline-flex;align-items:center;gap:8px;
+      padding:8px 18px;border:1px solid rgba(160,210,50,.45);border-radius:100px;
+      font-family:'Rubik',sans-serif;font-size:12px;font-weight:400;text-transform:uppercase;
+      letter-spacing:.06em;color:#a0d232;text-decoration:none;
+      transition:background .2s,color .2s,border-color .2s}
+    .sv-li:hover{background:#a0d232;border-color:#a0d232;color:#000}
+    .sv-li svg{width:15px;height:15px;fill:currentColor}
+
+    /* ══════════ 4 · TRABAJÁ CON NOSOTROS ══════════ */
+    .sv-cierre{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;text-align:center;padding:110px 24px 70px;
+      scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden}
+    .sv-cierre-inner{position:relative;z-index:1;max-width:900px}
+
+    .sv-rotulo-blanco{font-family:'Rubik',sans-serif;font-size:clamp(1rem,min(1.9vw,2.6vh),1.35rem);
+      font-weight:400;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.9);
+      margin-bottom:clamp(20px,3.4vh,38px)}
+    .sv-cierre-1{font-size:clamp(1.8rem,min(4.4vw,5.8vh),3.5rem);text-transform:uppercase;
+      line-height:1.12;margin-bottom:clamp(22px,3.6vh,40px)}
+    .sv-cierre-1 .a{font-weight:300;color:#fff}
+    .sv-cierre-1 .b{font-weight:600;color:#a0d232}
+    .sv-cierre-2{font-size:clamp(.95rem,min(1.6vw,2.2vh),1.2rem);font-weight:300;line-height:1.7;
+      color:rgba(255,255,255,.82);margin-bottom:clamp(28px,4.6vh,52px)}
+    .sv-cierre-2 strong{font-weight:500;color:#fff}
+    .sv-cierre-btn{display:inline-block;padding:14px 40px;background:#a0d232;color:#000;
+      font-family:'Rubik',sans-serif;font-size:14px;font-weight:500;text-transform:uppercase;
+      letter-spacing:.05em;text-decoration:none;border-radius:6px;border:1px solid #a0d232;
+      transition:background .2s,color .2s}
+    .sv-cierre-btn:hover{background:transparent;color:#a0d232}
+
+    /* ── APARICIÓN DE CADA SECCIÓN ── */
+    .sv-hero-tit,.sv-hero-texto,
+    .sv-titulo,.sv-lead-c,.sv-bajada,.sv-pista,
+    .sv-rotulo-blanco,.sv-cierre-1,.sv-cierre-2,.sv-cierre-btn-wrap{
+      opacity:0;transform:translateY(22px);
+      transition:opacity .7s cubic-bezier(.22,.61,.36,1),transform .7s cubic-bezier(.22,.61,.36,1)}
+    .visible .sv-hero-tit,.visible .sv-hero-texto,
+    .visible .sv-titulo,.visible .sv-lead-c,.visible .sv-bajada,.visible .sv-pista,
+    .visible .sv-rotulo-blanco,.visible .sv-cierre-1,.visible .sv-cierre-2,
+    .visible .sv-cierre-btn-wrap{opacity:1;transform:none}
+    .visible .sv-hero-tit{transition-delay:.05s}
+    .visible .sv-hero-texto{transition-delay:.28s}
+    .visible .sv-titulo{transition-delay:.05s}
+    .visible .sv-lead-c{transition-delay:.18s}
+    .visible .sv-bajada{transition-delay:.3s}
+    .visible .sv-pista{transition-delay:.5s}
+    .visible .sv-rotulo-blanco{transition-delay:.05s}
+    .visible .sv-cierre-1{transition-delay:.2s}
+    .visible .sv-cierre-2{transition-delay:.38s}
+    .visible .sv-cierre-btn-wrap{transition-delay:.56s}
+
+    @media(prefers-reduced-motion:reduce){
+      .sv-hero-tit,.sv-hero-texto,.sv-titulo,.sv-lead-c,.sv-bajada,.sv-pista,
+      .sv-nodo,.sv-persona,.sv-rotulo-blanco,.sv-cierre-1,.sv-cierre-2,
+      .sv-cierre-btn-wrap{opacity:1;transform:none;transition:none}
+      .sv-nodo{transform:translate(-50%,-50%) scale(var(--e))}
+    }
+
+    /* ── RESPONSIVO ── */
+    @media(max-width:1100px){
+      .sv-hero-grid{gap:20px}
+      .sv-nodo p{white-space:normal}
+    }
+    @media(max-width:900px){
+      html{scroll-snap-type:none}
+      .sv-hero,.sv-seccion,.sv-cierre{min-height:auto;padding:100px 24px 80px}
+      .sv-hero-grid{grid-template-columns:1fr;gap:34px;width:100%}
+      .sv-hero-texto{max-width:100%;justify-self:stretch}
+      .sv-hero-orbe{max-width:min(460px,86vw)}
+      .sv-equipo{grid-template-columns:1fr;gap:44px}
+      /* En pantallas chicas la constelación no entra: los íconos pasan a una
+         grilla de dos columnas, quietos, y el canvas se apaga. El motor
+         detecta este caso y no toca las posiciones. */
+      .sv-constel{aspect-ratio:auto;display:grid;grid-template-columns:1fr 1fr;
+        gap:44px 16px;max-width:460px}
+      #sv-constel-canvas{display:none}
+      .sv-nodo{position:static;width:auto;aspect-ratio:auto;max-width:150px;margin:0 auto;
+        opacity:1;filter:none}
+      .sv-nodo img{width:clamp(76px,22vw,110px);height:auto;margin:0 auto}
+      .sv-nodo p{position:static;transform:none;margin-top:10px;white-space:normal}
+      /* La ficha pasa a ser una tarjeta centrada en la pantalla: sobre la
+         grilla de íconos no entraría. */
+      .sv-ficha{position:fixed;width:min(520px,90vw);max-height:80vh;height:80svh;overflow:auto;
+        flex-direction:column;gap:16px;align-items:center;text-align:center}
+      .sv-ficha img{width:96px}
+      .abierta .sv-nodo{opacity:.4}
+    }
+
+    /* Pantallas bajas: que las cuatro pantallas sigan entrando enteras */
+    @media(max-height:820px) and (min-width:901px){
+      .sv-hero{padding:110px 48px 50px}
+      .sv-seccion{padding:clamp(100px,14vh,150px) 48px 34px}
+      /* Con el título más abajo, en pantallas bajas la constelación necesita
+         algo menos de alto para que la sección siga entrando entera */
+      #principios{padding-top:clamp(104px,13vh,150px)}
+      .sv-constel{margin-top:clamp(20px,4vh,44px);aspect-ratio:1080/330}
+      .sv-equipo{margin-top:clamp(22px,4vh,44px)}
+    }
+  </style>
+</head>
+<body>
+
+
+  <!-- FLECHA: LLEVA A LA SECCIÓN SIGUIENTE -->
+  <button class="flecha-baja" id="flecha-baja" type="button"
+          data-cursor="Down" aria-label="Go to the next section">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <line x1="12" y1="4" x2="12" y2="20"></line>
+      <polyline points="6 14 12 20 18 14"></polyline>
+    </svg>
+  </button>
+
+  <!-- HEADER -->
+  <header class="site-header" id="site-header">
+    <a href="/en/" class="header-logo" aria-label="Vortex IT">
+      <img src="/assets/Logo%20VX_blanco%20y%20violeta.svg" alt="Vortex IT" class="logo-img">
+    </a>
+
+    <nav aria-label="Main navigation">
+      <ul class="header-nav" id="header-nav">
+        <li><a href="/en/">Home</a></li>
+        <li><a href="/en/solutions.html">Solutions</a></li>
+        <li><a href="/en/how-we-work.html">How we work</a></li>
+        <li><a href="/en/about.html" class="active">About Vortex</a></li>
+        <li><a href="/en/blog.html">Blog</a></li>
+        <li><a href="/en/platforms.html">Platforms</a></li>
+        <li><a href="/en/contact.html" class="nav-cta" data-cursor="Let&#039;s talk">Let's talk</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-right">
+      <!-- Conmutador de idioma: son links reales a la misma página en el
+           otro idioma, no botones. Así se puede compartir la dirección y
+           Google puede seguirlos. -->
+      <div class="lang-switch">
+        <a class="lang-btn"
+           href="/sobre-vortex.html" hreflang="es" lang="es">ES</a>
+        <span class="lang-sep">|</span>
+        <a class="lang-btn active"
+           href="/en/about.html" hreflang="en" lang="en">EN</a>
+      </div>
+      <div class="social-links">
+        <a href="https://www.linkedin.com/company/vortex-it-ok" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="https://www.instagram.com/vortex.it/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@vortexit" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#333"/></svg>
+        </a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+<main>
+
+  <!-- ══════════ 1 · PORTADA ══════════ -->
+  <section class="sv-hero" id="quienes-somos">
+    <div class="sv-hero-inner">
+
+      <div class="sv-hero-tit">
+        <h1>About          <img class="sv-logo" src="/assets/Logo%20VX_blanco%20y%20violeta.svg" alt="Vortex">
+        </h1>
+        <p class="sv-rotulo">Who we are</p>
+      </div>
+
+      <div class="sv-hero-grid">
+        <div class="sv-hero-texto">
+        <p class="sv-lead">Technology that supports<br>how businesses evolve.</p>
+        <p class="sv-sub">At <strong>VORTEX</strong> we bring together business<br> insight, technology and innovation to design<br> and build solutions that answer the<br> challenges each organization faces.</p>
+        <p class="sv-remate">
+          <span>We are not just<br>technology suppliers.</span>
+          <strong>We are strategic partners<br>in innovation.</strong>
+        </p>
+        </div>
+
+        <div class="sv-hero-orbe" id="sv-orbe-caja" aria-hidden="true"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════ 2 · NUESTROS PRINCIPIOS ══════════ -->
+  <section class="sv-seccion sv-constel-zona" id="principios">
+    <div class="sv-inner">
+      <h2 class="sv-titulo">Our principles</h2>
+      <p class="sv-bajada">Six ideas that shape how we think,<br>decide and build.</p>
+
+      <div class="sv-constel">
+        <canvas id="sv-constel-canvas" aria-hidden="true"></canvas>
+
+        <div class="sv-nodo" data-i="0" data-cursor="View" data-num="01" data-nombre="Strategy first"
+             data-desc="Every transformation starts by understanding the business. Technology is a means; &lt;b&gt;strategy sets the direction.&lt;/b&gt;">
+          <img src="/assets/icono-estrategia.webp" alt="Strategy first">
+          <p><b>01.</b> Strategy<br>first</p>
+        </div>
+
+        <div class="sv-nodo" data-i="1" data-cursor="View" data-num="02" data-nombre="AI-First from the start"
+             data-desc="We build artificial intelligence in from the design stage to &lt;b&gt;uncover new capabilities&lt;/b&gt;, streamline operations and improve decision-making.">
+          <img src="/assets/icono-ai-first.webp" alt="AI-First from the start">
+          <p><b>02.</b> AI-First<br>from the start</p>
+        </div>
+
+        <div class="sv-nodo" data-i="2" data-cursor="View" data-num="03" data-nombre="Redesign to transform"
+             data-desc="Transformation is not digitizing what already exists. It means &lt;b&gt;questioning, redesigning and building&lt;/b&gt; new ways of working.">
+          <img src="/assets/icono-redisenar.webp" alt="Redesign to transform">
+          <p><b>03.</b> Redesign to<br>transform</p>
+        </div>
+
+        <div class="sv-nodo" data-i="3" data-cursor="View" data-num="04" data-nombre="Technology that evolves"
+             data-desc="We design platforms and solutions &lt;b&gt;ready to take on new capabilities&lt;/b&gt; as the needs of the business change.">
+          <img src="/assets/icono-tecnologia.webp" alt="Technology that evolves">
+          <p><b>04.</b> Technology<br>that evolves</p>
+        </div>
+
+        <div class="sv-nodo" data-i="4" data-cursor="View" data-num="05" data-nombre="People amplified"
+             data-desc="Artificial intelligence &lt;b&gt;extends what people are able to do&lt;/b&gt; when they analyze, decide, create and innovate.">
+          <img src="/assets/icono-personas.webp" alt="People amplified">
+          <p><b>05.</b> People<br>amplified</p>
+        </div>
+
+        <div class="sv-nodo" data-i="5" data-cursor="View" data-num="06" data-nombre="Continuous evolution"
+             data-desc="Transformation does not end when a solution goes live. It begins when the organization &lt;b&gt;builds the ability to keep evolving.&lt;/b&gt;">
+          <img src="/assets/icono-evolucion.webp" alt="Continuous evolution">
+          <p><b>06.</b> Continuous<br>evolution</p>
+        </div>
+
+        <!-- La ficha se rellena al clickear un ícono -->
+        <article class="sv-ficha" id="sv-ficha" role="dialog" aria-modal="false" aria-hidden="true">
+          <button class="sv-cerrar" type="button" id="sv-cerrar" aria-label="Close">&times;</button>
+          <img id="sv-ficha-img" src="" alt="" width="512" height="512">
+          <div>
+            <p class="sv-ficha-num" id="sv-ficha-num"></p>
+            <h3 id="sv-ficha-tit"></h3>
+            <p id="sv-ficha-txt"></p>
+          </div>
+        </article>
+      </div>
+
+      <p class="sv-pista">Tap each icon to read what it means</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 3 · LIDERAZGO ══════════
+       Nueve personas en tres grupos de tres. Cada grupo es su propia
+       sección de una pantalla: con el encaje de scroll activo una sección
+       más alta que el viewport no se puede recorrer entera, y además el
+       .sv-seccion recorta lo que se pase (overflow:hidden). Así cada fila
+       entra completa y encaja sola, igual que el resto de la página.
+       El título va solo en la primera; las otras dos son su continuación.
+
+       Para sumar a alguien: copiá un bloque "article" entero y corregí el --i
+       (0, 1, 2 dentro de cada grupo). La foto va en assets/equipo/, en
+       webp cuadrado de 512 px. -->
+  <section class="sv-seccion sv-liderazgo" id="liderazgo">
+    <div class="sv-inner">
+      <h2 class="sv-titulo">Leadership</h2>
+      <p class="sv-lead-c">The people behind the VORTEX vision.</p>
+      <p class="sv-bajada">Our leadership team combines experience in business, technology and innovation to meet our clients' challenges and drive the company forward.</p>
+
+      <div class="sv-equipo">
+
+        <article class="sv-persona" style="--i:0">
+          <img class="sv-foto" src="/assets/equipo/jorge-nieves.webp"
+               alt="Jorge Daniel Nieves Castillo" loading="lazy" width="512" height="512">
+          <h3>Jorge Daniel Nieves Castillo</h3>
+          <p class="sv-cargo">Chief Innovation Officer</p>
+          <p class="sv-cofu">Co-founder of Vortex</p>
+          <p class="sv-est">BSc in Information Systems<br>Postgraduate in Business Administration</p>
+          <a class="sv-li" href="https://www.linkedin.com/in/jdnievescastillo/" target="_blank" rel="noopener"
+             data-cursor="LinkedIn" aria-label="LinkedIn profile of Jorge Daniel Nieves Castillo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05C20.4 8.65 21 11.1 21 14.3V21h-4v-6c0-1.43-.03-3.27-2-3.27-2 0-2.3 1.56-2.3 3.17V21H9z"/></svg> LinkedIn</a>
+        </article>
+
+        <article class="sv-persona" style="--i:1">
+          <img class="sv-foto" src="/assets/equipo/matias-cortes.webp"
+               alt="Matías Cortés" loading="lazy" width="512" height="512">
+          <h3>Matías Cortés</h3>
+          <p class="sv-cargo">Chief Technology Officer</p>
+          <p class="sv-cofu">Co-founder of Vortex</p>
+          <p class="sv-est">Software Architect<br>Postgraduate in Business Administration</p>
+          <a class="sv-li" href="https://www.linkedin.com/in/matias-cortes-07441246/" target="_blank" rel="noopener"
+             data-cursor="LinkedIn" aria-label="LinkedIn profile of Matías Cortés"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05C20.4 8.65 21 11.1 21 14.3V21h-4v-6c0-1.43-.03-3.27-2-3.27-2 0-2.3 1.56-2.3 3.17V21H9z"/></svg> LinkedIn</a>
+        </article>
+
+        <article class="sv-persona" style="--i:2">
+          <img class="sv-foto" src="/assets/equipo/ariel-castro.webp"
+               alt="Ariel Castro" loading="lazy" width="512" height="512">
+          <h3>Ariel Castro</h3>
+          <p class="sv-cargo">Chief Executive Officer</p>
+          <p class="sv-cofu">Co-founder of Vortex</p>
+          <p class="sv-est">Systems Engineer<br>Postgraduate in Business Administration</p>
+          <a class="sv-li" href="https://www.linkedin.com/in/ariel-castro-busico/" target="_blank" rel="noopener"
+             data-cursor="LinkedIn" aria-label="LinkedIn profile of Ariel Castro"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05C20.4 8.65 21 11.1 21 14.3V21h-4v-6c0-1.43-.03-3.27-2-3.27-2 0-2.3 1.56-2.3 3.17V21H9z"/></svg> LinkedIn</a>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="sv-seccion sv-liderazgo" id="liderazgo-2" aria-label="Leadership">
+    <div class="sv-inner">
+      <!-- El mismo encabezado que el grupo 1. Acá el título va como párrafo
+           y no como encabezado real, a propósito: repetirlo tres veces
+           ensuciaría la estructura de la página para buscadores y lectores
+           de pantalla. Se ve exactamente igual porque el estilo va por
+           clase, y el aria-hidden evita que se lea tres veces. -->
+      <p class="sv-titulo" aria-hidden="true">Leadership</p>
+      <p class="sv-lead-c">The people behind the VORTEX vision.</p>
+      <p class="sv-bajada">Our leadership team combines experience in business, technology and innovation to meet our clients' challenges and drive the company forward.</p>
+
+      <div class="sv-equipo">
+
+        <article class="sv-persona" style="--i:0">
+          <img class="sv-foto" src="/assets/equipo/mauricio-velez.webp"
+               alt="Mauricio Vélez" loading="lazy" width="512" height="512">
+          <h3>Mauricio Vélez</h3>
+          <p class="sv-cargo">Director, Vortex Andean Region</p>
+          <p class="sv-est">Economist with specialist studies in Commercial Management</p>
+          <a class="sv-li" href="https://www.linkedin.com/in/mauricio-velez-83754b13/" target="_blank" rel="noopener"
+             data-cursor="LinkedIn" aria-label="LinkedIn profile of Mauricio Vélez"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05C20.4 8.65 21 11.1 21 14.3V21h-4v-6c0-1.43-.03-3.27-2-3.27-2 0-2.3 1.56-2.3 3.17V21H9z"/></svg> LinkedIn</a>
+        </article>
+
+        <article class="sv-persona" style="--i:1">
+          <img class="sv-foto" src="/assets/equipo/edwin-leiton.webp"
+               alt="Edwin Leiton" loading="lazy" width="512" height="512">
+          <h3>Edwin Leiton</h3>
+          <p class="sv-cargo">Director, Vortex Central America</p>
+          <p class="sv-est">Specialist in the commercialization<br>of ICT solutions</p>
+          <a class="sv-li" href="https://www.linkedin.com/in/edwinleiton/" target="_blank" rel="noopener"
+             data-cursor="LinkedIn" aria-label="LinkedIn profile of Edwin Leiton"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05C20.4 8.65 21 11.1 21 14.3V21h-4v-6c0-1.43-.03-3.27-2-3.27-2 0-2.3 1.56-2.3 3.17V21H9z"/></svg> LinkedIn</a>
+        </article>
+
+        <article class="sv-persona" style="--i:2">
+          <img class="sv-foto" src="/assets/equipo/guillermo-bellini.webp"
+               alt="Guillermo Bellini" loading="lazy" width="512" height="512">
+          <h3>Guillermo Bellini</h3>
+          <p class="sv-cargo">PMO Manager</p>
+          <p class="sv-est">Solutions architect specializing in agile methodologies and IT resource allocation.</p>
+          <a class="sv-li" href="https://www.linkedin.com/in/guillermobellini/" target="_blank" rel="noopener"
+             data-cursor="LinkedIn" aria-label="LinkedIn profile of Guillermo Bellini"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05C20.4 8.65 21 11.1 21 14.3V21h-4v-6c0-1.43-.03-3.27-2-3.27-2 0-2.3 1.56-2.3 3.17V21H9z"/></svg> LinkedIn</a>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="sv-seccion sv-liderazgo" id="liderazgo-3" aria-label="Leadership">
+    <div class="sv-inner">
+      <!-- El mismo encabezado que el grupo 1. Acá el título va como párrafo
+           y no como encabezado real, a propósito: repetirlo tres veces
+           ensuciaría la estructura de la página para buscadores y lectores
+           de pantalla. Se ve exactamente igual porque el estilo va por
+           clase, y el aria-hidden evita que se lea tres veces. -->
+      <p class="sv-titulo" aria-hidden="true">Leadership</p>
+      <p class="sv-lead-c">The people behind the VORTEX vision.</p>
+      <p class="sv-bajada">Our leadership team combines experience in business, technology and innovation to meet our clients' challenges and drive the company forward.</p>
+
+      <div class="sv-equipo">
+
+        <article class="sv-persona" style="--i:0">
+          <img class="sv-foto" src="/assets/equipo/ignacio-bravo.webp"
+               alt="Ignacio Bravo" loading="lazy" width="512" height="512">
+          <h3>Ignacio Bravo</h3>
+          <p class="sv-cargo">UX/UI Director</p>
+          <p class="sv-cofu">Co-founder of QuickPass</p>
+          <p class="sv-est">Tech manager specializing in interaction design, interfaces and app/web prototype layout.</p>
+          <a class="sv-li" href="https://www.linkedin.com/in/ignacionbt/" target="_blank" rel="noopener"
+             data-cursor="LinkedIn" aria-label="LinkedIn profile of Ignacio Bravo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05C20.4 8.65 21 11.1 21 14.3V21h-4v-6c0-1.43-.03-3.27-2-3.27-2 0-2.3 1.56-2.3 3.17V21H9z"/></svg> LinkedIn</a>
+        </article>
+
+        <article class="sv-persona" style="--i:1">
+          <img class="sv-foto" src="/assets/equipo/pablo-moroni.webp"
+               alt="Pablo Moroni" loading="lazy" width="512" height="512">
+          <h3>Pablo Moroni</h3>
+          <p class="sv-cargo">Development Director</p>
+          <p class="sv-cofu">Co-founder of QuickPass</p>
+          <p class="sv-est">Front-end tech manager, architect specializing in React, React Native and Firebase.</p>
+          <a class="sv-li" href="https://www.linkedin.com/in/pablo-m-alejandro-moroni-30302781/" target="_blank" rel="noopener"
+             data-cursor="LinkedIn" aria-label="LinkedIn profile of Pablo Moroni"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05C20.4 8.65 21 11.1 21 14.3V21h-4v-6c0-1.43-.03-3.27-2-3.27-2 0-2.3 1.56-2.3 3.17V21H9z"/></svg> LinkedIn</a>
+        </article>
+
+        <article class="sv-persona" style="--i:2">
+          <img class="sv-foto" src="/assets/equipo/lucas-spinozzi.webp"
+               alt="Lucas Spinozzi" loading="lazy" width="512" height="512">
+          <h3>Lucas Spinozzi</h3>
+          <p class="sv-cargo">Development Director</p>
+          <p class="sv-cofu">Co-founder of QuickPass</p>
+          <p class="sv-est">Back-end tech manager, architect specializing in Node.js, AWS and Google.</p>
+          <a class="sv-li" href="https://www.linkedin.com/in/lucas-spinozzi-731969105/" target="_blank" rel="noopener"
+             data-cursor="LinkedIn" aria-label="LinkedIn profile of Lucas Spinozzi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05C20.4 8.65 21 11.1 21 14.3V21h-4v-6c0-1.43-.03-3.27-2-3.27-2 0-2.3 1.56-2.3 3.17V21H9z"/></svg> LinkedIn</a>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 4 · TRABAJÁ CON NOSOTROS ══════════ -->
+  <div class="sv-cierre" id="trabaja">
+    <div class="sv-cierre-inner">
+      <p class="sv-rotulo-blanco">Careers</p>
+      <p class="sv-cierre-1">
+        <span class="a">The future gets built</span><br>
+        <span class="b">as a team, too</span>
+      </p>
+      <p class="sv-cierre-2">We look for people who want to learn, create and take on the challenges that come with technological change.<br> <strong>If you would like to be part of VORTEX, we want to meet you.</strong></p>
+      <div class="sv-cierre-btn-wrap">
+        <a class="sv-cierre-btn" href="/en/careers.html" data-cursor="Apply">Send us your CV</a>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo-wrap">
+          <img src="/assets/Logo%20VX_blanco%20y%20violeta.svg" alt="Vortex IT" class="logo-img">
+        </div>
+        <p class="footer-logo-desc">Founded in Córdoba, Argentina. We operate across Latin America, Europe and the United States.</p>
+      </div>
+
+      <div>
+        <p class="footer-col-title">Vortex IT</p>
+        <ul class="footer-links">
+          <li><a href="/en/">Home</a></li>
+          <li><a href="/en/solutions.html">Solutions</a></li>
+          <li><a href="/en/how-we-work.html">How we work</a></li>
+          <li><a href="/en/about.html">About Vortex</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="footer-col-title">Community</p>
+        <ul class="footer-links">
+          <li><a href="/en/blog.html">Blog</a></li>
+          <li><a href="/en/platforms.html">Platforms</a></li>
+          <li><a href="/en/careers.html">Careers</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="footer-col-title">Let's talk</p>
+        <ul class="footer-contact-list">
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <a href="mailto:info@vortex-it.com">info@vortex-it.com</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 014.69 12 19.79 19.79 0 011.61 3.42 2 2 0 013.6 1.24h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.91 8.96a16 16 0 006.02 6.02l.95-.95a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0121.73 16.92z"/></svg>
+            <a href="tel:+5493515104734">+54 9 351 510-4734</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.122 1.523 5.855L.057 23.943l6.272-1.443A11.953 11.953 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.656-.51-5.176-1.4l-.37-.22-3.725.857.884-3.617-.242-.373A9.956 9.956 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+            <a href="https://wa.me/5493515104734" target="_blank" rel="noopener">WhatsApp</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            <a href="https://www.linkedin.com/company/vortex-it-ok" target="_blank" rel="noopener">LinkedIn</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            <a href="https://www.instagram.com/vortex.it/" target="_blank" rel="noopener">Instagram</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 Vortex IT. All rights reserved.</p>
+      <div class="footer-social">
+        <a href="https://www.linkedin.com/company/vortex-it-ok" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="https://www.instagram.com/vortex.it/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@vortexit" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#333"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+<script src="/assets/vortex.js?v=23"></script>
+<script>
+  /* ── ORBE DE PARTÍCULAS ──
+     El mismo del hero de la home: esfera de puntos en malla de Fibonacci,
+     degradado violeta, giro lento sobre el eje Y y repulsión elástica
+     alrededor del puntero. Acá se reposiciona según la sección que se mira:
+     a la derecha y recortado en la portada, grande y tenue detrás de
+     Liderazgo y del cierre, apagado en Principios. */
+  (function() {
+    var canvas = document.createElement('canvas');
+    canvas.id = 'orbe-fondo';
+    canvas.setAttribute('aria-hidden', 'true');
+    document.body.insertBefore(canvas, document.body.firstChild);
+    var ctx = canvas.getContext('2d');
+
+    var W = 0, H = 0, R = 0, CX = 0, CY = 0;
+    var dpr = Math.min(window.devicePixelRatio || 1, DPR_MAX);
+    /* Mismo tope que en la home: 6.600 partículas en un canvas a pantalla
+       completa con 'lighter' era el trabajo más caro de la página. */
+    var N = MODO_LIGERO ? Math.min(3500, cuantasPart(11000)) : cuantasPart(11000);
+
+    /* Paleta: #6a3ac7 → #8a3ce0 → #c07df0 */
+    var PASOS = 14, PALETA = [];
+    for (var c = 0; c < PASOS; c++) {
+      var u = c / (PASOS - 1), rr, gg, bb;
+      if (u < 0.5) { var v = u / 0.5;
+        rr = 106 + 32 * v; gg = 58 + 2 * v; bb = 199 + 25 * v;
+      } else { var v2 = (u - 0.5) / 0.5;
+        rr = 138 + 54 * v2; gg = 60 + 65 * v2; bb = 224 + 16 * v2; }
+      PALETA.push('rgb(' + (rr | 0) + ',' + (gg | 0) + ',' + (bb | 0) + ')');
+    }
+
+    /* Arrays tipados: memoria contigua y sin un objeto por partícula */
+    var bx = new Float32Array(N), by = new Float32Array(N), bz = new Float32Array(N);
+    var col = new Uint8Array(N), bri = new Float32Array(N), tam = new Float32Array(N);
+    var fas = new Float32Array(N), vel = new Float32Array(N);
+    var ox = new Float32Array(N), oy = new Float32Array(N);
+    var vx = new Float32Array(N), vy = new Float32Array(N);
+
+    (function construir() {
+      var tmp = [], phiOro = Math.PI * (3 - Math.sqrt(5));
+      for (var i = 0; i < N; i++) {
+        var yy = 1 - (i + 0.5) / N * 2;
+        yy += (Math.random() - 0.5) * (1.6 / N) * 40;
+        if (yy > 1) yy = 1; else if (yy < -1) yy = -1;
+        var anillo = Math.sqrt(Math.max(0, 1 - yy * yy));
+        var th = phiOro * i + (Math.random() - 0.5) * 0.32;
+        var rr2 = 1 + (Math.random() - 0.5) * 0.06;
+        tmp.push([anillo * Math.cos(th) * rr2, yy * rr2, anillo * Math.sin(th) * rr2, 0,
+                  0.45 + Math.random() * Math.random() * 1.9,
+                  0.8 + Math.random() * Math.random() * 1.6,
+                  Math.random() * 6.2832, 0.4 + Math.random() * 1.5]);
+      }
+      /* Ordenadas por color: el fillStyle cambia 14 veces por frame, no N */
+      tmp.forEach(function(p) { p[3] = Math.min(PASOS - 1, ((p[0] + 1) / 2 * PASOS) | 0); });
+      tmp.sort(function(a, b) { return a[3] - b[3]; });
+      for (var k = 0; k < N; k++) {
+        bx[k] = tmp[k][0]; by[k] = tmp[k][1]; bz[k] = tmp[k][2]; col[k] = tmp[k][3];
+        bri[k] = tmp[k][4]; tam[k] = tmp[k][5]; fas[k] = tmp[k][6]; vel[k] = tmp[k][7];
+      }
+    })();
+
+    function resize() {
+      W = window.innerWidth; H = window.innerHeight;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      R = Math.min(W, H) * (ES_MOVIL ? 0.33 : 0.31);
+    }
+    resize();
+    alRedimensionar(resize);
+
+    /* Puntero */
+    var mx = -9999, my = -9999, pX = 0, pY = 0, tX = 0, tY = 0;
+    window.addEventListener('mousemove', function(e) {
+      mx = e.clientX; my = e.clientY;
+      tX = mx / (window.innerWidth || 1) - 0.5;
+      tY = my / (window.innerHeight || 1) - 0.5;
+    }, { passive: true });
+    window.addEventListener('mouseleave', function() { mx = -9999; my = -9999; }, { passive: true });
+
+    /* ── DÓNDE VA EL ORBE EN CADA SECCIÓN ──
+       cx y cy en fracción de pantalla, esc como múltiplo del radio base. */
+    var DESTINOS = {
+      'quienes-somos': null,      /* se calcula: ver metaPortada() */
+      'principios':    { cx: 0.50, cy: 0.54, esc: 1.95, dim: 0.55 },
+      /* Los tres grupos de Liderazgo comparten el mismo destino: así el orbe
+         se queda quieto de fondo mientras se pasa de una fila a la otra, en
+         vez de apagarse al salir de la primera. */
+      'liderazgo':     { cx: 0.50, cy: 0.54, esc: 1.95, dim: 0.55 },
+      'liderazgo-2':   { cx: 0.50, cy: 0.54, esc: 1.95, dim: 0.55 },
+      'liderazgo-3':   { cx: 0.50, cy: 0.54, esc: 1.95, dim: 0.55 },
+      'trabaja':       { cx: 0.50, cy: 0.50, esc: 1.90, dim: 0.48 }
+    };
+    var FUERA = { cx: 0.5, cy: 0.5, esc: 1.8, dim: 0 };
+
+    var zonas = [];
+    for (var id in DESTINOS) {
+      var el = document.getElementById(id);
+      if (el) zonas.push({ el: el, id: id, d: DESTINOS[id] });
+    }
+
+    /* En la portada el orbe ocupa exactamente la caja reservada en la grilla,
+       igual que el planeta en la sección 7 de la home. Se mide en vivo, así
+       vale para cualquier pantalla. */
+    var cajaOrbe = document.getElementById('sv-orbe-caja');
+    var portada = { cx: 0.72, cy: 0.5, esc: 1, dim: 1 };
+
+    /* El disco que se ve no mide R: la perspectiva empuja hacia afuera las
+       partículas del frente y el borde queda en 1.176 · R. Sin esta cuenta
+       el orbe salía un 18% más grande que su caja y se cortaba. */
+    var DISCO = 1.176;
+
+    function metaPortada() {
+      if (!cajaOrbe || !R) return portada;
+      var r = cajaOrbe.getBoundingClientRect();
+      if (!r.width) return portada;
+      portada.cx  = (r.left + r.right) / 2 / W;
+      portada.cy  = (r.top + r.bottom) / 2 / H;
+      portada.esc = (r.width / 2) / (R * DISCO);
+      portada.dim = ES_MOVIL ? 0.6 : 1;
+      return portada;
+    }
+
+    var cam  = { cx: 0.80, cy: 0.5, esc: 1.16, dim: 0 };
+    var meta = FUERA;
+
+    function elegirMeta() {
+      var medio = H * 0.5, elegida = FUERA;
+      for (var i = 0; i < zonas.length; i++) {
+        var r = zonas[i].el.getBoundingClientRect();
+        if (r.top <= medio && r.bottom >= medio) {
+          elegida = zonas[i].d || metaPortada();
+          break;
+        }
+      }
+      meta = elegida;
+      cam.cx  += (meta.cx  - cam.cx)  * 0.08;
+      cam.cy  += (meta.cy  - cam.cy)  * 0.08;
+      cam.esc += (meta.esc - cam.esc) * 0.08;
+      cam.dim += (meta.dim - cam.dim) * 0.08;
+    }
+
+    var ang = 0, RADIO_MOUSE = ES_MOVIL ? 0 : 165, despMax = 0, limpio = false;
+
+    function tick(t) {
+      elegirMeta();
+
+      /* Apagado (Principios): se limpia una vez y no se dibuja más */
+      if (cam.dim < 0.015) {
+        if (!limpio) { ctx.clearRect(0, 0, W, H); limpio = true; }
+        return;
+      }
+      limpio = false;
+
+      ang += 0.0016;
+      var tt = t * 0.001;
+      var ca = Math.cos(ang), sa = Math.sin(ang);
+      pX += (tX - pX) * 0.045;
+      pY += (tY - pY) * 0.045;
+      CX = W * cam.cx; CY = H * cam.cy;
+      var Rc = R * cam.esc, dim = cam.dim;
+      var despX = -pX * 26, despY = -pY * 20;
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.globalCompositeOperation = 'lighter';
+
+      /* Ninguna partícula puede moverse si el puntero está más lejos que el
+         radio del orbe más el alcance del efecto: una comparación por cuadro
+         evita el resorte y la raíz cuadrada de las 3.500. */
+      var dcx = mx - CX, dcy = my - CY;
+      var alcance = Rc * 1.18 + RADIO_MOUSE;
+      var conRepulsion = RADIO_MOUSE && ((dcx * dcx + dcy * dcy) < alcance * alcance || despMax > 0.05);
+      if (RADIO_MOUSE && !conRepulsion && despMax !== 0) {
+        ox.fill(0); oy.fill(0); vx.fill(0); vy.fill(0);
+        despMax = 0;
+      }
+      var nuevoMax = 0;
+
+      var colActual = -1;
+      for (var i = 0; i < N; i++) {
+        /* Giro sobre el eje Y */
+        var x = bx[i] * ca + bz[i] * sa;
+        var z = -bx[i] * sa + bz[i] * ca;
+        var y = by[i];
+
+        var k = 1.9 / (1.9 + z);                    /* perspectiva suave */
+        var sx = CX + x * Rc * k + despX;
+        var sy = CY + y * Rc * k + despY;
+
+        /* Repulsión elástica alrededor del puntero (vuelve sola a su lugar) */
+        if (conRepulsion) {
+          var dx = sx + ox[i] - mx, dy = sy + oy[i] - my;
+          var d2 = dx * dx + dy * dy;
+          if (d2 < RADIO_MOUSE * RADIO_MOUSE) {
+            var d = Math.sqrt(d2) || 1;
+            var f = (1 - d / RADIO_MOUSE); f = f * f * 3.2;
+            vx[i] += (dx / d) * f; vy[i] += (dy / d) * f;
+          }
+          vx[i] = (vx[i] - ox[i] * 0.028) * 0.8;
+          vy[i] = (vy[i] - oy[i] * 0.028) * 0.8;
+          ox[i] += vx[i]; oy[i] += vy[i];
+          sx += ox[i]; sy += oy[i];
+          var mo = (ox[i] < 0 ? -ox[i] : ox[i]) + (oy[i] < 0 ? -oy[i] : oy[i]);
+          if (mo > nuevoMax) nuevoMax = mo;
+        }
+
+        if (sx < -4 || sx > W + 4 || sy < -4 || sy > H + 4) continue;
+
+        /* Tenue al frente, encendido hacia el borde, con titileo desfasado */
+        var rho = Math.sqrt(x * x + y * y);
+        var a = (0.32 + rho * rho * 1.25) * (z < 0 ? 1 : 0.88) * bri[i] * dim;
+        /* Una lectura de tabla y una multiplicación por partícula por cuadro */
+        if (!ES_MOVIL && !MODO_LIGERO) a *= 0.78 + 0.22 * senoRapido(tt * vel[i] + fas[i]);
+        if (a <= 0.015) continue;
+
+        if (col[i] !== colActual) { colActual = col[i]; ctx.fillStyle = PALETA[colActual]; }
+        ctx.globalAlpha = a > 1 ? 1 : a;
+        var s = tam[i] * k;
+        ctx.fillRect(sx, sy, s, s);
+      }
+
+      if (conRepulsion) despMax = nuevoMax;
+
+      ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    LOOP.add(tick, function() { return true; });
+  })();
+
+  /* ── APARICIÓN DE CADA SECCIÓN ──
+     Al entrar en pantalla, sus elementos se encadenan solos (los retrasos
+     están en el CSS). Al salir se resetea, así la secuencia se repite. */
+  (function() {
+    var secciones = document.querySelectorAll('.sv-hero, .sv-seccion, .sv-cierre');
+    var io = new IntersectionObserver(function(entradas) {
+      entradas.forEach(function(e) {
+        e.target.classList.toggle('visible', e.isIntersecting);
+      });
+    }, { threshold: 0.35 });
+    secciones.forEach(function(s) { io.observe(s); });
+  })();
+
+  /* ── LA CONSTELACIÓN ──
+     El mismo motor que "Cómo trabajamos" en la home: cada ícono tiene su
+     lugar en un zigzag horizontal, su profundidad propia (los cercanos más
+     grandes, nítidos y opacos) y una flotación lenta que no se repite entre
+     ellos. El canvas dibuja por detrás las líneas que los unen, la luz
+     violeta y las partículas que orbitan cada uno.
+     El hover ilumina; el click abre la ficha y atenúa a los demás. */
+  (function() {
+    var zona   = document.querySelector('.sv-constel-zona');
+    var caja   = document.querySelector('.sv-constel');
+    var cv     = document.getElementById('sv-constel-canvas');
+    var ficha  = document.getElementById('sv-ficha');
+    if (!zona || !caja || !cv || !ficha) return;
+
+    var nodos = Array.prototype.slice.call(caja.querySelectorAll('.sv-nodo'));
+    var N = nodos.length;
+    /* En pantallas chicas los íconos van en grilla y quietos: el motor solo
+       se encarga de abrir la ficha. */
+    var MOVIL = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
+    var ctx = cv.getContext('2d');
+    var dpr = Math.min(window.devicePixelRatio || 1, DPR_MAX);
+    var CW = 0, CH = 0;
+
+    var img    = document.getElementById('sv-ficha-img');
+    var num    = document.getElementById('sv-ficha-num');
+    var titulo = document.getElementById('sv-ficha-tit');
+    var texto  = document.getElementById('sv-ficha-txt');
+    var cerrar = document.getElementById('sv-cerrar');
+
+    /* Lugares de reposo: posición en la línea y profundidad.
+       prof 1 = más cerca (grande y nítido) · 0 = más lejos (chico y difuso) */
+    var SLOTS = [
+      { dx: -1.00, dy:  0.54, prof: 1.00 },
+      { dx: -0.62, dy: -0.62, prof: 0.84 },
+      { dx: -0.20, dy:  0.68, prof: 0.68 },
+      { dx:  0.22, dy: -0.68, prof: 0.52 },
+      { dx:  0.62, dy:  0.54, prof: 0.36 },
+      { dx:  1.00, dy: -0.50, prof: 0.22 }
+    ];
+
+    var focoObj = [], focoVal = [], iluObj = [], iluVal = [], proy = [];
+    for (var z = 0; z < N; z++) { focoObj[z] = 0; focoVal[z] = 0; iluObj[z] = 0; iluVal[z] = 0; }
+    var activo = -1, fade = 0;
+
+    /* Partículas: cada ícono tiene su propio grupo orbitando siempre */
+    var POR_ICONO = cuantasPart(8);
+    var CHISPAS = [];
+    for (var ci = 0; ci < POR_ICONO * N; ci++) {
+      CHISPAS.push({
+        ang:  Math.random() * 6.2832,
+        r:    Math.random(),
+        vel:  (0.18 + Math.random() * 0.42) * (Math.random() < 0.5 ? -1 : 1),
+        vd:   0.5 + Math.random() * 1.2,
+        vb:   0.6 + Math.random() * 1.6,
+        fase: Math.random() * 6.2832,
+        br:   0.35 + Math.random() * Math.random() * 0.75,
+        s:    0.9 + Math.random() * 1.6,
+        tipo: Math.random() < 0.45 ? 1 : 0
+      });
+    }
+
+    /* El ancho del nodo se medía con offsetWidth dentro del bucle de dibujo,
+       que también escribe estilos sobre esos mismos nodos: leer → escribir →
+       leer en cada cuadro fuerza un recálculo de layout sincrónico. Solo
+       cambia con el tamaño de la ventana, así que se mide acá. */
+    var baseW = 96;
+    function medir() {
+      if (MOVIL) return;
+      CW = caja.clientWidth; CH = caja.clientHeight;
+      cv.width = CW * dpr; cv.height = CH * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      baseW = (nodos[0] && nodos[0].offsetWidth) || 96;
+    }
+    medir();
+    alRedimensionar(medir);
+
+    nodos.forEach(function(el, i) {
+      el.addEventListener('pointerenter', function() { iluObj[i] = 1; });
+      el.addEventListener('pointerleave', function() { iluObj[i] = 0; });
+      el.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (activo === i) cerrarFicha(); else abrir(i);
+      });
+      el.setAttribute('tabindex', '0');
+      el.setAttribute('role', 'button');
+      el.setAttribute('aria-expanded', 'false');
+      el.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
+      });
+    });
+
+    function abrir(i) {
+      var el = nodos[i];
+      activo = i;
+      var ic = el.querySelector('img');
+      img.src = ic ? ic.getAttribute('src') : '';
+      img.alt = el.getAttribute('data-nombre') || '';
+      num.textContent    = el.getAttribute('data-num') || '';
+      titulo.textContent = el.getAttribute('data-nombre') || '';
+      texto.innerHTML    = el.getAttribute('data-desc') || '';
+      zona.classList.add('abierta');
+      ficha.setAttribute('aria-hidden', 'false');
+      nodos.forEach(function(n, k) { n.setAttribute('aria-expanded', k === i ? 'true' : 'false'); });
+    }
+
+    function cerrarFicha() {
+      activo = -1;
+      zona.classList.remove('abierta');
+      ficha.setAttribute('aria-hidden', 'true');
+      nodos.forEach(function(n) { n.setAttribute('aria-expanded', 'false'); });
+    }
+
+    cerrar.addEventListener('click', function(e) { e.stopPropagation(); cerrarFicha(); });
+    ficha.addEventListener('click', function(e) { e.stopPropagation(); });
+    document.addEventListener('click', function() { if (activo >= 0) cerrarFicha(); });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') cerrarFicha(); });
+
+    /* La constelación aparece cuando la sección entra, y se cierra al salir */
+    new IntersectionObserver(function(e) {
+      if (!e[0].isIntersecting && activo >= 0) cerrarFicha();
+    }, { threshold: 0.2 }).observe(zona);
+
+    function dibujar() {
+      if (!CW) medir();
+      if (!CW) return;
+
+      /* Aparición suave al entrar la sección */
+      var meta = zona.classList.contains('visible') ? 1 : 0;
+      fade += (meta - fade) * 0.06;
+      if (fade < 0.004) { ctx.clearRect(0, 0, CW, CH); return; }
+
+      var t = performance.now() * 0.001;
+      var cx = CW / 2, cy = CH * 0.5;
+
+      /* Ancho de la línea y amplitud del zigzag */
+      var Rx = Math.min(CW * 0.44, CW / 2 - baseW * 0.62);
+      var Ry = Math.min(CH * 0.24, 86);
+
+      ctx.clearRect(0, 0, CW, CH);
+      proy.length = 0;
+
+      /* Easing de los dos niveles. focoMax dice si hay alguno abierto. */
+      var focoMax = 0;
+      for (var f = 0; f < N; f++) {
+        focoObj[f] = (f === activo) ? 1 : 0;
+        focoVal[f] += (focoObj[f] - focoVal[f]) * 0.10;
+        if (Math.abs(focoObj[f] - focoVal[f]) < 0.001) focoVal[f] = focoObj[f];
+        if (focoVal[f] > focoMax) focoMax = focoVal[f];
+        iluVal[f] += (iluObj[f] - iluVal[f]) * 0.16;
+        if (Math.abs(iluObj[f] - iluVal[f]) < 0.001) iluVal[f] = iluObj[f];
+      }
+
+      for (var i = 0; i < N; i++) {
+        var foco = focoVal[i]; foco = foco * foco * (3 - 2 * foco);
+        var ilum = iluVal[i];  ilum = ilum * ilum * (3 - 2 * ilum);
+        var brillo = Math.max(foco, ilum);
+        var sl = SLOTS[i];
+
+        /* Flotación lenta, distinta para cada uno */
+        var sx = cx + sl.dx * Rx + Math.sin(t * 0.47 + i * 1.7) * 11;
+        var sy = cy + sl.dy * Ry * (1 + Math.sin(t * 0.19 + i * 1.3) * 0.07)
+                    + Math.cos(t * 0.41 + i * 2.3) * 9;
+
+        /* Cada uno conserva su profundidad. Al iluminarse se acerca un poco;
+           al abrirse su ficha, crece pero no se va del lugar. */
+        var escBase = (0.60 + sl.prof * 0.46) * (1 + ilum * 0.10);
+        var esc = escBase + (1.30 - escBase) * foco;
+        var luzBase = 0.38 + sl.prof * 0.42;
+        /* Con una ficha abierta los demás bajan para no competir */
+        var atenua = 1 - focoMax * (1 - Math.max(foco, ilum * 0.9)) * 0.74;
+        var luz = (luzBase + (1 - luzBase) * brillo) * fade * atenua;
+        var desenfoque = (1 - brillo) * (2.2 - sl.prof * 1.9)
+                       + focoMax * (1 - Math.max(foco, ilum)) * 1.1;
+
+        var el = nodos[i];
+        el.style.transform = 'translate(' + sx.toFixed(1) + 'px,' + sy.toFixed(1) + 'px) '
+                           + 'translate(-50%,-50%) scale(' + esc.toFixed(3) + ')';
+        el.style.opacity = luz.toFixed(3);
+        /* El desenfoque se redondea a medio píxel y solo se escribe cuando
+           cambia: así el navegador no repinta el ícono en cada cuadro. */
+        var borroso = Math.round(desenfoque * 2) / 2;
+        if (borroso !== el._borroso) {
+          el.style.filter = borroso ? 'blur(' + borroso + 'px)' : 'none';
+          el._borroso = borroso;
+        }
+        /* Tope 5: la ficha está en 10 y no la puede tapar ningún ícono */
+        el.style.zIndex = Math.min(5, 2 + Math.round(sl.prof * 2) + Math.round(brillo * 2));
+        el.style.pointerEvents = fade > 0.6 ? 'auto' : 'none';
+
+        proy.push({ x: sx, y: sy, luz: luz, foco: foco, ilum: ilum,
+                    prof: sl.prof, rad: baseW * esc * 0.5 });
+      }
+
+      /* Líneas que unen los nodos en orden. Van primero y en modo normal,
+         para quedar por detrás de las luces. */
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.lineCap = 'round';
+      var atenuaLinea = 1 - focoMax * 0.7;
+      for (var k = 0; k < proy.length - 1; k++) {
+        var A = proy[k], B = proy[k + 1];
+        var aA = A.luz * atenuaLinea * 0.55, aB = B.luz * atenuaLinea * 0.55;
+        if (aA < 0.015 && aB < 0.015) continue;
+
+        /* Arranca y termina en el borde del ícono, no en su centro */
+        var dx = B.x - A.x, dy = B.y - A.y;
+        var d = Math.sqrt(dx * dx + dy * dy) || 1;
+        var ux = dx / d, uy = dy / d;
+        var x1 = A.x + ux * (A.rad * 0.92), y1 = A.y + uy * (A.rad * 0.92);
+        var x2 = B.x - ux * (B.rad * 0.92), y2 = B.y - uy * (B.rad * 0.92);
+        if ((x2 - x1) * ux + (y2 - y1) * uy <= 0) continue;
+
+        var gl = ctx.createLinearGradient(x1, y1, x2, y2);
+        gl.addColorStop(0,   'rgba(160,210,50,' + aA.toFixed(3) + ')');
+        gl.addColorStop(0.5, 'rgba(150,120,225,' + (((aA + aB) / 2) * 0.8).toFixed(3) + ')');
+        gl.addColorStop(1,   'rgba(160,210,50,' + aB.toFixed(3) + ')');
+        ctx.strokeStyle = gl;
+        ctx.lineWidth = 1.1;
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+      }
+
+      ctx.globalCompositeOperation = 'lighter';
+
+      /* Luz violeta detrás: tenue con el hover, plena con la ficha abierta */
+      for (var b = 0; b < proy.length; b++) {
+        var nb = proy[b];
+        var g = Math.max(nb.foco, nb.ilum * 0.55) * fade;
+        if (g < 0.02) continue;
+        var Rg = nb.rad * (2.5 + nb.foco * 0.7 + Math.sin(t * 1.05) * 0.16);
+        var grd = ctx.createRadialGradient(nb.x, nb.y, nb.rad * 0.12, nb.x, nb.y, Rg);
+        grd.addColorStop(0,    'rgba(163, 116, 245,' + (0.50 * g).toFixed(3) + ')');
+        grd.addColorStop(0.28, 'rgba(120, 66, 214,'  + (0.28 * g).toFixed(3) + ')');
+        grd.addColorStop(0.62, 'rgba(78, 40, 152,'   + (0.10 * g).toFixed(3) + ')');
+        grd.addColorStop(1,    'rgba(57, 31, 82, 0)');
+        ctx.fillStyle = grd;
+        ctx.beginPath();
+        ctx.arc(nb.x, nb.y, Rg, 0, 6.2832);
+        ctx.fill();
+      }
+
+      /* Partículas orbitando cada ícono */
+      for (var pp = 0; pp < proy.length; pp++) {
+        var nodo = proy[pp];
+        if (nodo.luz < 0.04) continue;
+        var rad = nodo.rad;
+        var pico = Math.max(nodo.foco, nodo.ilum * 0.85);
+        var base = nodo.luz * (0.40 + 0.60 * pico);
+        var tam  = 0.42 + nodo.prof * 0.30 + pico * 0.62;
+        for (var q = 0; q < POR_ICONO; q++) {
+          var ch = CHISPAS[pp * POR_ICONO + q];
+          var ang = ch.ang + t * ch.vel;
+          var orb = rad * (1.18 + ch.r * 0.75) + Math.sin(t * ch.vd + ch.fase) * rad * 0.07;
+          var px = nodo.x + Math.cos(ang) * orb;
+          var py = nodo.y + Math.sin(ang) * orb * 0.82;
+          var a2 = base * ch.br * (0.55 + 0.45 * Math.sin(t * ch.vb + ch.fase));
+          if (a2 <= 0.02) continue;
+          ctx.fillStyle = ch.tipo
+            ? 'rgba(214,190,255,' + a2.toFixed(3) + ')'
+            : 'rgba(160,210,50,' + a2.toFixed(3) + ')';
+          ctx.beginPath();
+          ctx.arc(px, py, ch.s * tam, 0, 6.2832);
+          ctx.fill();
+        }
+      }
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    /* Solo se dibuja mientras la sección se ve */
+    var enPantalla = false;
+    new IntersectionObserver(function(e) {
+      enPantalla = e[0].isIntersecting;
+    }, { rootMargin: '120px' }).observe(caja);
+
+    if (!MOVIL) LOOP.add(dibujar, function() { return enPantalla || fade > 0.004; });
+  })();
+</script>
+</body>
+</html>

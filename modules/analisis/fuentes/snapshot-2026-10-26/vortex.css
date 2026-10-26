@@ -1,0 +1,597 @@
+/* ============================================================
+   VORTEX IT — ESTILOS COMPARTIDOS
+   Base, fondo animado, header, footer, botones, campo de estrellas
+   y cursor personalizado. Lo usan todas las páginas del sitio.
+   Cada página carga después su propio <style> con lo que le es propio,
+   así puede sobrescribir lo que necesite.
+============================================================ */
+
+/* ============================================================
+   RESET Y BASE
+============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; overflow-x: clip; }
+
+body {
+  font-family: 'Rubik', sans-serif;
+  font-weight: 300;
+  background-color: #000;
+  color: #fff;
+  overflow-x: clip;
+}
+
+/* ============================================================
+   FONDO ANIMADO
+============================================================ */
+@property --p1x { syntax: '<percentage>'; inherits: false; initial-value: 85%; }
+@property --p1y { syntax: '<percentage>'; inherits: false; initial-value: 58%; }
+@property --p2x { syntax: '<percentage>'; inherits: false; initial-value: 8%;  }
+@property --p2y { syntax: '<percentage>'; inherits: false; initial-value: 11%; }
+@property --p3x { syntax: '<percentage>'; inherits: false; initial-value: 44%; }
+@property --p3y { syntax: '<percentage>'; inherits: false; initial-value: 0%;  }
+@property --p4x { syntax: '<percentage>'; inherits: false; initial-value: 65%; }
+@property --p4y { syntax: '<percentage>'; inherits: false; initial-value: 95%; }
+@property --p5x { syntax: '<percentage>'; inherits: false; initial-value: 60%; }
+@property --p5y { syntax: '<percentage>'; inherits: false; initial-value: 60%; }
+
+body {
+  background-image:
+    radial-gradient(at var(--p1x) var(--p1y), rgba(57,31,82,0.28) 0px, transparent 50%),
+    radial-gradient(at var(--p2x) var(--p2y), rgba(57,31,82,0.28) 0px, transparent 50%),
+    radial-gradient(at var(--p3x) var(--p3y), rgba(57,31,82,0.22) 0px, transparent 50%),
+    radial-gradient(at var(--p4x) var(--p4y), #000000 0px, transparent 50%),
+    radial-gradient(at var(--p5x) var(--p5y), rgba(57,31,82,0.34) 0px, transparent 55%);
+  background-attachment: fixed;   /* se libera en Mac y táctiles */
+  animation: vortexNodes 20s ease-in-out infinite;
+}
+
+@keyframes vortexNodes {
+  0%   { --p1x:85%; --p1y:58%; --p2x:8%;  --p2y:11%; --p3x:44%; --p3y:0%;  --p4x:65%; --p4y:95%; --p5x:60%; --p5y:60%; }
+  33%  { --p1x:70%; --p1y:30%; --p2x:20%; --p2y:40%; --p3x:60%; --p3y:20%; --p4x:40%; --p4y:80%; --p5x:50%; --p5y:50%; }
+  66%  { --p1x:90%; --p1y:70%; --p2x:5%;  --p2y:60%; --p3x:30%; --p3y:10%; --p4x:75%; --p4y:60%; --p5x:65%; --p5y:45%; }
+  100% { --p1x:85%; --p1y:58%; --p2x:8%;  --p2y:11%; --p3x:44%; --p3y:0%;  --p4x:65%; --p4y:95%; --p5x:60%; --p5y:60%; }
+}
+
+
+/* ============================================================
+   HEADER
+============================================================ */
+.site-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 0 48px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #333;
+  transition: background 0.3s ease;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.header-logo img.logo-img {
+  height: 26px;
+  width: auto;
+  display: block;
+}
+
+.header-logo svg {
+  height: 28px;
+  width: auto;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+}
+
+.header-nav a {
+  font-family: 'Rubik', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #fff;
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  transition: color 0.2s;
+}
+
+.header-nav a:hover { color: #a0d232; }
+
+/* Página actual */
+.header-nav a.active { color: #a0d232; font-weight: 500; }
+
+/* ── EL BOTÓN "HABLEMOS" DEL MENÚ ──
+   Fuera de su página: negro, con borde y texto verdes.
+   En su propia página: al revés, verde con borde y texto negros. */
+.header-nav .nav-cta {
+  background: #000;
+  color: #a0d232;
+  border: 1px solid #a0d232;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.header-nav .nav-cta:hover {
+  background: #a0d232;
+  color: #000;
+  border-color: #a0d232;
+}
+
+/* La regla de arriba, '.header-nav a.active', pisaba el color del botón y lo
+   dejaba verde sobre verde: por eso el texto desaparecía justo en la página
+   de Hablemos. Nombrar las dos clases sobre el elemento le gana en
+   especificidad (0,3,1 contra 0,2,1). El :hover se incluye para que estando
+   en la página el botón no cambie al pasarle el mouse por encima. */
+.header-nav a.nav-cta.active,
+.header-nav a.nav-cta.active:hover {
+  background: #a0d232;
+  color: #000;
+  border-color: #000;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.lang-switch {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lang-btn {
+  font-family: 'Rubik', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.5);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 2px 4px;
+}
+
+.lang-btn:hover, .lang-btn.active { color: #a0d232; }
+.lang-sep { color: rgba(255,255,255,0.2); font-size: 12px; }
+
+.social-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.social-links a {
+  color: rgba(255,255,255,0.5);
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.social-links a:hover { color: #a0d232; }
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 1.5px;
+  background: #fff;
+  transition: all 0.3s;
+}
+
+
+/* ============================================================
+   BOTONES GENERALES
+============================================================ */
+.btn-primary {
+  display: inline-block;
+  padding: 14px 36px;
+  background: #a0d232;
+  color: #000;
+  font-family: 'Rubik', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 6px;
+  border: 1px solid #a0d232;
+  transition: background 0.2s, color 0.2s;
+}
+
+.btn-primary:hover { background: #000; color: #a0d232; border-color: #a0d232; }
+
+
+
+.section-title {
+  font-family: 'Rubik', sans-serif;
+  font-weight: 500;
+  font-size: clamp(1.5rem, min(4vw, 5.5vh), 3rem);
+  color: #a0d232;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 32px;
+  position: relative;
+  z-index: 2;
+}
+
+
+#estrellas-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ============================================================
+   FOOTER
+============================================================ */
+.site-footer {
+  background: rgba(0,0,0,0.7);
+  border-top: 1px solid rgba(160,210,50,0.08);
+  padding: 64px 60px 40px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1.5fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+
+.footer-logo-wrap img.logo-img {
+  height: 30px;
+  width: auto;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.footer-logo-wrap svg {
+  height: 24px;
+  width: auto;
+  margin-bottom: 16px;
+}
+
+.footer-logo-desc {
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.45);
+  max-width: 220px;
+}
+
+.footer-col-title {
+  font-size: 11px;
+  font-weight: 400;
+  text-transform: uppercase;
+  color: #a0d232;
+  margin-bottom: 16px;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-links a {
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: #a0d232; }
+
+.footer-contact-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-contact-list li {
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.5);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-contact-list a {
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-contact-list a:hover { color: #a0d232; }
+
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-copy {
+  font-size: 12px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.3);
+}
+
+.footer-social {
+  display: flex;
+  gap: 16px;
+}
+
+.footer-social a {
+  color: rgba(255,255,255,0.4);
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.footer-social a:hover { color: #a0d232; }
+
+/* ============================================================
+   FLECHA FLOTANTE — LLEVA A LA SECCIÓN SIGUIENTE
+   Al llegar al final gira y vuelve arriba (clase .arriba).
+============================================================ */
+.flecha-baja {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 999;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(160, 210, 50, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a0d232;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.25s, color 0.25s, border-color 0.25s,
+              transform 0.35s cubic-bezier(.22,.61,.36,1);
+}
+
+.flecha-baja svg {
+  width: 20px;
+  height: 20px;
+  animation: flechaLatido 2.4s ease-in-out infinite;
+}
+
+@keyframes flechaLatido {
+  0%, 100% { transform: translateY(-2px); }
+  50%      { transform: translateY(2px); }
+}
+
+.flecha-baja:hover {
+  background: #a0d232;
+  border-color: #a0d232;
+  color: #000;
+}
+
+/* Última sección: la flecha se da vuelta y vuelve al principio */
+.flecha-baja.arriba { transform: rotate(180deg); }
+.flecha-baja.arriba svg { animation: none; }
+
+/* ============================================================
+   CURSOR PERSONALIZADO
+   Contorno sin relleno que persigue al puntero con inercia y se
+   deforma según la velocidad, como una gota. Sobre elementos con
+   [data-cursor] se expande y muestra la instrucción.
+   Solo en dispositivos con puntero fino.
+============================================================ */
+@media (pointer: fine) {
+  body.cursor-on,
+  body.cursor-on a,
+  body.cursor-on button,
+  body.cursor-on [role="button"] { cursor: none; }
+}
+
+.cursor-punto,
+.cursor-anillo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  border-radius: 50%;
+  opacity: 0;
+  will-change: transform;
+}
+
+.cursor-punto {
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  background: #a0d232;
+  transition: opacity 0.25s ease;
+}
+
+/* El contenedor solo se traslada; el aro es el que se deforma,
+   así el texto de adentro nunca gira ni se estira */
+.cursor-anillo { width: 0; height: 0; }
+
+.cursor-aro {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border: 1px solid #a0d232;
+  border-radius: 50%;
+  will-change: transform;
+  transition: width 0.35s cubic-bezier(.22,.61,.36,1),
+              height 0.35s cubic-bezier(.22,.61,.36,1),
+              margin 0.35s cubic-bezier(.22,.61,.36,1);
+}
+
+.cursor-anillo span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+  font-family: 'Rubik', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a0d232;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+}
+
+/* Sobre un elemento con instrucción: solo crece el contorno */
+body.cursor-etiqueta .cursor-aro {
+  width: 88px;
+  height: 88px;
+  margin: -44px 0 0 -44px;
+}
+body.cursor-etiqueta .cursor-anillo span { opacity: 1; }
+body.cursor-etiqueta .cursor-punto { opacity: 0 !important; }
+
+
+/* Con el menú de siete ítems, en notebooks el header queda justo:
+   se recortan los espacios antes de que se rompa la línea */
+@media (max-width: 1320px) and (min-width: 769px) {
+  .site-header { padding: 0 28px; }
+  .header-nav a { padding: 8px 10px; font-size: 12px; }
+  .header-nav .nav-cta { padding: 8px 15px; font-size: 12px; }
+  .header-right { gap: 12px; }
+}
+
+/* ============================================================
+   MOBILE NAV (compartido)
+============================================================ */
+@media (max-width: 768px) {
+  .site-header { padding: 0 24px; }
+  .header-nav { display: none; position: fixed; top: 72px; left: 0; right: 0; background: rgba(0,0,0,0.96); flex-direction: column; padding: 24px; gap: 8px; }
+  .header-nav.open { display: flex; }
+  .hamburger { display: flex; }
+  .header-right { gap: 12px; }
+  .social-links { display: none; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .site-footer { padding: 48px 24px 32px; }
+}
+
+/* ============================================================
+   MÓVIL — SCROLL SIN VIBRACIÓN
+   'background-attachment: fixed' obliga al navegador a repintar todo
+   el fondo en cada frame de scroll: en móvil eso produce el temblor.
+============================================================ */
+@media (max-width: 900px), (pointer: coarse) {
+  body { background-attachment: scroll; animation: none; }
+}
+
+/* ============================================================
+   MAC / SAFARI — LO CARO SE APAGA
+   Todo lo que sigue vale para cualquier página del sitio, porque el
+   .es-mac lo pone vortex.js en el <html>.
+
+   1. backdrop-filter: es la propiedad más cara de Safari. Cada elemento
+      con desenfoque de fondo obliga a copiar y desenfocar lo que hay
+      detrás en cada frame. Se reemplaza por un fondo sólido.
+   2. Las sombras enormes (200px de difuminado) se pintan en CPU.
+   3. El encaje de scroll pelea con la inercia de macOS.
+   4. Las partículas en CSS de "Cómo trabajamos" son cientos de capas.
+============================================================ */
+.es-mac .paso-card,
+.es-mac .solucion-card,
+.es-mac .sv-principio,
+.es-mac .sv-persona,
+.es-mac .blog-card,
+.es-mac form.tcn-form,
+.es-mac form.hb-form {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  /* Se imita el vidrio sin desenfocar: un velo claro sobre un fondo casi
+     opaco y una línea fina de borde. Sobre el fondo oscuro del sitio la
+     diferencia con el desenfoque real es mínima. */
+  background: linear-gradient(rgba(255,255,255,0.055), rgba(255,255,255,0.028)),
+              rgba(19,13,29,0.88);
+  border: 1px solid rgba(255,255,255,0.07);
+}
+
+/* Las fichas ya tienen fondo casi opaco: solo se les saca el desenfoque */
+.es-mac .sv-ficha,
+.es-mac .constel-ficha {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: rgba(17,11,28,0.97);
+}
+
+/* El halo violeta se conserva, con dos capas en vez de cuatro: las de 160 y
+   250 px de difuminado son las que más cuestan y las que menos se ven. */
+.es-mac .paso-card-caja::before,
+.es-mac .solucion-card-caja::before,
+.es-mac .sv-caja::before,
+.es-mac .tcn-marco::before,
+.es-mac .hb-marco::before {
+  box-shadow: 0 0 38px 5px rgba(163,116,245,0.22),
+              0 0 96px 26px rgba(132,76,222,0.14) !important;
+}
+
+/* La flecha flotante era el último backdrop-filter vivo en Mac, y el peor:
+   es position:fixed, así que obliga a leer y desenfocar el fondo en CADA
+   cuadro de scroll, y encima su flecha late en bucle. */
+.es-mac .flecha-baja {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: rgba(0, 0, 0, 0.72);
+}
+.es-mac .flecha-baja svg { animation: none !important; }
+
+.es-mac { scroll-snap-type: none !important; }
+
+/* Sin capas promovidas de más: en Safari cada una es memoria de GPU */
+.es-mac .sv-nodo,
+.es-mac .constel-item { will-change: auto !important; }
+
+/* ============================================================
+   MAC / SAFARI — SCROLL SIN TEMBLOR
+   El fondo fijo se libera y el degradado deja de animarse: anima cinco
+   radiales a pantalla completa y obliga a repintar todo el viewport en
+   cada frame. Es la operación más cara de la web.
+============================================================ */
+.es-mac body { background-attachment: scroll; animation: none; }

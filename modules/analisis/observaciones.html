@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Observaciones · Análisis · Vortex IT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/analisis.css">
+</head>
+<body class="an">
+  <nav class="an-bar" aria-label="Ubicación">
+    <div class="an-bar-in">
+      <a href="../../index.html">Hub</a><span class="an-crumb-sep">/</span>
+      <a href="index.html">Análisis</a><span class="an-crumb-sep">/</span>
+      <strong>Observaciones</strong>
+    </div>
+  </nav>
+  <main class="an-wrap">
+    <header class="an-head">
+      <p class="an-eyebrow">Análisis · Documento 4</p>
+      <h1 class="an-title">Observaciones</h1>
+      <p class="an-lead">Hallazgos preliminares del relevamiento, para tener en cuenta al armar la propuesta. No es una auditoría de usabilidad completa ni incluye pruebas con usuarios.</p>
+      <p class="an-meta">Revisión experta sobre el HTML publicado · snapshot del 26/10/2026 · <span class="an-tag an-tag--draft">Borrador</span></p>
+    </header>
+
+    <ul class="an-toc">
+      <li><a href="#estructura">Estructura y navegación</a></li>
+      <li><a href="#contenido">Contenido</a></li>
+      <li><a href="#idioma">Versión en inglés</a></li>
+      <li><a href="#seo">SEO técnico</a></li>
+      <li><a href="#a11y">Accesibilidad y experiencia</a></li>
+      <li><a href="#abiertas">Preguntas abiertas</a></li>
+    </ul>
+
+    <p class="an-note"><span class="an-tag an-tag--obs">Observado</span> se comprobó en el sitio publicado. <span class="an-tag an-tag--hyp">Hipótesis</span> es una interpretación a validar (con datos de uso o con Vortex) antes de tomarla como requisito.</p>
+
+    <section class="an-section" id="estructura">
+      <h2>Estructura y navegación</h2>
+      <div class="an-table-wrap">
+        <table class="an-table">
+          <thead><tr><th>#</th><th>Observación</th><th>Evidencia</th><th>Tipo</th><th>A considerar en la propuesta</th></tr></thead>
+          <tbody>
+            <tr><td class="an-num">E1</td><td>Sitio plano de 8 páginas por idioma, sin subpáginas. Cada solución, paso y plataforma vive como ancla dentro de una página.</td><td>Recorrido de enlaces internos</td><td><span class="an-tag an-tag--obs">Observado</span></td><td>Evaluar si soluciones o plataformas necesitan página propia (contenido enlazable y posicionable).</td></tr>
+            <tr><td class="an-num">E2</td><td>El footer agrupa Blog, Plataformas y Trabajá con nosotros bajo “Comunidad”; Plataformas son productos comerciales, no comunidad.</td><td>Footer de todas las páginas</td><td><span class="an-tag an-tag--obs">Observado</span></td><td>Reagrupar el footer por intención (oferta, empresa, contenidos, contacto).</td></tr>
+            <tr><td class="an-num">E3</td><td>Trabajá con nosotros no está en el menú principal; sólo se llega desde el footer y el cierre de Sobre Vortex.</td><td>Header vs. footer</td><td><span class="an-tag an-tag--obs">Observado</span></td><td>Confirmar si la búsqueda de talento es un objetivo del sitio y darle la visibilidad que corresponda.</td></tr>
+            <tr><td class="an-num">E4</td><td>Tres de los cuatro productos enlazan a su sitio propio; Rutex AI lleva al formulario de contacto.</td><td>CTAs de Plataformas y de la home</td><td><span class="an-tag an-tag--obs">Observado</span></td><td>Diferenciar el CTA de Rutex (“Solicitar demo”, por ejemplo) para que el comportamiento sea esperable.</td></tr>
+            <tr><td class="an-num">E5</td><td>La home resume Soluciones, Cómo trabajamos y Plataformas; las páginas internas amplían con la misma numeración.</td><td>Mapa de contenido</td><td><span class="an-tag an-tag--obs">Observado</span></td><td>Fortaleza a conservar: la home funciona como índice narrativo.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="an-section" id="contenido">
+      <h2>Contenido</h2>
+      <div class="an-table-wrap">
+        <table class="an-table">
+          <thead><tr><th>#</th><th>Observación</th><th>Evidencia</th><th>Tipo</th><th>A considerar en la propuesta</th></tr></thead>
+          <tbody>
+            <tr><td class="an-num">C1</td><td>Los 21 artículos del blog están publicados en LinkedIn; el sitio sólo muestra la tarjeta y saca al visitante a otra pestaña.</td><td>Enlaces del Blog</td><td><span class="an-tag an-tag--obs">Observado</span></td><td>Decidir si los artículos se alojan en el sitio (posicionamiento, permanencia) o se mantiene LinkedIn como fuente.</td></tr>
+            <tr><td class="an-num">C2</td><td>El blog no tiene categorías, buscador ni filtro; con 21 piezas y temas que se repiten, encontrar uno puntual depende del scroll.</td><td>Blog</td><td><span class="an-tag an-tag--hyp">Hipótesis</span></td><td>Agrupar por tema (adopción de IA, gobierno de IA, procesos, LATAM) si el volumen sigue creciendo.</td></tr>
+            <tr><td class="an-num">C3</td><td>Nombres de soluciones con variantes: “Automatización con RPA + IA” (home) vs. “con RPA e IA” (Soluciones); “Aplicaciones web y mobile” vs. “web &amp; mobile”.</td><td>Home y Soluciones</td><td><span class="an-tag an-tag--obs">Observado</span></td><td>Fijar un nombre único por solución.</td></tr>
+            <tr><td class="an-num">C4</td><td>No hay casos de éxito ni resultados por cliente: la prueba social se apoya en logos y cifras agregadas.</td><td>Todo el sitio</td><td><span class="an-tag an-tag--obs">Observado</span></td><td>Evaluar con Vortex si hay casos publicables; sería contenido nuevo (alcance adicional).</td></tr>
+            <tr><td class="an-num">C5</td><td>“Transformación Digital AI-First” es la promesa central y aparece como opción del formulario, pero no tiene sección ni página que la desarrolle como servicio.</td><td>Hero, title y formulario de Hablemos</td><td><span class="an-tag an-tag--hyp">Hipótesis</span></td><td>Confirmar si es un servicio en sí o el enfoque que atraviesa las 4 soluciones.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="an-section" id="idioma">
+      <h2>Versión en inglés</h2>
+      <div class="an-table-wrap">
+        <table class="an-table">
+          <thead><tr><th>#</th><th>Observación</th><th>Evidencia</th><th>Tipo</th><th>A considerar en la propuesta</th></tr></thead>
+          <tbody>
+            <tr><td class="an-num">I1</td><td>El blog en inglés muestra los 21 títulos y las fechas en español; sólo están traducidos la intro y las etiquetas.</td><td><code>/en/blog.html</code></td><td><span class="an-tag an-tag--obs">Observado</span></td><td>Definir la política de contenido en inglés (traducir, filtrar o indicar que el artículo está en español).</td></tr>
+            <tr><td class="an-num">I2</td><td>El resto de las páginas en inglés replica estructura y secciones de la versión en español, con URLs propias.</td><td>Comparación de encabezados ES/EN</td><td><span class="an-tag an-tag--obs">Observado</span></td><td>Mantener la paridad en el rediseño.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="an-section" id="seo">
+      <h2>SEO técnico</h2>
+      <div class="an-table-wrap">
+        <table class="an-table">
+          <thead><tr><th>#</th><th>Observación</th><th>Evidencia</th><th>Tipo</th><th>A considerar en la propuesta</th></tr></thead>
+          <tbody>
+            <tr><td class="an-num">T1</td><td>No existen <code>sitemap.xml</code> ni <code>robots.txt</code> (responden 404).</td><td>Solicitud directa a ambas rutas</td><td><span class="an-tag an-tag--obs">Observado</span></td><td>Incluirlos en la implementación.</td></tr>
+            <tr><td class="an-num">T2</td><td>Ninguna página tiene metadatos Open Graph ni URL canónica: al compartir un enlace no hay imagen ni descripción controladas.</td><td>16 páginas revisadas</td><td><span class="an-tag an-tag--obs">Observado</span></td><td>Definir título, descripción e imagen para compartir por página.</td></tr>
+            <tr><td class="an-num">T3</td><td>La home no tiene <code>h1</code>: el titular “LA IA CAMBIÓ LAS REGLAS.” está dibujado como texto SVG. Las páginas internas sí tienen <code>h1</code>.</td><td>HTML de <code>/</code> y <code>/en/</code></td><td><span class="an-tag an-tag--obs">Observado</span></td><td>Que el titular principal sea un encabezado real.</td></tr>
+            <tr><td class="an-num">T4</td><td>Todas las páginas tienen <code>lang</code>, <code>description</code> y <code>hreflang</code> entre idiomas.</td><td>16 páginas revisadas</td><td><span class="an-tag an-tag--obs">Observado</span></td><td>Base correcta a conservar.</td></tr>
+            <tr><td class="an-num">T5</td><td>Las URLs terminan en <code>.html</code>.</td><td>Sitemap</td><td><span class="an-tag an-tag--obs">Observado</span></td><td>Si se cambian, prever redirecciones 301 desde las actuales.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="an-section" id="a11y">
+      <h2>Accesibilidad y experiencia</h2>
+      <div class="an-table-wrap">
+        <table class="an-table">
+          <thead><tr><th>#</th><th>Observación</th><th>Evidencia</th><th>Tipo</th><th>A considerar en la propuesta</th></tr></thead>
+          <tbody>
+            <tr><td class="an-num">A1</td><td>Contenido que sólo se lee tras interactuar: la descripción de los 6 principios y el detalle de los 4 pasos de la home se abren al tocar un ícono.</td><td>Sobre Vortex (“Tocá cada ícono…”), home</td><td><span class="an-tag an-tag--obs">Observado</span></td><td>Que el contenido esencial sea visible sin interacción; la animación puede sumar, no ocultar.</td></tr>
+            <tr><td class="an-num">A2</td><td>Los logos de clientes y partners están duplicados en el HTML para el carrusel infinito, sin ocultar la copia a lectores de pantalla.</td><td>Home, sección Confían en nosotros</td><td><span class="an-tag an-tag--obs">Observado</span></td><td>Ocultar la copia (<code>aria-hidden</code>) y ofrecer pausa del movimiento.</td></tr>
+            <tr><td class="an-num">A3</td><td>Uso intensivo de animación ligada al scroll y 3D (GSAP + three.js) en la home. Puede afectar rendimiento en móviles de gama media.</td><td>Scripts cargados</td><td><span class="an-tag an-tag--hyp">Hipótesis</span></td><td>Medir rendimiento real (Lighthouse/Web Vitals) antes de decidir.</td></tr>
+            <tr><td class="an-num">A4</td><td>La home respeta la preferencia de reducir movimiento: detiene las animaciones y muestra el contenido.</td><td>Script de la home</td><td><span class="an-tag an-tag--obs">Observado</span></td><td>Buena práctica a conservar y extender a todas las páginas.</td></tr>
+            <tr><td class="an-num">A5</td><td>El formulario de Hablemos pide 6 datos obligatorios, entre ellos cargo y email corporativo, antes de poder describir el desafío.</td><td>Formulario de Hablemos</td><td><span class="an-tag an-tag--hyp">Hipótesis</span></td><td>Validar con datos de conversión si el largo del formulario frena consultas; no cambiar sin evidencia.</td></tr>
+            <tr><td class="an-num">A6</td><td>Los formularios tienen consentimiento explícito y campo anti-spam oculto.</td><td>Hablemos y Trabajá con nosotros</td><td><span class="an-tag an-tag--obs">Observado</span></td><td>Conservar.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="an-section" id="abiertas">
+      <h2>Preguntas abiertas para Vortex</h2>
+      <p class="an-sub">Respuestas que cambian el rumbo de la propuesta.</p>
+      <div class="an-card">
+        <ol>
+          <li>¿Cuál es el objetivo principal del sitio: generar consultas comerciales, posicionar liderazgo de opinión, atraer talento o mostrar productos? ¿En qué orden?</li>
+          <li>¿Hay datos de analítica (páginas más vistas, fuentes, conversión del formulario) que podamos usar?</li>
+          <li>¿El blog debe quedar en LinkedIn o pasar a publicarse en el sitio?</li>
+          <li>¿Existen casos de éxito publicables?</li>
+          <li>¿Qué tanto de la identidad actual (colores, animaciones, orbes, cursor) se considera parte de la marca y debe mantenerse?</li>
+          <li>¿Qué peso tiene la versión en inglés y qué contenidos deben traducirse?</li>
+        </ol>
+      </div>
+    </section>
+
+    <p class="an-foot">Fuente: HTML, CSS y JS publicados de vortex-it.com, 26/10/2026. Sin datos de analítica ni participación de usuarios.</p>
+  </main>
+</body>
+</html>

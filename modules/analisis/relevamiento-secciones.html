@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Relevamiento de secciones · Análisis · Vortex IT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/analisis.css">
+</head>
+<body class="an">
+  <nav class="an-bar" aria-label="Ubicación">
+    <div class="an-bar-in">
+      <a href="../../index.html">Hub</a><span class="an-crumb-sep">/</span>
+      <a href="index.html">Análisis</a><span class="an-crumb-sep">/</span>
+      <strong>Relevamiento de secciones</strong>
+    </div>
+  </nav>
+  <main class="an-wrap">
+    <header class="an-head">
+      <p class="an-eyebrow">Análisis · Documento 3</p>
+      <h1 class="an-title">Relevamiento de secciones</h1>
+      <p class="an-lead">Inventario de los tipos de sección que usa el sitio, en qué páginas se repiten y qué parte de su estructura se propone conservar en el rediseño.</p>
+      <p class="an-meta">Revisión del HTML publicado · snapshot del 26/10/2026 · <span class="an-tag an-tag--draft">Borrador</span></p>
+    </header>
+
+    <ul class="an-toc">
+      <li><a href="#patrones">Patrones de sección</a></li>
+      <li><a href="#matriz">Matriz página × patrón</a></li>
+      <li><a href="#conservar">Estructura a conservar</a></li>
+      <li><a href="#tecnica">Base técnica</a></li>
+    </ul>
+
+    <p class="an-note">La columna “Propuesta” es una recomendación de trabajo para el rediseño, no una decisión tomada. Queda pendiente de validar con Vortex.</p>
+
+    <section class="an-section" id="patrones">
+      <h2>Patrones de sección</h2>
+      <p class="an-sub">15 patrones identificados. Los ids corresponden a los usados en el HTML del sitio.</p>
+      <div class="an-table-wrap">
+        <table class="an-table">
+          <thead><tr><th>#</th><th>Patrón</th><th>Contenido</th><th>Comportamiento</th><th>Dónde</th><th>Propuesta</th></tr></thead>
+          <tbody>
+            <tr><td class="an-num">S1</td><td>Header global</td><td>Logo, menú de 7 ítems, “Hablemos” destacado, ES/EN, redes</td><td>Menú plegable en mobile</td><td>Todas</td><td><span class="an-tag an-tag--obs">Conservar estructura</span></td></tr>
+            <tr><td class="an-num">S2</td><td>Hero de home</td><td>Titular gráfico, bajada, imagen, botón de scroll</td><td>Titular dibujado en SVG; animación de entrada</td><td>Inicio</td><td><span class="an-tag an-tag--muted">Rediseñar</span></td></tr>
+            <tr><td class="an-num">S3</td><td>Hero de página interna</td><td>H1, bajada de 1–3 párrafos, a veces orbe animado o índice de íconos</td><td>Orbe 3D en Sobre Vortex y Plataformas</td><td>Soluciones, Cómo trabajamos, Sobre Vortex, Blog, Plataformas, Hablemos, Trabajá</td><td><span class="an-tag an-tag--obs">Conservar estructura</span></td></tr>
+            <tr><td class="an-num">S4</td><td>Visión con video</td><td>Título, dos frases, miniatura de video</td><td>Texto fijo (sticky) mientras se desplaza; video al hacer clic</td><td>Inicio</td><td><span class="an-tag an-tag--obs">Conservar contenido</span></td></tr>
+            <tr><td class="an-num">S5</td><td>Grilla de 4 tarjetas con imagen</td><td>Las 4 soluciones</td><td>—</td><td>Inicio (resumen), Soluciones (índice)</td><td><span class="an-tag an-tag--obs">Conservar estructura</span></td></tr>
+            <tr><td class="an-num">S6</td><td>Bloque numerado “01 —”</td><td>Número, título, imagen/ícono, descripción + columna de detalle con listas y “Resultado”</td><td>Columna de detalle a la derecha</td><td>Soluciones (×4), Cómo trabajamos (×4)</td><td><span class="an-tag an-tag--obs">Conservar estructura</span></td></tr>
+            <tr><td class="an-num">S7</td><td>Constelación interactiva</td><td>Íconos dispersos que abren un detalle</td><td>Requiere clic/toque para leer el contenido</td><td>Inicio (4 pasos), Sobre Vortex (6 principios)</td><td><span class="an-tag an-tag--hyp">Revisar</span></td></tr>
+            <tr><td class="an-num">S8</td><td>Carrusel de logos</td><td>Clientes, partners, membresías</td><td>Desplazamiento continuo; logos duplicados para el bucle</td><td>Inicio</td><td><span class="an-tag an-tag--obs">Conservar contenido</span></td></tr>
+            <tr><td class="an-num">S9</td><td>Escena de producto</td><td>Logo, 4–6 capacidades, mockups, CTA</td><td>Escenas fijas que se alternan con el scroll (home); bloques alternados (Plataformas)</td><td>Inicio, Plataformas (×4)</td><td><span class="an-tag an-tag--obs">Conservar estructura</span></td></tr>
+            <tr><td class="an-num">S10</td><td>Cifras + globo</td><td>+25 años, +250 cuentas, +600 proyectos, +130 profesionales, origen</td><td>Contadores y globo 3D</td><td>Inicio</td><td><span class="an-tag an-tag--obs">Conservar contenido</span></td></tr>
+            <tr><td class="an-num">S11</td><td>Equipo</td><td>Foto, nombre, cargo, formación</td><td>Tres grupos de tres con encabezado repetido</td><td>Sobre Vortex</td><td><span class="an-tag an-tag--obs">Conservar contenido</span></td></tr>
+            <tr><td class="an-num">S12</td><td>Listado de artículos</td><td>Portada, fuente, fecha, título</td><td>Primera tarjeta destacada; enlaces externos</td><td>Blog</td><td><span class="an-tag an-tag--hyp">Revisar</span></td></tr>
+            <tr><td class="an-num">S13</td><td>Cierre con CTA</td><td>Frase de cierre + botón a Hablemos o Trabajá</td><td>—</td><td>Todas salvo Plataformas, Hablemos y Trabajá</td><td><span class="an-tag an-tag--obs">Conservar estructura</span></td></tr>
+            <tr><td class="an-num">S14</td><td>Formulario</td><td>Campos agrupados, consentimiento, anti-spam</td><td>Envío por POST a la misma página (procesado en el servidor)</td><td>Hablemos, Trabajá con nosotros</td><td><span class="an-tag an-tag--obs">Conservar campos</span></td></tr>
+            <tr><td class="an-num">S15</td><td>Footer global</td><td>Origen, 3 columnas de enlaces y contacto, copyright</td><td>—</td><td>Todas</td><td><span class="an-tag an-tag--muted">Reagrupar</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="an-section" id="matriz">
+      <h2>Matriz página × patrón</h2>
+      <p class="an-sub">Qué patrones arma cada página, en orden de aparición (sin contar header y footer).</p>
+      <div class="an-table-wrap">
+        <table class="an-table">
+          <thead><tr><th>Página</th><th>Secuencia de patrones</th><th>Bloques</th></tr></thead>
+          <tbody>
+            <tr><td>Inicio</td><td>S2 → S4 → S5 → S7 → S8 → S9 → S10 + S13</td><td class="an-num">7</td></tr>
+            <tr><td>Soluciones</td><td>S3 + S5 → S6 ×4 → S13</td><td class="an-num">6</td></tr>
+            <tr><td>Cómo trabajamos</td><td>S3 → S6 ×4 → S13</td><td class="an-num">6</td></tr>
+            <tr><td>Sobre Vortex</td><td>S3 → S7 → S11 → S13</td><td class="an-num">4</td></tr>
+            <tr><td>Blog</td><td>S3 → S12 → S13</td><td class="an-num">3</td></tr>
+            <tr><td>Plataformas</td><td>S3 → S9 ×4</td><td class="an-num">5</td></tr>
+            <tr><td>Hablemos</td><td>S3 → S14</td><td class="an-num">2</td></tr>
+            <tr><td>Trabajá con nosotros</td><td>S3 → S14</td><td class="an-num">2</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="an-section" id="conservar">
+      <h2>Estructura a conservar (propuesta de trabajo)</h2>
+      <p class="an-sub">Puntos de partida para la propuesta de rediseño; a confirmar con Vortex.</p>
+      <div class="an-card">
+        <ul>
+          <li><b>Arquitectura de 8 páginas por idioma</b>, con las mismas URLs para no perder enlaces existentes.</li>
+          <li><b>La home como índice narrativo</b>: visión → soluciones → método → prueba social → productos → cifras → contacto.</li>
+          <li><b>El esquema “Qué resolvemos / Qué hacemos / Resultado”</b> de Soluciones y el paralelo “Analizamos / Diseñamos / Integramos / Evolucionamos + El resultado” de Cómo trabajamos.</li>
+          <li><b>La numeración 01–04</b> como hilo entre el resumen de la home y las páginas de detalle.</li>
+          <li><b>Hablemos como conversión principal</b>, presente en el menú y en los cierres de página.</li>
+          <li><b>Los campos de ambos formularios</b>, incluida la clasificación por tipo de ayuda y etapa de la iniciativa.</li>
+          <li><b>Las cuatro plataformas</b> con el relato desafío → producto → capacidades.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="an-section" id="tecnica">
+      <h2>Base técnica observada</h2>
+      <p class="an-sub">Lo que hay detrás de las secciones, para dimensionar el rediseño.</p>
+      <div class="an-table-wrap">
+        <table class="an-table">
+          <thead><tr><th>Aspecto</th><th>Detalle</th></tr></thead>
+          <tbody>
+            <tr><td>Tipo de sitio</td><td>HTML estático, una página por archivo, carpeta <code>/en/</code> para inglés</td></tr>
+            <tr><td>Estilos</td><td>Hoja global <code>vortex.css</code> + estilos embebidos por página</td></tr>
+            <tr><td>Animación</td><td>GSAP 3.12.5 con ScrollTrigger (secciones fijas y transiciones al hacer scroll)</td></tr>
+            <tr><td>3D</td><td>three.js r128 (globo de cifras, orbes)</td></tr>
+            <tr><td>Script propio</td><td><code>vortex.js</code> (cursor contextual y efectos ligados al scroll) + scripts embebidos por página</td></tr>
+            <tr><td>Tipografía</td><td>Rubik (Google Fonts)</td></tr>
+            <tr><td>Colores más usados</td><td>Verde lima <code>#a0d232</code>, violetas <code>#8a3ce0</code> / <code>#6a3ac7</code> / <code>#c07df0</code>, fondo oscuro <code>#0d0918</code>. El detalle de estilos se documentará aparte.</td></tr>
+            <tr><td>Movimiento reducido</td><td>La home detiene las animaciones si el sistema pide reducir movimiento</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <p class="an-foot">Fuente: HTML, CSS y JS publicados de vortex-it.com, 26/10/2026.</p>
+  </main>
+</body>
+</html>

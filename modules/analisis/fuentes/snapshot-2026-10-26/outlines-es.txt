@@ -1,0 +1,900 @@
+==================== p_index.html
+
+[header id=site-header class=site-header]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+
+[nav id= class=]
+   - Inicio
+   - Soluciones
+   - Cómo trabajamos
+   - Sobre Vortex
+   - Blog
+   - Plataformas
+   - Hablemos
+   [cta] ES -> /
+   [cta] EN -> /en/
+
+[main id= class=]
+
+[section id=inicio class=hero-wrapper]
+   img alt='' src=/assets/cohete.webp
+
+[div id=hero-titulo class=hero-titulo-svg]
+   · Impulsamos la evolución de las organizaciones mediante estrategias de Transformación Digital AI-First.
+   [btn] Conocé nuestra visión
+
+[section id=vision class=vision-section]
+
+[div id=vision-sticky class=vision-sticky]
+## Nuestra visión
+   · La tecnología no es el punto de partida.El negocio sí.
+   · Por eso combinamos estrategia e inteligencia artificialpara transformar desafíos en oportunidades de crecimiento.
+
+[div id=vision-img class=vision-img-wrap]
+   img alt='Ver el video de Vortex IT' src=tps://i.ytimg.com/vi/s-Rfc8M-V60/maxresdefault.jpg
+
+[section id=soluciones class=soluciones-section]
+## Soluciones
+   · Diseñadas para convertir la estrategia en resultados.
+   img alt='Aplicaciones web y mobile' src=/assets/sol-apps.webp
+   img alt='Inteligencia artificial e innovación' src=/assets/sol-ia.webp
+   img alt='Automatización con RPA + IA' src=/assets/sol-rpa.webp
+   img alt='Integración de aplicaciones y datos' src=/assets/sol-integracion.webp
+
+[section id=como-trabajamos class=constel-section]
+
+[div id=constel-inner class=constel-inner]
+## Cómo trabajamos
+
+[div id=cn1 class=constel-item]
+   img alt='' src=/assets/boton_rompecabezas.webp
+
+[div id=cn2 class=constel-item]
+   img alt='' src=/assets/boton_brujula.webp
+
+[div id=cn3 class=constel-item]
+   img alt='' src=/assets/boton_engranaje.webp
+
+[div id=cn4 class=constel-item]
+   img alt='' src=/assets/boton_crecimiento.webp
+   [btn] ×
+   img alt='' src=
+   [cta] Conocé más -> /como-trabajamos.html
+
+[section id=clientes class=clientes-section]
+## Confían en nosotros
+   · Clientes
+
+[div id=track-clientes class=logos-track]
+   img alt='Galicia' src=/assets/Galicia.svg
+   img alt='Carrefour' src=/assets/Carrefour_Blanco.svg
+   img alt='Correo Argentino' src=/assets/Correo%20Argentino.svg
+   img alt='DirecTV' src=/assets/DirecTV.svg
+   img alt='Naranja X' src=/assets/NaranjaX.svg
+   img alt='Arcor' src=/assets/Arcor.svg
+   img alt='Galicia' src=/assets/Galicia.svg
+   img alt='Carrefour' src=/assets/Carrefour_Blanco.svg
+   img alt='Correo Argentino' src=/assets/Correo%20Argentino.svg
+   img alt='DirecTV' src=/assets/DirecTV.svg
+   img alt='Naranja X' src=/assets/NaranjaX.svg
+   img alt='Arcor' src=/assets/Arcor.svg
+   · Partners
+
+[div id=track-partners class=logos-track]
+   img alt='Google' src=/assets/Google.svg
+   img alt='Red Hat' src=/assets/RedHat.svg
+   img alt='Mercado Libre' src=/assets/Mercado%20Libre_Blanco.svg
+   img alt='BeAware' src=/assets/Be%20Aware.svg
+   img alt='Rocketbot' src=/assets/Rocketbot.svg
+   img alt='AWS' src=/assets/AWS.svg
+   img alt='Oracle' src=/assets/Oracle.svg
+   img alt='Google' src=/assets/Google.svg
+   img alt='Red Hat' src=/assets/RedHat.svg
+   img alt='Mercado Libre' src=/assets/Mercado%20Libre_Blanco.svg
+   img alt='BeAware' src=/assets/Be%20Aware.svg
+   img alt='Rocketbot' src=/assets/Rocketbot.svg
+   img alt='AWS' src=/assets/AWS.svg
+   img alt='Oracle' src=/assets/Oracle.svg
+   · Miembros de
+   img alt='CESSI' src=/assets/Logo%20Cessi.svg
+   img alt='Córdoba Technology Cluster' src=/assets/C%C3%B3rdoba%20Cluster.svg
+
+[section id=plataformas class=plataformas-section]
+
+[div id=plat-p1 class=plataformas-sticky plataformas-pantalla]
+## Plataformas
+   · Soluciones desarrolladas por Vortex para industrias específicas.
+
+[div id=esc-qp class=plat-escena]
+   img alt='QuickPass' src=/assets/logoQP.svg
+   - Tickets digitales
+   - Fidelización
+   - Wallet & Cashless
+   - Analíticas
+   img alt='' src=/assets/mock-quickpass-a1.webp?v=2
+   img alt='' src=/assets/mock-quickpass-a2.webp?v=2
+   img alt='' src=/assets/mock-quickpass-a3.webp?v=2
+   img alt='' src=/assets/mock-quickpass-b1.webp?v=2
+   img alt='' src=/assets/mock-quickpass-b2.webp?v=2
+   img alt='' src=/assets/mock-quickpass-b3.webp?v=2
+   img alt='' src=/assets/mock-quickpass-b4.webp?v=2
+   [cta] Conocer QuickPass -> https://quickpass.app/
+
+[div id=esc-lx class=plat-escena plat-escena-inv]
+   img alt='Loyalix' src=/assets/logoLX.svg
+   - Programas de puntos
+   - Personalización
+   - Cupones inteligentes
+   - Analíticas
+   img alt='' src=/assets/mock-loyalix-a1.webp?v=2
+   img alt='' src=/assets/mock-loyalix-a2.webp?v=2
+   img alt='' src=/assets/mock-loyalix-a3.webp?v=2
+   img alt='' src=/assets/mock-loyalix-a4.webp?v=2
+   img alt='' src=/assets/mock-loyalix-b1.webp?v=2
+   img alt='' src=/assets/mock-loyalix-b2.webp?v=2
+   img alt='' src=/assets/mock-loyalix-b3.webp?v=2
+   img alt='' src=/assets/mock-loyalix-b4.webp?v=2
+   [cta] Conocer Loyalix -> https://loyalix.app/
+
+[div id=plat-p2 class=plataformas-sticky plataformas-pantalla]
+   · Plataformas
+   · Soluciones desarrolladas por Vortex para industrias específicas.
+
+[div id=esc-om class=plat-escena]
+   img alt='Omnia Talents' src=/assets/logoOmnia.svg
+   - Análisis de CVs
+   - Entrevistas con IA
+   - Validación de identidad
+   - Desarrollo profesional
+   img alt='' src=/assets/mock-omnia.webp?v=2
+   [cta] Conocer Omnia Talents -> https://omniatalents.com/
+
+[div id=esc-rx class=plat-escena plat-escena-inv]
+   img alt='Rutex AI' src=/assets/logoRutex.svg
+   - Gestión de modelos
+   - Control de costos
+   - Seguridad
+   - Trazabilidad
+   img alt='' src=/assets/mock-rutex.webp?v=3
+   [cta] Conocer Rutex AI -> /hablemos.html
+
+[section id=hablemos class=cierre-section]
+
+[div id=stats-intro-wrap class=]
+   · Más de 25 años impulsando la evolución de negocios mediante tecnología e innovación.
+
+[div id=stats-track-wrap class=]
+
+[div id=stats-track class=stats-grid]
+
+[div id=globo-wrap class=globo-container]
+
+[div id=stats-origen-wrap class=stats-origen-wrap]
+   · Con origen en Córdoba, Argentina, desarrollamos proyectos para clientes de Latinoamérica, Estados Unidos y Europa.
+## La transformación digital no es un proyecto técnico. Es una decisión estratégica.
+   · Si estás evaluando cómo integrar inteligencia artificial, automatizar procesos o acelerar la evolución de tu organización, hablemos.
+
+[div id=cta-btn-wrap class=cta-btn-wrap]
+   [cta] Agendar una llamada -> /hablemos.html#formulario
+
+[footer id= class=site-footer]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+   · Con origen en Córdoba, Argentina. Operamos en LATAM, Europa y Estados Unidos.
+   · Vortex IT
+   - Inicio
+   - Soluciones
+   - Cómo trabajamos
+   - Sobre Vortex
+   · Comunidad
+   - Blog
+   - Plataformas
+   - Trabajá con nosotros
+   · Hablemos
+   - info@vortex-it.com
+   - +54 9 351 510-4734
+   - WhatsApp
+   - LinkedIn
+   - Instagram
+   · © 2026 Vortex IT. Todos los derechos reservados.
+==================== p_soluciones.html.html
+
+[header id=site-header class=site-header]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+
+[nav id= class=]
+   - Inicio
+   - Soluciones
+   - Cómo trabajamos
+   - Sobre Vortex
+   - Blog
+   - Plataformas
+   - Hablemos
+   [cta] ES -> /soluciones.html
+   [cta] EN -> /en/solutions.html
+
+[main id= class=]
+# Soluciones
+   · Integramos estrategia, inteligencia artificial y tecnologíapara acompañar la evolución de tu negocio.
+   img alt='Inteligencia artificial e innovación' src=/assets/sol-ia.webp
+   img alt='Automatización con RPA e IA' src=/assets/sol-rpa.webp
+   img alt='Aplicaciones web & mobile' src=/assets/sol-apps.webp
+   img alt='Integración de aplicaciones y datos' src=/assets/sol-integracion.webp
+
+[div id=ia class=solucion-bloque]
+   · 01 —
+## Inteligencia artificiale innovación
+   img alt='Inteligencia artificial e innovación' src=/assets/sol-ia.webp
+   · Aplicamos inteligencia artificial y analítica avanzada para mejorar decisiones, optimizar procesos y desarrollar nuevas capacidades a partir de los datos.
+
+[div id=det-ia class=solucion-right]
+   · Qué resolvemos
+   - Decisiones basadas en información insuficiente.
+   - Datos que no se aprovechan.
+   - Necesidad de aplicar IA a problemas concretos.
+   · Qué hacemos
+   - Analítica avanzada y modelos predictivos.
+   - IA generativa, agentes y asistentes inteligentes.
+   - Sistemas de recomendación y optimización.
+   - Arquitecturas de datos para IA.
+   · Resultado
+   · Mejores decisiones, procesos más inteligentes y nuevas capacidades para el negocio.
+
+[div id=rpa class=solucion-bloque]
+   · 02 —
+## Automatizacióncon RPA e IA
+   img alt='Automatización con RPA e IA' src=/assets/sol-rpa.webp
+   · Automatizamos tareas y flujos de trabajo mediante RPA e inteligencia artificial para simplificar la operación, reducir errores y liberar capacidad.
+
+[div id=det-rpa class=solucion-right]
+   · Qué resolvemos
+   - Tareas manuales y repetitivas.
+   - Errores operativos.
+   - Procesos lentos y costosos.
+   · Qué hacemos
+   - Automatización de procesos end-to-end.
+   - Implementación de RPA.
+   - Integración de IA en flujos automatizados.
+   - Orquestación de procesos.
+   · Resultado
+   · Mayor productividad, menos errores y procesos más eficientes.
+
+[div id=apps class=solucion-bloque]
+   · 03 —
+## Aplicacionesweb & mobile
+   img alt='Aplicaciones web & mobile' src=/assets/sol-apps.webp
+   · Diseñamos y desarrollamos aplicaciones web, mobile y productos digitales que responden a las necesidades del negocio y mejoran la experiencia de sus usuarios.
+
+[div id=det-apps class=solucion-right]
+   · Qué resolvemos
+   - Experiencias digitales deficientes.
+   - Plataformas que necesitan modernizarse.
+   - Necesidad de nuevos productos digitales.
+   · Qué hacemos
+   - Diseño y desarrollo web y mobile.
+   - UX/UI orientado al negocio.
+   - Arquitecturas y APIs escalables.
+   - Integración y evolución de productos digitales.
+   · Resultado
+   · Productos digitales robustos, escalables y centrados en el usuario.
+
+[div id=integracion class=solucion-bloque]
+   · 04 —
+## Integración deaplicaciones y datos
+   img alt='Integración de aplicaciones y datos' src=/assets/sol-integracion.webp
+   · Integramos aplicaciones, plataformas y datos para conectar sistemas, facilitar el flujo de información y construir un ecosistema digital integrado.
+
+[div id=det-integracion class=solucion-right]
+   · Qué resolvemos
+   - Sistemas desconectados.
+   - Datos fragmentados.
+   - Baja interoperabilidad entre plataformas.
+   · Qué hacemos
+   - Integración de APIs, aplicaciones y sistemas.
+   - Arquitecturas y flujos de datos.
+   - Integración, sincronización y gobierno de datos.
+   - Interoperabilidad entre plataformas.
+   · Resultado
+   · Información integrada, procesos más fluidos y mejores decisiones.
+
+[div id=cierre class=sol-cierre]
+   · Cada negocio necesitauna estrategia diferente.
+   · Contanos cuáles son tus objetivos y diseñemos juntoscómo llevarlos adelante.
+   [cta] Contanos tu desafío → -> /hablemos.html
+
+[footer id= class=site-footer]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+   · Con origen en Córdoba, Argentina. Operamos en LATAM, Europa y Estados Unidos.
+   · Vortex IT
+   - Inicio
+   - Soluciones
+   - Cómo trabajamos
+   - Sobre Vortex
+   · Comunidad
+   - Blog
+   - Plataformas
+   - Trabajá con nosotros
+   · Hablemos
+   - info@vortex-it.com
+   - +54 9 351 510-4734
+   - WhatsApp
+   - LinkedIn
+   - Instagram
+   · © 2026 Vortex IT. Todos los derechos reservados.
+==================== p_como-trabajamos.html.html
+
+[header id=site-header class=site-header]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+
+[nav id= class=]
+   - Inicio
+   - Soluciones
+   - Cómo trabajamos
+   - Sobre Vortex
+   - Blog
+   - Plataformas
+   - Hablemos
+   [cta] ES -> /como-trabajamos.html
+   [cta] EN -> /en/how-we-work.html
+
+[main id= class=]
+# Cómo trabajamos
+   · Transformar no es solamente implementar tecnología.
+   · Es comprender el negocio, definir qué necesita cambiar, diseñar la estrategia adecuaday construir soluciones preparadas para evolucionar.
+   · En VORTEX combinamos visión de negocio, tecnología e inteligencia artificialpara acompañar cada etapa de esa evolución.
+   img alt='Entendemos el negocio' src=/assets/boton_rompecabezas.webp
+   img alt='Diseñamos la estrategia' src=/assets/boton_brujula.webp
+   img alt='Desarrollamos la solución' src=/assets/boton_engranaje.webp
+   img alt='Evolucionamos continuamente' src=/assets/boton_crecimiento.webp
+
+[div id=entendemos class=paso-bloque]
+   · 01 —
+## Entendemosel negocio
+   img alt='' src=/assets/boton_rompecabezas.webp
+   · Antes de diseñar una solución, entendemos qué necesita cambiar.
+   · Analizamos los objetivos de la organización, sus procesos, plataformas y desafíos para identificar dónde existen oportunidades de transformación y qué capacidades necesita desarrollar el negocio.
+
+[div id=det-entendemos class=paso-right]
+   · Analizamos
+   - Objetivos estratégicos.
+   - Procesos críticos.
+   - Plataformas y arquitectura.
+   - Datos y fuentes de información.
+   - Necesidades de las personas y del negocio.
+   · El resultado
+   · Una visión clara del desafío y de las oportunidades que pueden abordarse.
+
+[div id=estrategia class=paso-bloque]
+   · 02 —
+## Diseñamosla estrategia
+   img alt='' src=/assets/boton_brujula.webp
+   · Definimos el camino antes de elegir la tecnología.
+   · A partir del entendimiento del negocio, diseñamos una estrategia que establece prioridades, capacidades y soluciones necesarias para alcanzar los objetivos definidos.
+   · La inteligencia artificial se incorpora desde el origen cuando puede aportar nuevas capacidades, mejorar procesos o transformar la toma de decisiones.
+
+[div id=det-estrategia class=paso-right]
+   · Diseñamos
+   - Estrategias de transformación.
+   - Nuevos procesos y modelos operativos.
+   - Arquitecturas y plataformas.
+   - Capacidades digitales y de IA.
+   - Prioridades y roadmap de evolución.
+   · El resultado
+   · Una estrategia alineada al negocio y un camino concreto para llevarla adelante.
+
+[div id=desarrollamos class=paso-bloque]
+   · 03 —
+## Desarrollamosla solución
+   img alt='' src=/assets/boton_engranaje.webp
+   · Convertimos la estrategia en capacidades que funcionan.
+   · Diseñamos y desarrollamos soluciones integrando tecnología, datos e inteligencia artificial, con foco en los procesos y necesidades definidos.
+   · No se trata solamente de implementar una herramienta: construimos plataformas y soluciones preparadas para evolucionar a medida que cambian las necesidades del negocio.
+
+[div id=det-desarrollamos class=paso-right]
+   · Integramos
+   - Tecnología y arquitectura.
+   - Datos e inteligencia artificial.
+   - Aplicaciones y plataformas.
+   - Automatización de procesos.
+   - Integraciones y APIs.
+   · El resultado
+   · Soluciones implementadas y preparadas para crecer junto con el negocio.
+
+[div id=evolucionamos class=paso-bloque]
+   · 04 —
+## Evolucionamoscontinuamente
+   img alt='' src=/assets/boton_crecimiento.webp
+   · La transformación no termina cuando la solución entra en producción.
+   · Medimos resultados, incorporamos aprendizajes y ajustamos las soluciones para responder a nuevas necesidades, datos y oportunidades.
+   · La evolución continua permite que las plataformas, procesos y capacidades acompañen el cambio permanente del negocio.
+
+[div id=det-evolucionamos class=paso-right]
+   · Evolucionamos
+   - Medimos resultados.
+   - Analizamos nuevos desafíos.
+   - Incorporamos nuevas capacidades.
+   - Optimizamos procesos y soluciones.
+   - Adaptamos las plataformas a nuevas necesidades.
+   · El resultado
+   · Una capacidad permanente para evolucionar.
+
+[div id=cierre class=ct-cierre]
+   · La transformación no es un proyecto cerrado. Es la capacidad de una organización para seguir evolucionando.
+   [cta] Hablemos → -> /hablemos.html
+
+[footer id= class=site-footer]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+   · Con origen en Córdoba, Argentina. Operamos en LATAM, Europa y Estados Unidos.
+   · Vortex IT
+   - Inicio
+   - Soluciones
+   - Cómo trabajamos
+   - Sobre Vortex
+   · Comunidad
+   - Blog
+   - Plataformas
+   - Trabajá con nosotros
+   · Hablemos
+   - info@vortex-it.com
+   - +54 9 351 510-4734
+   - WhatsApp
+   - LinkedIn
+   - Instagram
+   · © 2026 Vortex IT. Todos los derechos reservados.
+==================== p_sobre-vortex.html.html
+
+[header id=site-header class=site-header]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+
+[nav id= class=]
+   - Inicio
+   - Soluciones
+   - Cómo trabajamos
+   - Sobre Vortex
+   - Blog
+   - Plataformas
+   - Hablemos
+   [cta] ES -> /sobre-vortex.html
+   [cta] EN -> /en/about.html
+
+[main id= class=]
+
+[section id=quienes-somos class=sv-hero]
+   img alt='Vortex' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+# Sobre
+   · Quiénes somos
+   · Tecnología para acompañarla evolución de los negocios.
+   · En VORTEX combinamos visión de negocio, tecnología e innovación para diseñar y desarrollar soluciones que respondan a los desafíos de cada organización.
+   · No somos soloproveedores tecnológicos. Somos socios estratégicosen innovación.
+
+[div id=sv-orbe-caja class=sv-hero-orbe]
+
+[section id=principios class=sv-seccion sv-constel-zona]
+## Nuestros principios
+   · Seis ideas que ordenan cómo pensamos,decidimos y construimos.
+   img alt='La estrategia primero' src=/assets/icono-estrategia.webp
+   · 01. La estrategiaprimero
+   img alt='AI-First desde el origen' src=/assets/icono-ai-first.webp
+   · 02. AI-Firstdesde el origen
+   img alt='Rediseñar para transformar' src=/assets/icono-redisenar.webp
+   · 03. Rediseñarpara transformar
+   img alt='Tecnología que evoluciona' src=/assets/icono-tecnologia.webp
+   · 04. Tecnologíaque evoluciona
+   img alt='Personas potenciadas' src=/assets/icono-personas.webp
+   · 05. Personaspotenciadas
+   img alt='Evolución continua' src=/assets/icono-evolucion.webp
+   · 06. Evolucióncontinua
+   [btn] ×
+   img alt='' src=
+   · Tocá cada ícono para leer de qué se trata
+
+[section id=liderazgo class=sv-seccion sv-liderazgo]
+## Liderazgo
+   · Las personas detrás de la visión de VORTEX.
+   · Nuestro equipo directivo combina experiencia en negocio, tecnología e innovación para acompañar los desafíos de nuestros clientes e impulsar la evolución de la compañía.
+   img alt='Jorge Daniel Nieves Castillo' src=/assets/equipo/jorge-nieves.webp
+### Jorge Daniel Nieves Castillo
+   · Director de Innovación
+   · Cofundador de Vortex
+   · Licenciado en SistemasPosgrado en Adm. de Empresas
+   img alt='Matías Cortés' src=/assets/equipo/matias-cortes.webp
+### Matías Cortés
+   · Director de Tecnología
+   · Cofundador de Vortex
+   · Arquitecto de SoftwarePosgrado en Adm. de Empresas
+   img alt='Ariel Castro' src=/assets/equipo/ariel-castro.webp
+### Ariel Castro
+   · Director Ejecutivo
+   · Cofundador de Vortex
+   · Ingeniero en SistemasPosgrado en Adm. de Empresas
+
+[section id=liderazgo-2 class=sv-seccion sv-liderazgo]
+   · Liderazgo
+   · Las personas detrás de la visión de VORTEX.
+   · Nuestro equipo directivo combina experiencia en negocio, tecnología e innovación para acompañar los desafíos de nuestros clientes e impulsar la evolución de la compañía.
+   img alt='Mauricio Vélez' src=/assets/equipo/mauricio-velez.webp
+### Mauricio Vélez
+   · Director de Vortex Andina
+   · Economista con estudios de especialización en Gerencia Comercial
+   img alt='Edwin Leiton' src=/assets/equipo/edwin-leiton.webp
+### Edwin Leiton
+   · Director de Vortex Centroamérica
+   · Especialista en comercializaciónde soluciones TIC
+   img alt='Guillermo Bellini' src=/assets/equipo/guillermo-bellini.webp
+### Guillermo Bellini
+   · PMO Manager
+   · Arquitecto de soluciones especializado en metodologías ágiles y asignación de recursos IT.
+
+[section id=liderazgo-3 class=sv-seccion sv-liderazgo]
+   · Liderazgo
+   · Las personas detrás de la visión de VORTEX.
+   · Nuestro equipo directivo combina experiencia en negocio, tecnología e innovación para acompañar los desafíos de nuestros clientes e impulsar la evolución de la compañía.
+   img alt='Ignacio Bravo' src=/assets/equipo/ignacio-bravo.webp
+### Ignacio Bravo
+   · Director UX/UI
+   · Cofundador de QuickPass
+   · Tech Manager especializado en diseño interactivo, interfaces y maquetación de prototipos App/web.
+   img alt='Pablo Moroni' src=/assets/equipo/pablo-moroni.webp
+### Pablo Moroni
+   · Director de Desarrollo
+   · Cofundador de QuickPass
+   · Tech Manager de Front-End, arquitecto especializado en React, React Native y Firebase.
+   img alt='Lucas Spinozzi' src=/assets/equipo/lucas-spinozzi.webp
+### Lucas Spinozzi
+   · Director de Desarrollo
+   · Cofundador de QuickPass
+   · Tech Manager de Back-End, arquitecto especializado en Node.js, AWS y Google.
+
+[div id=trabaja class=sv-cierre]
+   · Trabajá con nosotros
+   · El futuro también se construye en equipo
+   · Buscamos personas que quieran aprender, crear y ser parte de los desafíos que plantea la evolución tecnológica. Si te interesa formar parte de VORTEX, queremos conocerte.
+   [cta] Enviános tu CV -> /trabaja-con-nosotros.html
+
+[footer id= class=site-footer]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+   · Con origen en Córdoba, Argentina. Operamos en LATAM, Europa y Estados Unidos.
+   · Vortex IT
+   - Inicio
+   - Soluciones
+   - Cómo trabajamos
+   - Sobre Vortex
+   · Comunidad
+   - Blog
+   - Plataformas
+   - Trabajá con nosotros
+   · Hablemos
+   - info@vortex-it.com
+   - +54 9 351 510-4734
+   - WhatsApp
+   - LinkedIn
+   - Instagram
+   · © 2026 Vortex IT. Todos los derechos reservados.
+==================== p_blog.html.html
+
+[header id=site-header class=site-header]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+
+[nav id= class=]
+   - Inicio
+   - Soluciones
+   - Cómo trabajamos
+   - Sobre Vortex
+   - Blog
+   - Plataformas
+   - Hablemos
+   [cta] ES -> /blog.html
+   [cta] EN -> /en/blog.html
+
+[main id= class=]
+# Blog
+   · Ideas y análisis sobre inteligencia artificial, transformación digitaly tecnología aplicada al negocio.
+   img alt='' src=/assets/portadas/portada-435c030195.png
+## Argentina ¿última en adopción de IA?
+   img alt='' src=/assets/portadas/portada-565eb12ba4.png
+## El riesgo de la IA y el circo para la tribuna
+   img alt='' src=/assets/portadas/portada-16b6f4c66e.png
+## El 71% de las empresas latinoamericanas adoptó IA. El 30% la puso a trabajar.
+   img alt='' src=/assets/portadas/portada-da2870e4e3.png
+## Stripe pagó US$7.500 millones por resolver un problema que muchas empresas todavía no admiten tener
+   img alt='' src=/assets/portadas/portada-562fff63ee.png
+## EL PROBLEMA NO ES LA IA. Es el proceso que nadie se animó a cambiar.
+   img alt='' src=/assets/portadas/portada-5d0732b05c.png
+## ¿Y si el problema de la deuda no fuera solamente la mora?
+   img alt='' src=/assets/portadas/portada-5d0c6fcf53.png
+## Identidad, permisos y trazabilidad: lo que un agente de IA necesita antes de operar en producción
+   img alt='' src=/assets/portadas/portada-7f7e7e0329.png
+## Forward-Deployed Engineers: por qué la implementación volvió al centro de la conversación
+   img alt='' src=/assets/portadas/portada-a5654a66d5.png
+## La obsesión por los pilotos de IA está frenando la transformación del negocio
+   img alt='' src=/assets/portadas/portada-9ecacf15cd.png
+## ¿Y si mañana Estados Unidos apaga la IA para Argentina?
+   img alt='' src=/assets/portadas/portada-fc50044781.png
+## ¿Y si el “humano en el loop” ya es el problema, no la solución?
+   img alt='' src=/assets/portadas/portada-98c03ab49f.png
+## En 2024 dije que la IA iba a cambiar el software. Me quedé corto.
+   img alt='' src=/assets/portadas/portada-ef9617b285.png
+## Mythos acaba de encontrar vulnerabilidades de 27 años en sistemas que creíamos seguros.
+   img alt='' src=/assets/portadas/portada-095ad09702.jpg
+## Los procesos de negocio, como los conocías, ya murieron. Lo que viene no es automatización.
+   img alt='' src=/assets/portadas/portada-8ee90d8de5.png
+## IA y despidos: la tentación en la que muchas empresas pueden caer
+   img alt='' src=/assets/portadas/portada-c5a476da84.png
+## El fin de las implementaciones eternas: hacia el software que se autoconfigura (ERP/CRM/WMS)
+   img alt='' src=/assets/portadas/portada-e9baa87f9a.png
+## De “pilotos eternos” a EBITDA: el índice de madurez de IA para empresas de LATAM
+   img alt='' src=/assets/portadas/portada-41a2020f1d.png
+## Del software prêt-à-porter al tailor-made digital
+   img alt='' src=/assets/portadas/portada-99e608fe01.jpg
+## De la promesa a la práctica: ¿por qué la IA no despega en muchas empresas?
+   img alt='' src=/assets/portadas/portada-c7e93deee3.jpg
+## IA y Transformación Digital en LATAM: tendencias que tenés que conocer
+   img alt='' src=/assets/portadas/portada-5025618677.jpg
+## Más que agentes y PoCs: por qué la IA exige un rediseño organizacional en LATAM
+   · ¿Querés conversar sobre alguno de estos temasaplicado a tu negocio? Hablemos.
+   [cta] Contanos tu desafío -> /hablemos.html
+
+[footer id= class=site-footer]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+   · Con origen en Córdoba, Argentina. Operamos en LATAM, Europa y Estados Unidos.
+   · Vortex IT
+   - Inicio
+   - Soluciones
+   - Cómo trabajamos
+   - Sobre Vortex
+   · Comunidad
+   - Blog
+   - Plataformas
+   - Trabajá con nosotros
+   · Hablemos
+   - info@vortex-it.com
+   - +54 9 351 510-4734
+   - WhatsApp
+   - LinkedIn
+   - Instagram
+   · © 2026 Vortex IT. Todos los derechos reservados.
+==================== p_plataformas.html.html
+
+[header id=site-header class=site-header]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+
+[nav id= class=]
+   - Inicio
+   - Soluciones
+   - Cómo trabajamos
+   - Sobre Vortex
+   - Blog
+   - Plataformas
+   - Hablemos
+   [cta] ES -> /plataformas.html
+   [cta] EN -> /en/platforms.html
+
+[main id= class=]
+
+[section id=plataformas class=pl-hero]
+# Plataformas
+   · De desafíos concretos a plataformasque evolucionan.
+   · En VORTEX no solo desarrollamos soluciones para nuestros clientes. También construimos productos a partir de necesidades específicas que identificamos en distintas industrias.
+   · Conocemos el contexto, entendemos los procesos y transformamos esos desafíos en plataformas capaces de crecer y evolucionar junto con el negocio.
+
+[div id=pl-orbe-caja class=pl-hero-orbe]
+
+[section id=quickpass class=pl-seccion]
+   img alt='QuickPass' src=/assets/logoQP.svg
+## QuickPass
+   · Del desafío de gestionar un evento a una plataforma para toda la experiencia.
+   · Los eventos y espectáculos necesitan mucho más que vender entradas. La operación combina múltiples necesidades: accesos, tickets, pagos, consumos, usuarios y experiencia, que deben funcionar de manera integrada.
+   · A partir de estas necesidades desarrollamos QUICKPASS, una plataforma diseñada específicamente para la industria de espectáculos y eventos.
+### ¿Qué permite?
+   - Tickets digitales
+   - Control de acceso
+   - Wallet & Cashless
+   - Fidelización
+   - Analíticas
+   - Gestión de usuarios
+   · Una plataforma que evoluciona con la industria QUICKPASS incorpora nuevas capacidades a medida que evolucionan las necesidades de los eventos, sus operadores y sus públicos.
+   [cta] Conocer QuickPass → -> https://quickpass.app/
+   img alt='' src=/assets/mock-quickpass-a1.webp?v=2
+   img alt='' src=/assets/mock-quickpass-b1.webp?v=2
+
+[section id=loyalix class=pl-seccion]
+   img alt='Loyalix' src=/assets/Logo%20horizontal.png
+## Loyalix
+   · De programas de fidelización a relaciones más inteligentes con los clientes.
+   · Las marcas necesitan conocer mejor a sus clientes, personalizar beneficios y transformar cada interacción en una oportunidad para fortalecer la relación.
+   · A partir de este desafío desarrollamos LOYALIX, una plataforma de fidelización que permite diseñar experiencias personalizadas y gestionar programas de beneficios desde una misma solución.
+### ¿Qué permite?
+   - Programas de puntos
+   - Cupones y promociones
+   - Personalización
+   - Segmentación
+   - Analíticas
+   - Integración con plataformas existentes
+   · Una plataforma que se adapta a cada marca LOYALIX puede integrarse mediante APIs a una aplicación o ecosistema existente, o implementarse como una solución personalizada bajo la identidad de la marca.
+   [cta] Conocer Loyalix → -> https://loyalix.app/
+   img alt='' src=/assets/mock-loyalix-a1.webp?v=2
+   img alt='' src=/assets/mock-loyalix-b1.webp?v=2
+
+[section id=omnia class=pl-seccion]
+   img alt='Omnia Talents' src=/assets/logoOmnia.svg
+## Omnia Talents
+   · De revisar currículums a optimizar los procesos de selección con IA.
+   · Los equipos de Recursos Humanos necesitan analizar perfiles, validar candidatos y agilizar las distintas etapas de selección. Cuando el volumen de postulaciones crece, evaluar cada perfil requiere cada vez más tiempo y o
+   · A partir de este desafío desarrollamos OmnIA Talents, una plataforma que incorpora inteligencia artificial para agilizar el reclutamiento, la validación de candidatos y su desarrollo profesional.
+### ¿Qué permite?
+   - Análisis de CVs
+   - Screening de candidatos
+   - Entrevistas asincrónicas con IA
+   - Validación de identidad
+   - Recomendaciones basadas en perfiles
+   - Desarrollo profesional
+   · Una plataforma que potencia la gestión del talento OmnIA Talents agiliza las etapas de evaluación y organiza información relevante para acompañar la selección y el desarrollo de las personas.
+   [cta] Conocer Omnia Talents → -> https://omniatalents.com/
+   img alt='' src=/assets/mock-omnia.webp?v=2
+
+[section id=rutex class=pl-seccion]
+   img alt='Rutex AI' src=/assets/logoRutex.svg
+## Rutex AI
+   · De usar modelos de IA a gestionar su uso de forma centralizada.
+   · A medida que las empresas incorporan inteligencia artificial, necesitan administrar los modelos que utilizan, controlar los costos y mantener la calidad, la seguridad y la trazabilidad de las interacciones.
+   · A partir de este desafío desarrollamos RUTEX AI, una plataforma de IA empresarial que centraliza la gestión del uso de modelos y facilita su control dentro de la organización.
+### ¿Qué permite?
+   - Gestión centralizada de modelos
+   - Control de costos
+   - Seguimiento del rendimiento
+   - Gestión de la calidad
+   - Seguridad
+   - Trazabilidad de las interacciones
+   · Una plataforma para gestionar la IA empresarial RUTEX AI permite centralizar la administración del uso de inteligencia artificial y mejorar la visibilidad y el control a medida que se extiende su adopción en la empresa.
+   [cta] Conocer Rutex AI → -> /hablemos.html
+   img alt='' src=/assets/mock-rutex.webp?v=3
+
+[footer id= class=site-footer]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+   · Con origen en Córdoba, Argentina. Operamos en LATAM, Europa y Estados Unidos.
+   · Vortex IT
+   - Inicio
+   - Soluciones
+   - Cómo trabajamos
+   - Sobre Vortex
+   · Comunidad
+   - Blog
+   - Plataformas
+   - Trabajá con nosotros
+   · Hablemos
+   - info@vortex-it.com
+   - +54 9 351 510-4734
+   - WhatsApp
+   - LinkedIn
+   - Instagram
+   · © 2026 Vortex IT. Todos los derechos reservados.
+==================== p_hablemos.html.html
+
+[header id=site-header class=site-header]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+
+[nav id= class=]
+   - Inicio
+   - Soluciones
+   - Cómo trabajamos
+   - Sobre Vortex
+   - Blog
+   - Plataformas
+   - Hablemos
+   [cta] ES -> /hablemos.html
+   [cta] EN -> /en/contact.html
+
+[main id= class=]
+# Hablemos
+   · ¿Tenés un desafío de negocio?
+   · Contanos qué necesitás resolver, qué querés mejorar o qué iniciativa estás evaluando. Nuestro equipo analizará tu desafío y se pondrá en contacto.
+
+[div id=formulario class=hb-marco]
+   FORM action=None
+   input name=abierto type=hidden ph=''
+   lbl No completar
+   input name=sitio_web type=text ph=''
+   · Contanos sobre tu desafío
+## Datos de contacto
+   lbl Nombre y apellido *
+   input name=nombre type=text ph=''
+   lbl Empresa *
+   input name=empresa type=text ph=''
+   lbl Cargo / Rol *
+   input name=cargo type=text ph=''
+   lbl Email corporativo *
+   input name=email type=email ph=''
+   lbl País *
+   select name=pais type=None ph=''
+## Tu iniciativa
+   lbl ¿En qué podemos ayudarte? *
+   select name=ayuda type=None ph=''
+   lbl ¿En qué etapa se encuentra tu iniciativa? (opcional)
+   select name=etapa type=None ph=''
+   lbl Contanos brevemente sobre tu desafío (opcional)
+   textarea name=mensaje type=None ph='¿Qué necesitás resolver, mejorar o desarrollar?'
+   · ¿Qué necesitás resolver, mejorar o desarrollar?
+   · Al enviar, autorizás a Vortex IT a guardar estos datos con el único fin de responder tu consulta. Podés pedir que los eliminemos escribiendo a info@vortex-it.com.
+   [btn] Enviar consulta
+
+[footer id= class=site-footer]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+   · Con origen en Córdoba, Argentina. Operamos en LATAM, Europa y Estados Unidos.
+   · Vortex IT
+   - Inicio
+   - Soluciones
+   - Cómo trabajamos
+   - Sobre Vortex
+   · Comunidad
+   - Blog
+   - Plataformas
+   - Trabajá con nosotros
+   · Hablemos
+   - info@vortex-it.com
+   - +54 9 351 510-4734
+   - WhatsApp
+   - LinkedIn
+   - Instagram
+   · © 2026 Vortex IT. Todos los derechos reservados.
+==================== p_trabaja-con-nosotros.html.html
+
+[header id=site-header class=site-header]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+
+[nav id= class=]
+   - Inicio
+   - Soluciones
+   - Cómo trabajamos
+   - Sobre Vortex
+   - Blog
+   - Plataformas
+   - Hablemos
+   [cta] ES -> /trabaja-con-nosotros.html
+   [cta] EN -> /en/careers.html
+
+[main id= class=]
+# Trabajá con nosotros
+   · El futuro también se construye en equipo.
+   · Buscamos personas que quieran aprender, crear y ser parte de los desafíos que plantea la evolución tecnológica. Contanos quién sos y dejanos tu CV.
+   FORM action=None
+   input name=abierto type=hidden ph=''
+   lbl No completar
+   input name=sitio_web type=text ph=''
+   lbl Nombre
+   input name=nombre type=text ph='Nombre'
+   lbl E-mail *
+   input name=email type=email ph='E-mail'
+   lbl Número de WhatsApp
+   input name=whatsapp type=tel ph='Dejanos tu WhatsApp para contactarte rápidamente'
+   lbl Contanos a qué puesto querés aplicar *
+   input name=puesto type=text ph='JAVA developer, Full-stack developer, Front-end developer, etc'
+   lbl Perfil de LinkedIn
+   input name=linkedin type=text ph='Dejanos el link a tu perfil'
+   lbl Comentarios
+   textarea name=comentarios type=None ph='Dejanos un comentario'
+   lbl Tu CV *
+
+[div id=tcn-archivo class=tcn-archivo]
+   input name=cv type=file ph=''
+   · Adjuntá tu CVEn PDF o Word, hasta 8 MB.
+   · Al enviar, autorizás a Vortex IT a guardar tus datos y tu CV con el único fin de evaluar tu postulación. Podés pedir que los eliminemos escribiendo a info@vortex-it.com.
+   [btn] Enviar postulación
+
+[footer id= class=site-footer]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+   · Con origen en Córdoba, Argentina. Operamos en LATAM, Europa y Estados Unidos.
+   · Vortex IT
+   - Inicio
+   - Soluciones
+   - Cómo trabajamos
+   - Sobre Vortex
+   · Comunidad
+   - Blog
+   - Plataformas
+   - Trabajá con nosotros
+   · Hablemos
+   - info@vortex-it.com
+   - +54 9 351 510-4734
+   - WhatsApp
+   - LinkedIn
+   - Instagram
+   · © 2026 Vortex IT. Todos los derechos reservados.

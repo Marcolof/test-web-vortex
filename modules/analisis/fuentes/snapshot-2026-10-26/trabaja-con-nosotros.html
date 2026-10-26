@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="alternate" hreflang="es" href="https://vortex-it.com/trabaja-con-nosotros.html">
+  <link rel="alternate" hreflang="en" href="https://vortex-it.com/en/careers.html">
+  <link rel="alternate" hreflang="x-default" href="https://vortex-it.com/trabaja-con-nosotros.html">
+  <title>Vortex — Trabajá con nosotros</title>
+  <meta name="description" content="Buscamos personas que quieran aprender, crear y ser parte de los desafíos que plantea la evolución tecnológica. Dejanos tus datos y tu CV.">
+    <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+/* Móvil o cualquier cosa con dedo en vez de puntero */
+var ES_MOVIL = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
+var CPU_BAJA = (navigator.hardwareConcurrency || 4) <= 4;
+var CALIDAD  = ES_MOVIL ? (CPU_BAJA ? 0.18 : 0.3) : (CPU_BAJA ? 0.65 : 1);
+
+/* macOS resuelve el scroll y los sticky en el compositor con inercia,
+   mientras GSAP aplica los transform en el hilo principal: ese desfasaje
+   es lo que se ve como temblor. Se detecta para corregirlo. */
+var ES_MAC = /Mac|iPad|iPhone|iPod/.test(navigator.platform || '') ||
+             (navigator.userAgent.indexOf('Mac') !== -1);
+
+/* Safari (cualquier plataforma) entra al mismo perfil liviano: es el que
+   más sufre el backdrop-filter, el fondo fijo y el degradado animado. */
+var ES_SAFARI = /^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i
+                  .test(navigator.userAgent || '');
+if (ES_SAFARI) ES_MAC = true;
+
+/* Interruptor para probar sin tener una Mac:
+   ?perfil=mac    fuerza el modo Mac (para ver los cambios visuales)
+   ?perfil=normal lo desactiva aunque estés en Mac (para comparar) */
+var _perfilForzado = new URLSearchParams(location.search).get('perfil');
+if (_perfilForzado === 'mac')    ES_MAC = true;
+if (_perfilForzado === 'normal') ES_MAC = false;
+
+/* ── MODO LIGERO ──
+   Mac, Safari y las máquinas de pocos núcleos entran acá. Es el interruptor
+   que usan todos los canvas del sitio para bajar partículas, saltear frames
+   y evitar el desenfoque por frame. */
+var MODO_LIGERO = ES_MAC || CPU_BAJA;
+
+/* En pantallas Retina, dibujar los canvas al doble multiplica por cuatro el
+   trabajo por frame. En modo ligero se baja a 1.35x: sigue viéndose nítido
+   —a 1x los puntos quedaban gruesos— y cuesta la mitad que a 2x. */
+var DPR_MAX = ES_MOVIL ? 1 : (MODO_LIGERO ? 1.35 : (window.devicePixelRatio > 1.5 ? 1.5 : 2));
+
+/* Cuánto se recorta la cantidad de partículas de cada efecto. Con 0.6 el
+   orbe conserva su densidad; por debajo se empezaba a ver ralo. */
+var FACTOR_PART = MODO_LIGERO ? 0.6 : (ES_MOVIL ? 0.4 : 1);
+function cuantasPart(n) { return Math.max(3, Math.round(n * FACTOR_PART)); }
+
+/* La clase se pone en <html> y no en <body>, porque <body> todavía no
+   existe cuando esto corre. Es lo que apaga backdrop-filter, el degradado
+   animado y el encaje de scroll antes del primer pintado. */
+if (ES_MAC) document.documentElement.classList.add('es-mac');
+</script>
+  <link rel="stylesheet" href="/assets/vortex.css?v=23">
+  <style>
+    /* Esta página no usa encaje de scroll: es un formulario largo */
+    main,.site-footer{position:relative;z-index:1}
+
+    .tcn-hero{padding:clamp(130px,19vh,200px) 48px clamp(24px,4vh,48px);text-align:center}
+    .tcn-hero h1{font-size:clamp(2.4rem,min(5.4vw,7vh),4.4rem);font-weight:500;color:#a0d232;text-transform:uppercase;line-height:1.05;margin-bottom:clamp(16px,2.6vh,30px)}
+    .tcn-hero .tcn-lead{font-size:clamp(1.15rem,min(2.2vw,3vh),1.75rem);font-weight:400;line-height:1.4;color:#fff;max-width:min(920px,94%);margin:0 auto 14px}
+    .tcn-hero p.tcn-sub{font-size:clamp(.98rem,min(1.6vw,2.2vh),1.2rem);font-weight:300;line-height:1.6;color:rgba(255,255,255,.7);max-width:min(860px,94%);margin:0 auto}
+
+    .tcn-caja{max-width:920px;margin:0 auto;padding:0 24px clamp(80px,12vh,140px)}
+
+    /* Luz violeta alrededor del formulario, como en las cards del sitio */
+    .tcn-marco{position:relative}
+    .tcn-marco::before{content:'';position:absolute;inset:0;border-radius:18px;pointer-events:none;z-index:0;
+      box-shadow:0 0 38px 4px rgba(163,116,245,.18),
+                 0 0 84px 22px rgba(132,76,222,.12),
+                 0 0 160px 56px rgba(96,50,180,.07)}
+
+    form.tcn-form{position:relative;z-index:1;background:rgba(255,255,255,.05);border-radius:18px;
+      padding:clamp(28px,4.4vh,52px) clamp(24px,3.4vw,52px);
+      backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+
+    .tcn-grupo{margin-bottom:clamp(28px,4vh,44px)}
+    .tcn-grupo:last-of-type{margin-bottom:clamp(20px,3vh,32px)}
+    .tcn-grupo h2{font-family:'Rubik',sans-serif;font-size:clamp(.95rem,1.3vw,1.1rem);font-weight:500;
+      text-transform:uppercase;letter-spacing:.1em;color:#a0d232;padding-bottom:10px;margin-bottom:22px;
+      border-bottom:1px solid rgba(160,210,50,.22)}
+
+    .tcn-fila{display:grid;grid-template-columns:1fr 1fr;gap:18px 22px}
+    .tcn-fila-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px 22px}
+    .tcn-campo{margin-bottom:18px}
+    .tcn-campo:last-child{margin-bottom:0}
+    .tcn-fila .tcn-campo,.tcn-fila-3 .tcn-campo{margin-bottom:0}
+
+    label{display:block;font-family:'Rubik',sans-serif;font-size:11px;font-weight:400;text-transform:uppercase;
+      letter-spacing:.08em;color:rgba(160,210,50,.85);margin-bottom:8px}
+    label .opt{color:rgba(255,255,255,.35);letter-spacing:.04em}
+    label .req{color:#a0d232}
+    .tcn-legal{font-size:12.5px;font-weight:300;line-height:1.6;color:rgba(255,255,255,.42);
+      margin:22px 0 26px}
+
+    input[type=text],input[type=email],input[type=tel],input[type=url],select,textarea{
+      width:100%;padding:12px 14px;background:rgba(0,0,0,.4);color:#fff;
+      border:1px solid rgba(255,255,255,.12);border-radius:8px;
+      font-family:'Rubik',sans-serif;font-size:15px;font-weight:300}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:rgba(160,210,50,.55)}
+    input::placeholder,textarea::placeholder{color:rgba(255,255,255,.28)}
+    select{appearance:none;-webkit-appearance:none;cursor:pointer;
+      background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a0d232' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;background-position:right 12px center;background-size:16px;padding-right:38px}
+    select option{background:#150e22;color:#fff}
+    textarea{min-height:110px;resize:vertical;line-height:1.55}
+    .tcn-ayuda{font-size:12px;color:rgba(255,255,255,.4);margin-top:7px;line-height:1.55}
+
+    /* El adjunto */
+    .tcn-archivo{position:relative;border:1px dashed rgba(160,210,50,.4);border-radius:12px;
+      padding:22px;text-align:center;transition:border-color .25s,background .25s}
+    .tcn-archivo:hover{border-color:rgba(160,210,50,.8);background:rgba(160,210,50,.04)}
+    .tcn-archivo input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+    .tcn-archivo-txt{font-size:14px;font-weight:300;color:rgba(255,255,255,.75);line-height:1.6}
+    .tcn-archivo-txt strong{font-weight:500;color:#a0d232}
+
+    .tcn-check{display:flex;align-items:flex-start;gap:12px;margin-bottom:26px}
+    .tcn-check input{width:18px;height:18px;margin-top:2px;accent-color:#a0d232;flex-shrink:0}
+    .tcn-check label{margin:0;text-transform:none;letter-spacing:0;font-size:13.5px;font-weight:300;
+      color:rgba(255,255,255,.7);line-height:1.6}
+
+    .tcn-enviar{display:inline-flex;align-items:center;gap:10px;padding:15px 40px;background:#a0d232;color:#000;
+      border:1px solid #a0d232;border-radius:8px;font-family:'Rubik',sans-serif;font-size:14px;font-weight:500;
+      text-transform:uppercase;letter-spacing:.05em;cursor:pointer;transition:background .2s,color .2s}
+    .tcn-enviar:hover{background:transparent;color:#a0d232}
+
+    .tcn-aviso{padding:16px 20px;border-radius:10px;margin-bottom:28px;font-size:14px;line-height:1.65}
+    .tcn-aviso-mal{background:rgba(255,90,90,.1);border:1px solid rgba(255,90,90,.35);color:#ffb0b0}
+    .tcn-aviso-mal ul{margin:6px 0 0 18px}
+
+    /* Pantalla de gracias */
+    .tcn-gracias{max-width:720px;margin:0 auto;text-align:center;padding:clamp(150px,22vh,240px) 24px clamp(90px,14vh,150px)}
+    .tcn-tilde{width:clamp(96px,11vw,132px);height:auto;display:block;margin:0 auto clamp(24px,4vh,38px);
+      filter:drop-shadow(0 0 30px rgba(132,76,222,.45))}
+    .tcn-gracias h1{font-size:clamp(2rem,min(4.4vw,6vh),3.4rem);font-weight:500;color:#a0d232;text-transform:uppercase;line-height:1.1;margin-bottom:20px}
+    .tcn-gracias p{font-size:clamp(1rem,min(1.8vw,2.4vh),1.3rem);font-weight:300;line-height:1.6;color:#fff;margin-bottom:34px}
+
+    @media(max-width:760px){
+      .tcn-hero{padding:120px 24px 30px}
+      .tcn-fila,.tcn-fila-3{grid-template-columns:1fr}
+      form.tcn-form{padding:24px 20px}
+    }
+
+    .es-mac form.tcn-form{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(28,22,40,.82)}
+  </style>
+</head>
+<body>
+
+
+  <!-- FLECHA: LLEVA A LA SECCIÓN SIGUIENTE -->
+  <button class="flecha-baja" id="flecha-baja" type="button"
+          data-cursor="Bajar" aria-label="Ir a la sección siguiente">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <line x1="12" y1="4" x2="12" y2="20"></line>
+      <polyline points="6 14 12 20 18 14"></polyline>
+    </svg>
+  </button>
+
+  <!-- HEADER -->
+  <header class="site-header" id="site-header">
+    <a href="/" class="header-logo" aria-label="Vortex IT">
+      <img src="/assets/Logo%20VX_blanco%20y%20violeta.svg" alt="Vortex IT" class="logo-img">
+    </a>
+
+    <nav aria-label="Navegación principal">
+      <ul class="header-nav" id="header-nav">
+        <li><a href="/">Inicio</a></li>
+        <li><a href="/soluciones.html">Soluciones</a></li>
+        <li><a href="/como-trabajamos.html">Cómo trabajamos</a></li>
+        <li><a href="/sobre-vortex.html">Sobre Vortex</a></li>
+        <li><a href="/blog.html">Blog</a></li>
+        <li><a href="/plataformas.html">Plataformas</a></li>
+        <li><a href="/hablemos.html" class="nav-cta" data-cursor="Hablemos">Hablemos</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-right">
+      <!-- Conmutador de idioma: son links reales a la misma página en el
+           otro idioma, no botones. Así se puede compartir la dirección y
+           Google puede seguirlos. -->
+      <div class="lang-switch">
+        <a class="lang-btn active"
+           href="/trabaja-con-nosotros.html" hreflang="es" lang="es">ES</a>
+        <span class="lang-sep">|</span>
+        <a class="lang-btn"
+           href="/en/careers.html" hreflang="en" lang="en">EN</a>
+      </div>
+      <div class="social-links">
+        <a href="https://www.linkedin.com/company/vortex-it-ok" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="https://www.instagram.com/vortex.it/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@vortexit" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#333"/></svg>
+        </a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+<main>
+
+
+  <div class="tcn-hero">
+    <h1>Trabajá con nosotros</h1>
+    <p class="tcn-lead">El futuro también se construye en equipo.</p>
+    <p class="tcn-sub">Buscamos personas que quieran aprender, crear y ser parte de los desafíos que plantea la evolución tecnológica. Contanos quién sos y dejanos tu CV.</p>
+  </div>
+
+  <div class="tcn-caja">
+    <div class="tcn-marco">
+
+      
+      <form class="tcn-form" method="post" enctype="multipart/form-data" novalidate>
+        <input type="hidden" name="abierto" value="1793035184">
+        <!-- Campo trampa: queda escondido, solo lo completan los robots -->
+        <div style="position:absolute;left:-9999px" aria-hidden="true">
+          <label for="sitio_web">No completar</label>
+          <input type="text" id="sitio_web" name="sitio_web" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="tcn-campo">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre" placeholder="Nombre"
+                 value="" autocomplete="name">
+        </div>
+
+        <div class="tcn-campo">
+          <label for="email">E-mail <span class="req">*</span></label>
+          <input type="email" id="email" name="email" required placeholder="E-mail"
+                 value="" autocomplete="email">
+        </div>
+
+        <div class="tcn-campo">
+          <label for="whatsapp">Número de WhatsApp</label>
+          <input type="tel" id="whatsapp" name="whatsapp"
+                 placeholder="Dejanos tu WhatsApp para contactarte rápidamente"
+                 value="" autocomplete="tel">
+        </div>
+
+        <div class="tcn-campo">
+          <label for="puesto">Contanos a qué puesto querés aplicar <span class="req">*</span></label>
+          <input type="text" id="puesto" name="puesto" required list="puestos"
+                 placeholder="JAVA developer, Full-stack developer, Front-end developer, etc"
+                 value="">
+          <datalist id="puestos">
+            <option value="Desarrollo backend"></option>
+            <option value="Desarrollo frontend"></option>
+            <option value="Desarrollo full stack"></option>
+            <option value="Desarrollo mobile"></option>
+            <option value="Datos e inteligencia artificial"></option>
+            <option value="Automatización / RPA"></option>
+            <option value="Arquitectura y cloud"></option>
+            <option value="QA / Testing"></option>
+            <option value="UX / UI"></option>
+            <option value="Project management"></option>
+            <option value="Consultoría / Negocio"></option>
+          </datalist>
+        </div>
+
+        <div class="tcn-campo">
+          <label for="linkedin">Perfil de LinkedIn</label>
+          <input type="text" id="linkedin" name="linkedin" placeholder="Dejanos el link a tu perfil"
+                 value="">
+        </div>
+
+        <div class="tcn-campo">
+          <label for="comentarios">Comentarios</label>
+          <textarea id="comentarios" name="comentarios" placeholder="Dejanos un comentario"></textarea>
+        </div>
+
+        <div class="tcn-campo">
+          <label for="cv">Tu CV <span class="req">*</span></label>
+          <div class="tcn-archivo" id="tcn-archivo">
+            <input type="file" id="cv" name="cv" required
+                   accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                   aria-label="Adjuntá tu CV">
+            <p class="tcn-archivo-txt" id="tcn-archivo-txt">
+              <strong>Adjuntá tu CV</strong><br>En PDF o Word, hasta 8 MB.            </p>
+          </div>
+        </div>
+
+        <p class="tcn-legal">Al enviar, autorizás a Vortex IT a guardar tus datos y tu CV con el único fin de evaluar tu postulación. Podés pedir que los eliminemos escribiendo a info@vortex-it.com.</p>
+
+        <button class="tcn-enviar" type="submit" data-cursor="Enviar">
+          Enviar postulación          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+
+</main>
+
+
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo-wrap">
+          <img src="/assets/Logo%20VX_blanco%20y%20violeta.svg" alt="Vortex IT" class="logo-img">
+        </div>
+        <p class="footer-logo-desc">Con origen en Córdoba, Argentina. Operamos en LATAM, Europa y Estados Unidos.</p>
+      </div>
+
+      <div>
+        <p class="footer-col-title">Vortex IT</p>
+        <ul class="footer-links">
+          <li><a href="/">Inicio</a></li>
+          <li><a href="/soluciones.html">Soluciones</a></li>
+          <li><a href="/como-trabajamos.html">Cómo trabajamos</a></li>
+          <li><a href="/sobre-vortex.html">Sobre Vortex</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="footer-col-title">Comunidad</p>
+        <ul class="footer-links">
+          <li><a href="/blog.html">Blog</a></li>
+          <li><a href="/plataformas.html">Plataformas</a></li>
+          <li><a href="/trabaja-con-nosotros.html">Trabajá con nosotros</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="footer-col-title">Hablemos</p>
+        <ul class="footer-contact-list">
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <a href="mailto:info@vortex-it.com">info@vortex-it.com</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 014.69 12 19.79 19.79 0 011.61 3.42 2 2 0 013.6 1.24h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.91 8.96a16 16 0 006.02 6.02l.95-.95a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0121.73 16.92z"/></svg>
+            <a href="tel:+5493515104734">+54 9 351 510-4734</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.122 1.523 5.855L.057 23.943l6.272-1.443A11.953 11.953 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.656-.51-5.176-1.4l-.37-.22-3.725.857.884-3.617-.242-.373A9.956 9.956 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+            <a href="https://wa.me/5493515104734" target="_blank" rel="noopener">WhatsApp</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            <a href="https://www.linkedin.com/company/vortex-it-ok" target="_blank" rel="noopener">LinkedIn</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            <a href="https://www.instagram.com/vortex.it/" target="_blank" rel="noopener">Instagram</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 Vortex IT. Todos los derechos reservados.</p>
+      <div class="footer-social">
+        <a href="https://www.linkedin.com/company/vortex-it-ok" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="https://www.instagram.com/vortex.it/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@vortexit" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#333"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+<script src="/assets/vortex.js?v=23"></script>
+<script>
+  /* Muestra el nombre del archivo elegido y avisa si se pasa de 8 MB */
+  (function() {
+    var input = document.getElementById('cv');
+    var texto = document.getElementById('tcn-archivo-txt');
+    if (!input || !texto) return;
+    input.addEventListener('change', function() {
+      if (!input.files || !input.files.length) return;
+      var f = input.files[0];
+      var mb = f.size / 1048576;
+      if (mb > 8) {
+        texto.innerHTML = '<strong>' + f.name.replace(/[<>]/g, '') + '</strong><br>'
+                        + 'Pesa ' + mb.toFixed(1) + ' MB: el límite son 8 MB.';
+        input.value = '';
+        return;
+      }
+      if (!/\.(pdf|docx?)$/i.test(f.name)) {
+        texto.innerHTML = '<strong>Tiene que ser PDF o Word</strong><br>Elegí un .pdf, .doc o .docx.';
+        input.value = '';
+        return;
+      }
+      texto.innerHTML = '<strong>' + f.name.replace(/[<>]/g, '') + '</strong><br>'
+                      + (mb < 1 ? Math.round(f.size / 1024) + ' KB' : mb.toFixed(1) + ' MB')
+                      + ' · tocá de nuevo para cambiarlo';
+    });
+  })();
+</script>
+</body>
+</html>

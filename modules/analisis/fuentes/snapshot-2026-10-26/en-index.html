@@ -1,0 +1,3974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="alternate" hreflang="es" href="https://vortex-it.com/">
+  <link rel="alternate" hreflang="en" href="https://vortex-it.com/en/">
+  <link rel="alternate" hreflang="x-default" href="https://vortex-it.com/">
+  <title>Vortex — AI-First Digital Transformation Partner</title>
+  <meta name="description" content="We help banking, retail and fintech companies embed AI into their operations to cut costs, scale processes and make better decisions.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script>
+/* Móvil o cualquier cosa con dedo en vez de puntero */
+var ES_MOVIL = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
+var CPU_BAJA = (navigator.hardwareConcurrency || 4) <= 4;
+var CALIDAD  = ES_MOVIL ? (CPU_BAJA ? 0.18 : 0.3) : (CPU_BAJA ? 0.65 : 1);
+
+/* macOS resuelve el scroll y los sticky en el compositor con inercia,
+   mientras GSAP aplica los transform en el hilo principal: ese desfasaje
+   es lo que se ve como temblor. Se detecta para corregirlo. */
+var ES_MAC = /Mac|iPad|iPhone|iPod/.test(navigator.platform || '') ||
+             (navigator.userAgent.indexOf('Mac') !== -1);
+
+/* Safari (cualquier plataforma) entra al mismo perfil liviano: es el que
+   más sufre el backdrop-filter, el fondo fijo y el degradado animado. */
+var ES_SAFARI = /^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i
+                  .test(navigator.userAgent || '');
+if (ES_SAFARI) ES_MAC = true;
+
+/* Interruptor para probar sin tener una Mac:
+   ?perfil=mac    fuerza el modo Mac (para ver los cambios visuales)
+   ?perfil=normal lo desactiva aunque estés en Mac (para comparar) */
+var _perfilForzado = new URLSearchParams(location.search).get('perfil');
+if (_perfilForzado === 'mac')    ES_MAC = true;
+if (_perfilForzado === 'normal') ES_MAC = false;
+
+/* ── MODO LIGERO ──
+   Mac, Safari y las máquinas de pocos núcleos entran acá. Es el interruptor
+   que usan todos los canvas del sitio para bajar partículas, saltear frames
+   y evitar el desenfoque por frame. */
+var MODO_LIGERO = ES_MAC || CPU_BAJA;
+
+/* En pantallas Retina, dibujar los canvas al doble multiplica por cuatro el
+   trabajo por frame. En modo ligero se baja a 1.35x: sigue viéndose nítido
+   —a 1x los puntos quedaban gruesos— y cuesta la mitad que a 2x. */
+var DPR_MAX = ES_MOVIL ? 1 : (MODO_LIGERO ? 1.35 : (window.devicePixelRatio > 1.5 ? 1.5 : 2));
+
+/* Cuánto se recorta la cantidad de partículas de cada efecto. Con 0.6 el
+   orbe conserva su densidad; por debajo se empezaba a ver ralo. */
+var FACTOR_PART = MODO_LIGERO ? 0.6 : (ES_MOVIL ? 0.4 : 1);
+function cuantasPart(n) { return Math.max(3, Math.round(n * FACTOR_PART)); }
+
+/* La clase se pone en <html> y no en <body>, porque <body> todavía no
+   existe cuando esto corre. Es lo que apaga backdrop-filter, el degradado
+   animado y el encaje de scroll antes del primer pintado. */
+if (ES_MAC) document.documentElement.classList.add('es-mac');
+</script>
+  <link rel="stylesheet" href="/assets/vortex.css?v=23">
+  <style>
+    /* ============================================================
+       SECCIÓN 1 — HERO
+    ============================================================ */
+    /* ============================================================
+       SCROLL DE SECCIÓN EN SECCIÓN
+       Igual que en Soluciones. Las secciones que miden una pantalla son
+       parada obligatoria: un gesto de scroll pasa a la siguiente y su
+       contenido corre solo. Las tres largas — hero, soluciones y cierre —
+       anclan en su inicio y dejan recorrer su contenido con el scroll.
+    ============================================================ */
+    html { scroll-snap-type: y mandatory; }
+
+    .hero-wrapper,
+    .vision-section,
+    .soluciones-wrapper,
+    .constel-section,
+    .clientes-section,
+    .cierre-section { scroll-snap-align: start; }
+
+    /* Plataformas son cuatro marcas en dos pantallas apiladas, así que el
+       punto de anclaje va en CADA pantalla y no en la sección. Si anclara
+       solo la sección, el encaje obligatorio devolvería al inicio y a la
+       segunda pantalla no se llegaría nunca. */
+    .plataformas-pantalla { scroll-snap-align: start; }
+
+    /* El footer también tiene que ser punto de anclaje: si no, el encaje
+       devuelve al inicio del cierre y no se llega a verlo. Ancla por abajo
+       (end) porque es más bajo que la pantalla. */
+    .site-footer { position: relative; z-index: 2; scroll-snap-align: end; scroll-snap-stop: normal; }
+
+    .vision-section,
+    .constel-section,
+    .clientes-section,
+    .plataformas-pantalla { scroll-snap-stop: always; }
+
+    /* En táctiles el encaje forzado pelea con el scroll por inercia */
+    @media (max-width: 900px), (pointer: coarse) {
+      html { scroll-snap-type: none; }
+    }
+
+    .hero-wrapper {
+      position: relative;
+      /* 100vh de pantalla + 55vh de recorrido para el zoom del título.
+         Con sticky (sin pin de GSAP) no queda cola vacía: al terminar el
+         zoom, la sección siguiente entra de inmediato. */
+      height: 155vh;
+      height: 155svh;
+    }
+
+    .hero-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      height: 100svh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .hero-stack {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(22px, 3.4vh, 44px);
+      width: 100%;
+    }
+
+    .hero-titulo-svg {
+      width: min(1120px, 80vw);
+      will-change: transform, opacity;
+      opacity: 1;
+    }
+
+    .hero-titulo-svg svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      overflow: visible;
+    }
+
+    /* Halo oscuro detrás del título: mismo efecto que el drop-shadow anterior,
+       pero como capa fija — no se rerasteriza cuando el título hace zoom */
+    .hero-halo {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 118vw;
+      height: 52vh;
+      z-index: 1;
+      pointer-events: none;
+      background: radial-gradient(ellipse 50% 50% at 50% 50%,
+        rgba(0,0,0,0.5) 0%,
+        rgba(0,0,0,0.36) 34%,
+        rgba(0,0,0,0.18) 56%,
+        rgba(0,0,0,0.06) 76%,
+        rgba(0,0,0,0) 100%);
+    }
+
+    /* En escritorio solo corta el <br> de escritorio */
+    .hero-subtitulo br.br-mov { display: none; }
+
+    .hero-subtitulo {
+      width: min(760px, 86%);
+      margin: 0;
+      text-align: center;
+      font-family: 'Rubik', sans-serif;
+      font-size: clamp(1rem, 1.7vw, 1.35rem);
+      font-weight: 300;
+      color: #fff;
+      opacity: 0;
+      pointer-events: none;
+      text-shadow: 0 0 14px rgba(0,0,0,0.9), 0 0 34px rgba(0,0,0,0.6);
+    }
+
+    .hero-scroll {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 32px;
+      background: #a0d232;
+      color: #000;
+      border: 1px solid #a0d232;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'Rubik', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      text-transform: uppercase;
+      opacity: 0;
+      z-index: 3;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .hero-scroll:hover { background: #000; color: #a0d232; }
+
+    .hero-scroll svg {
+      width: 18px;
+      height: 18px;
+      animation: scrollBounce 1.8s ease-in-out infinite;
+    }
+
+    @keyframes scrollBounce {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(4px); }
+    }
+
+    .hero-linea {
+      display: block;
+      opacity: 0;
+      transform: translateY(15px);
+      /* Sombra suave: despega el texto del fondo estrellado */
+      text-shadow:
+        0 0 14px rgba(0,0,0,0.9),
+        0 0 34px rgba(0,0,0,0.7),
+        0 0 70px rgba(0,0,0,0.5);
+    }
+
+    .hero-btn {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 14px 36px;
+      background: #a0d232;
+      color: #000;
+      border-radius: 6px;
+      border: 1px solid #a0d232;
+      font-family: 'Rubik', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      text-decoration: none;
+      opacity: 0;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .hero-btn:hover { background: #000; color: #a0d232; }
+
+    /* ============================================================
+       SECCIÓN 2 — CLIENTES Y PARTNERS
+    ============================================================ */
+    .clientes-section {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      height: 100svh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      overflow: clip;
+    }
+
+    .clientes-oval {
+      background: #000;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(100px, 13vh, 170px) 60px clamp(80px, 11vh, 140px);
+      width: 150%;
+      margin-left: -25%;
+      margin-right: -25%;
+      min-height: 85vh;
+      opacity: 0;
+    }
+
+    .clientes-titulo {
+      font-family: 'Rubik', sans-serif;
+      font-weight: 500;
+      font-size: clamp(1.6rem, 3.5vw, 3rem);
+      color: #a0d232;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .clientes-subtexto {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .clientes-linea {
+      display: block;
+      font-family: 'Rubik', sans-serif;
+      font-weight: 300;
+      font-size: clamp(1rem, 1.8vw, 1.5rem);
+      color: #fff;
+      opacity: 0;
+      transform: translateY(15px);
+    }
+
+    .logos-bloque {
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+
+    .logos-divisor { display: none; }
+
+    .clientes-btn-wrap {
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    .clientes-titulo {
+      font-family: 'Rubik', sans-serif;
+      font-weight: 500;
+      font-size: clamp(1.6rem, 3.5vw, 3rem);
+      color: #a0d232;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .clientes-subtexto {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .clientes-linea {
+      display: block;
+      font-family: 'Rubik', sans-serif;
+      font-weight: 300;
+      font-size: clamp(1rem, 1.8vw, 1.5rem);
+      color: #fff;
+      opacity: 0;
+      transform: translateY(15px);
+    }
+
+    .logos-seccion-titulo {
+      font-family: 'Rubik', sans-serif;
+      font-weight: 400;
+      font-size: clamp(13px, 2vh, 18px);
+      color: #fff;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 16px;
+      padding-top: 0;
+    }
+
+    .logos-seccion-titulo::after {
+      content: '';
+      display: block;
+      width: min(720px, 88vw);
+      height: 1px;
+      background: rgba(255,255,255,0.25);
+      margin: 10px auto 0;
+    }
+
+    .logos-bloque { margin-bottom: clamp(16px, 4.4vh, 44px); overflow: hidden; }
+
+    .logos-track {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      width: max-content;
+      animation: logoScroll 28s linear infinite;
+    }
+
+    @keyframes logoScroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .logos-fila-estatica {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+      padding: 4px 0;
+    }
+
+    .logos-clientes .logo-item { width: 230px; }
+
+    .logo-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 180px;
+      padding: 4px 16px;
+    }
+
+    .logos-clientes .logo-item img { height: clamp(40px, 8vh, 72px); max-width: 210px; }
+    .logos-miembros .logo-item img { height: clamp(30px, 5.4vh, 48px); max-width: 165px; }
+
+    .logo-item img {
+      height: clamp(26px, 4.6vh, 40px);
+      width: auto;
+      max-width: 150px;
+      object-fit: contain;
+      opacity: 0.9;
+      transition: opacity 0.2s;
+    }
+
+    .logo-item img:hover { opacity: 1; }
+
+    .logo-item img.color-original { filter: none; }
+
+    .logos-divisor { display: none; }
+
+    .clientes-btn-wrap {
+      text-align: center;
+      margin-top: 56px;
+    }
+
+
+    #planetas-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+
+    /* Campo de partículas global (fijo, detrás de todo el contenido) */
+    #orbe-fondo {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Cohete: una sola pasada por el hero */
+    #cohete {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: clamp(58px, 6.5vw, 100px);
+      height: auto;
+      opacity: 0;
+      z-index: 1;
+      pointer-events: none;
+      filter: drop-shadow(0 0 18px rgba(106,58,199,0.4));
+      will-change: transform, opacity;
+    }
+
+
+
+
+
+
+
+
+    /* ============================================================
+       SECCIÓN 4 — SOLUCIONES
+    ============================================================ */
+    .soluciones-section {
+      position: relative;
+    }
+
+    .soluciones-wrapper {
+      position: relative;
+      /* Con el encaje de scroll activo (Windows, Chrome) esta sección tiene
+         que medir 200vh. La razón: tiene un punto de encaje en su inicio y
+         el siguiente está en la constelación, así que con 'mandatory' el
+         navegador no deja descansar en el medio y pasada la mitad empuja al
+         siguiente. La mitad de 200vh son 100vh, que es exactamente lo que
+         dura la secuencia de cards: entra justa y se ve entera.
+
+         Donde el encaje está apagado (Mac y teléfono) la sección se acorta
+         y la secuencia se estira hasta el final: ver el bloque .es-mac y el
+         de móvil más abajo.
+
+         La segunda declaración es la que importa en el teléfono: mostrar u
+         ocultar la barra de direcciones cambia la altura de la ventana, y con
+         ella TODO lo que mida vh. Esta sección es una de las dos que quedaron
+         con sticky más animación por scroll en móvil, así que ese cambio de
+         altura le llegaba justo mientras el contenido se estaba moviendo: eso
+         es la vibración. 'svh' es la altura con la barra visible y no cambia
+         nunca. En escritorio svh y vh valen lo mismo, así que no se ve
+         ninguna diferencia; los navegadores viejos que no conocen svh
+         ignoran la línea y se quedan con vh. */
+      height: 200vh;
+      height: 200svh;
+    }
+
+    /* El sticky lo resuelve el compositor; el transform lo escribe GSAP en el
+       hilo principal. Si los dos actúan sobre el MISMO elemento se desfasan un
+       cuadro y en Mac se ve como una vibración al scrollear. Por eso el sticky
+       queda quieto y lo que se desplaza es la capa de adentro. */
+    .soluciones-sticky {
+      opacity: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      height: 100svh;
+      overflow: hidden;
+    }
+
+    .soluciones-sticky > .sticky-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .soluciones-header {
+      position: relative;
+      z-index: 1;
+      padding: 0 40px;
+    }
+
+    .soluciones-titulo {
+      font-family: 'Rubik', sans-serif;
+      font-weight: 500;
+      font-size: clamp(1.8rem, min(5vw, 7vh), 4.5rem);
+      color: #a0d232;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      opacity: 0;
+      transform: translateY(20px);
+      position: relative;
+      z-index: 1;
+    }
+
+    .soluciones-subtitulo {
+      font-family: 'Rubik', sans-serif;
+      font-weight: 300;
+      font-size: clamp(1.3rem, 2.2vw, 2rem);
+      color: #fff;
+      opacity: 0;
+      transform: translateY(15px);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Cards glassmorphism — DELANTE del título */
+    .sol-cards-container {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .sol-card {
+      position: absolute;
+      width: clamp(260px, 38%, 380px);
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      will-change: transform;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 28px 32px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      opacity: 0;
+      transform: translateY(40px);
+      pointer-events: all;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+
+    a.sol-card {
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    a.sol-card:hover {
+      border-color: rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* 3 izquierda, 2 derecha — posición horizontal fija, vertical animada por GSAP */
+    .sol-card-1 { left: 22%;  top: 0; }
+    .sol-card-2 { right: 22%; top: 0; }
+    .sol-card-3 { left: 22%;  top: 0; }
+    .sol-card-4 { right: 22%; top: 0; }
+
+    .sol-card-img {
+      width: 72px;
+      height: 72px;
+      flex-shrink: 0;
+      object-fit: contain;
+    }
+
+    .sol-card-nombre {
+      font-family: 'Rubik', sans-serif;
+      font-weight: 400;
+      font-size: clamp(1rem, 1.6vw, 1.2rem);
+      color: #fff;
+      text-align: left;
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      .sol-card { width: 88%; left: 6% !important; right: auto !important; }
+    }
+
+    /* ============================================================
+       SECCIÓN 4 — CÓMO TRABAJAMOS (CONSTELACIÓN)
+    ============================================================ */
+    .constel-section {
+      position: relative;
+      z-index: 1;
+      /* Una pantalla: la constelación se arma sola y los íconos se exploran
+         con el mouse, sin consumir scroll */
+      height: 100vh;
+      height: 100svh;
+    }
+
+    .constel-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      height: 100svh;
+    }
+
+    .constel-inner {
+      position: absolute;
+      inset: 0;
+      will-change: transform;
+    }
+
+    #constel-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .constel-titulo {
+      position: absolute;
+      top: clamp(150px, 24vh, 250px);
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Rubik', sans-serif;
+      font-weight: 500;
+      font-size: clamp(1.5rem, min(4vw, 5.5vh), 3rem);
+      color: #a0d232;
+      text-transform: uppercase;
+      text-align: center;
+      white-space: nowrap;
+      z-index: 4;
+      opacity: 0;
+    }
+
+    .constel-item {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: clamp(108px, 13.5vw, 172px);
+      height: clamp(108px, 13.5vw, 172px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
+      opacity: 0;
+      pointer-events: auto;
+      cursor: pointer;
+      will-change: transform, opacity;
+    }
+
+    /* El nombre del paso, bajo cada ícono. Va dentro del ítem, así acompaña
+       su escala, su opacidad y su desenfoque: es parte del nodo.
+       Antes acá iba la numeración (01, 02…), de ahí el nombre de la clase.
+       El ancho se limita porque los íconos están sueltos en la constelación
+       y un texto largo se iría encima del vecino. */
+    .constel-num {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-top: 8px;
+      width: max-content;
+      max-width: clamp(120px, 15vw, 180px);
+      font-family: 'Rubik', sans-serif;
+      font-size: clamp(11px, 1.05vw, 14px);
+      font-weight: 400;
+      line-height: 1.25;
+      letter-spacing: 0.04em;
+      text-align: center;
+      color: rgba(160, 210, 50, 0.8);
+      pointer-events: none;
+      white-space: normal;
+    }
+
+    .constel-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* ── EN EL TELÉFONO: CUADRÍCULA DE 2 × 2 ──
+       La clase la pone el JS (ES_MOVIL). El canvas de las líneas y las
+       chispas no se dibuja, y los íconos dejan de estar posicionados a mano
+       para entrar en una grilla común. */
+    @media (max-width: 900px), (pointer: coarse) {
+      .constel-simple #constel-canvas { display: none; }
+
+      .constel-simple {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-content: center;
+        justify-items: center;
+        /* La fila necesita aire de sobra: el nombre del paso cuelga por
+           debajo de cada ícono, fuera de su caja, y son dos renglones. */
+        gap: clamp(62px, 11vh, 100px) clamp(16px, 7vw, 52px);
+        padding: 0 clamp(20px, 7vw, 44px);
+      }
+
+      /* El título deja de estar suelto y pasa a ser la primera fila */
+      .constel-simple .constel-titulo {
+        position: static;
+        transform: none;
+        grid-column: 1 / -1;
+        white-space: normal;
+        margin: 0 0 clamp(6px, 2vh, 22px);
+      }
+
+      .constel-simple .constel-item {
+        position: relative;
+        top: auto;
+        left: auto;
+        width: clamp(92px, 29vw, 148px);
+        height: clamp(92px, 29vw, 148px);
+        filter: none !important;
+        z-index: 3;
+        will-change: auto;
+      }
+
+      /* La ficha sigue flotando por encima: no ocupa una celda */
+      .constel-simple .constel-ficha { grid-column: 1 / -1; }
+    }
+
+    /* ── LA FICHA QUE SE ABRE AL CLICKEAR UN ÍCONO ──
+       Misma tarjeta que en "Nuestros principios" de Sobre Vortex: el ícono,
+       su explicación y el botón que lleva a la etapa correspondiente. */
+    .constel-ficha {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 10;
+      transform: translate(-50%, -50%) scale(0.94);
+      width: min(660px, 92%);
+      display: flex;
+      gap: clamp(18px, 2.2vw, 30px);
+      align-items: flex-start;
+      text-align: left;
+      background: rgba(18,12,30,0.92);
+      border: 1px solid rgba(163,116,245,0.22);
+      border-radius: 18px;
+      padding: clamp(22px, 3vh, 34px) clamp(24px, 2.6vw, 38px);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 0 44px 6px rgba(132,76,222,0.22),
+                  0 0 120px 30px rgba(96,50,180,0.14);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.34s ease, transform 0.34s cubic-bezier(.22,.61,.36,1);
+    }
+
+    .constel-ficha.abierta {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .constel-ficha img {
+      width: clamp(70px, 7vw, 104px);
+      height: auto;
+      flex-shrink: 0;
+    }
+
+    .constel-ficha-num {
+      font-family: 'Rubik', sans-serif;
+      font-size: clamp(11px, 1vw, 13px);
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      color: rgba(160,210,50,0.75);
+      margin-bottom: 6px;
+    }
+
+    .constel-ficha h3 {
+      font-family: 'Rubik', sans-serif;
+      font-size: clamp(1.1rem, min(1.8vw, 2.4vh), 1.5rem);
+      font-weight: 500;
+      color: #a0d232;
+      text-transform: uppercase;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .constel-ficha p {
+      font-size: clamp(0.92rem, min(1.35vw, 1.85vh), 1.08rem);
+      font-weight: 300;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.86);
+    }
+
+    .constel-ficha-btn {
+      display: inline-block;
+      margin-top: clamp(14px, 2vh, 22px);
+      padding: 10px 26px;
+      background: transparent;
+      color: #a0d232;
+      border: 1px solid #a0d232;
+      border-radius: 6px;
+      font-family: 'Rubik', sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .constel-ficha-btn:hover { background: #a0d232; color: #000; }
+
+    .constel-cerrar {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: rgba(255,255,255,0.45);
+      font-size: 22px;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+
+    .constel-cerrar:hover { color: #a0d232; }
+
+    @media (max-width: 900px), (pointer: coarse) {
+      /* En pantallas chicas la ficha se centra en la pantalla, no sobre la
+         constelación: ahí no entraría */
+      .constel-ficha {
+        position: fixed;
+        width: min(520px, 90vw);
+        max-height: 80vh;
+        overflow: auto;
+        flex-direction: column;
+        gap: 16px;
+        align-items: center;
+        text-align: center;
+      }
+      .constel-ficha img { width: 96px; }
+    }
+
+    /* ============================================================
+       SECCIÓN 2 — NUESTRA VISIÓN
+    ============================================================ */
+    .vision-section {
+      position: relative;
+      /* Una pantalla: el contenido aparece solo al llegar, no con el scroll */
+      height: 100vh;
+      height: 100svh;
+    }
+
+    .vision-sticky {
+      opacity: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      height: 100svh;
+      display: flex;
+      align-items: center;
+      padding: 100px 60px 80px;
+      will-change: transform;
+    }
+
+    .vision-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      max-width: 1240px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .vision-texto {
+      text-align: left;
+      position: relative;
+      z-index: 2;
+    }
+
+    .vision-titulo {
+      font-family: 'Rubik', sans-serif;
+      font-weight: 500;
+      font-size: clamp(1.9rem, min(4.8vw, 6.6vh), 3.8rem);
+      color: #a0d232;
+      text-transform: uppercase;
+      margin-bottom: clamp(24px, 3.4vh, 40px);
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .vision-lead {
+      font-family: 'Rubik', sans-serif;
+      font-size: clamp(1.25rem, min(2.7vw, 3.7vh), 2.3rem);
+      font-weight: 400;
+      line-height: 1.4;
+      color: #fff;
+      margin-bottom: clamp(20px, 2.8vh, 32px);
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .vision-bajada {
+      font-family: 'Rubik', sans-serif;
+      font-size: clamp(1.05rem, min(2vw, 2.7vh), 1.55rem);
+      font-weight: 300;
+      line-height: 1.55;
+      color: rgba(255,255,255,0.8);
+      max-width: 660px;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .vision-img-wrap {
+      position: relative;
+      z-index: 2;
+      opacity: 0;
+      transform: translateY(24px);
+    }
+
+    .vision-img-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 16px;
+    }
+
+    /* ── EL VIDEO DE LA SECCIÓN 2 ── */
+    .vision-video {
+      position: relative;
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      padding: 0;
+      border: 1px solid rgba(163,116,245,0.22);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #0d0918;
+      cursor: pointer;
+      /* El mismo halo violeta que usan las cards del sitio */
+      box-shadow: 0 0 38px 4px rgba(163,116,245,0.18),
+                  0 0 96px 26px rgba(132,76,222,0.11);
+      transition: box-shadow 0.35s ease;
+    }
+    .vision-video:hover {
+      box-shadow: 0 0 44px 6px rgba(163,116,245,0.28),
+                  0 0 120px 32px rgba(132,76,222,0.16);
+    }
+
+    .vision-video-tapa {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      border-radius: 0 !important;
+      opacity: 0.88;
+      transition: opacity 0.35s ease, transform 0.5s cubic-bezier(.22,.61,.36,1);
+    }
+    .vision-video:hover .vision-video-tapa { opacity: 1; transform: scale(1.03); }
+
+    .vision-video-play {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: clamp(54px, 5vw, 72px);
+      height: clamp(54px, 5vw, 72px);
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.55);
+      border: 1px solid #a0d232;
+      color: #a0d232;
+      transition: background 0.25s, color 0.25s, transform 0.3s cubic-bezier(.22,.61,.36,1);
+    }
+    .vision-video-play svg { width: 42%; height: 42%; margin-left: 8%; }
+    .vision-video:hover .vision-video-play {
+      background: #a0d232; color: #000;
+      transform: translate(-50%, -50%) scale(1.08);
+    }
+
+    /* Una vez insertado, el iframe ocupa toda la caja */
+    .vision-video iframe {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      border: 0; border-radius: 16px;
+    }
+
+    /* ============================================================
+       SECCIÓN 6 — PLATAFORMAS
+    ============================================================ */
+    /* Son cuatro marcas: dos pantallas, una debajo de la otra. La sección
+       crece con ellas y cada pantalla ocupa el alto de la ventana. No hay
+       sticky acá: se baja con scroll normal. */
+    .plataformas-section {
+      position: relative;
+      z-index: 1;
+      height: auto;
+    }
+
+    .plataformas-sticky {
+      position: relative;
+      height: 100vh;
+      height: 100svh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: clamp(20px, 3.6vh, 44px);
+      padding: clamp(140px, 19vh, 220px) 24px clamp(24px, 4vh, 56px);
+    }
+
+    .plataformas-header {
+      position: static;
+      width: 100%;
+      text-align: center;
+      z-index: 3;
+      flex-shrink: 0;
+    }
+
+    /* El título de esta sección es más grande que el genérico, y el
+       subtítulo va pegado: el margen inferior del h2 se anula. */
+    #plat-titulo {
+      font-size: clamp(1.9rem, min(5vw, 6.8vh), 3.9rem);
+      margin-bottom: 0;
+      opacity: 0;
+    }
+
+    .plataformas-subtitulo {
+      font-size: clamp(0.95rem, min(1.9vw, 2.6vh), 1.45rem);
+      font-weight: 300;
+      color: #fff;
+      margin-top: clamp(8px, 1.2vh, 14px);
+      opacity: 0;
+      transform: translateY(15px);
+    }
+
+    .plat-escenas {
+      position: static;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    /* Las dos plataformas conviven en pantalla, una al lado de la otra.
+       Con .plat-escena en display:contents las tres filas (info, mockups,
+       botón) quedan alineadas entre ambas columnas aunque el contenido de
+       cada una tenga distinta altura. */
+    .plat-duo {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto auto;
+      column-gap: clamp(20px, 2.4vw, 44px);
+      row-gap: clamp(12px, 2.2vh, 26px);
+      /* Más angosto que antes (1280px): cada bloque se centra en su columna,
+         así que achicar el contenedor los acerca al eje de la pantalla */
+      width: min(1040px, 100%);
+      justify-items: center;
+      align-items: start;
+    }
+
+    .plat-escena { display: contents; }
+    #esc-qp > *, #esc-om > * { grid-column: 1; }
+    #esc-lx > *, #esc-rx > * { grid-column: 2; }
+
+    /* El encabezado repetido de la segunda pantalla: mismo aspecto que el
+       título real, pero es un <p>, no un segundo <h2>. */
+    .plat-titulo-eco {
+      font-size: clamp(1.9rem, min(5vw, 6.8vh), 3.9rem);
+      margin-bottom: 0;
+      opacity: 0;
+    }
+    .plat-info    { grid-row: 1; }
+    .plat-mocks   { grid-row: 2; align-self: end; }
+    .plat-btn-wrap{ grid-row: 3; }
+
+    /* ── Mockups: dos grupos de imágenes ya compuestas.
+       Cada grupo alterna sus variantes con crossfade y flota por su cuenta. ── */
+    .plat-mocks {
+      position: relative;
+      width: min(100%, 46vh);
+      aspect-ratio: 4 / 3.2;
+      opacity: 0;
+    }
+
+    .mock-grupo {
+      position: absolute;
+      /* Capa propia: así el desplazamiento de entrada y la flotación se
+         resuelven en el compositor y no vuelven a rasterizar la sombra */
+      will-change: transform;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+
+    .mock-a {
+      z-index: 2;
+      animation: mockFlotaA 9s ease-in-out infinite alternate;
+    }
+
+    .mock-b {
+      z-index: 1;
+      animation: mockFlotaB 11s ease-in-out infinite alternate;
+      animation-delay: -3s;
+    }
+
+    /* Las imágenes vienen recortadas al dispositivo, sin relleno alrededor,
+       así que estos porcentajes son directos: lo que se define es lo que se
+       ve. Antes había que compensar el área transparente de cada archivo.
+
+       QuickPass: la laptop (A) apoyada abajo y el celular (B) montado sobre
+       su costado derecho. */
+    .plat-mocks-qp .mock-a { height: 88%; left: 0;   bottom: 8%; z-index: 1; }
+    .plat-mocks-qp .mock-b { height: 66%; left: 53%; bottom: 6%; z-index: 2; }
+
+    /* Loyalix: dos celulares, uno montado sobre el otro */
+    .plat-mocks-lx .mock-a { height: 96%; left: 38%; bottom: 0;   z-index: 2; }
+    .plat-mocks-lx .mock-b { height: 84%; left: 6%;  bottom: 12%; z-index: 1; }
+
+    /* Omnia y Rutex vienen en una sola pieza, con la laptop y el celular ya
+       compuestos en el archivo: un solo grupo que llena la caja. La caja
+       toma la proporción exacta de cada imagen para que no quede aire. */
+    /* Omnia va al 88%: su laptop llena el archivo entero, mientras que la de
+       QuickPass ocupa el 88% de su caja y la de Rutex comparte lugar con un
+       celular. A la misma medida de caja se veía bastante más grande que
+       las otras tres. El 88% de min(100%,46vh) es min(88%,40.5vh). */
+    .plat-mocks-om { aspect-ratio: 1.2; width: min(88%, 40.5vh); }
+    .plat-mocks-rx { aspect-ratio: 1.22; }
+    .plat-mocks-om .mock-a,
+    .plat-mocks-rx .mock-a { height: 100%; left: 0; bottom: 0; z-index: 1; }
+
+    /* El logotipo de Rutex es mucho más apaisado que los otros tres: a la
+       misma altura se veía gigante, así que se limita por ancho. */
+    .plat-logo-rx { max-width: min(200px, 74%); }
+
+    @keyframes mockFlotaA {
+      from { transform: translate3d(0, -8px, 0); }
+      to   { transform: translate3d(0, 8px, 0); }
+    }
+
+    @keyframes mockFlotaB {
+      from { transform: translate3d(0, 9px, 0); }
+      to   { transform: translate3d(0, -9px, 0); }
+    }
+
+    /* Sombra chica: drop-shadow sobre un PNG con transparencia obliga a
+       calcular una máscara borrosa y el costo crece con el cuadrado del
+       radio, así que 14px es unas ocho veces más barato que los 40px que
+       había antes.
+
+       NO se promueve cada imagen a su propia capa. Se probó y es peor: son
+       catorce, y darle capa a cada una obliga a subir catorce texturas a la
+       placa de video de una sola vez, justo cuando aparecen. Sin promover,
+       las que están en opacidad 0 no se pintan y no ocupan nada. La única
+       capa es la del grupo, que son cuatro. */
+    .mock-grupo .mock-img {
+      display: block;
+      height: 100%;
+      width: auto;
+      opacity: 0;
+      transition: opacity 1s ease;
+      filter: drop-shadow(0 10px 14px rgba(0,0,0,0.5));
+    }
+
+    /* Las variantes se apilan sobre la primera, que define el alto */
+    .mock-grupo .mock-img:not(:first-child) {
+      position: absolute;
+      inset: 0;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .mock-grupo .mock-img { z-index: 1; }
+    .mock-grupo .mock-img.activa { opacity: 1; }
+
+    /* Mientras el JS no tome el control, se ve la primera */
+    .mock-grupo:not(.js-listo) .mock-img:first-child { opacity: 1; }
+
+    /* ── Bloque de texto ── */
+    .plat-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: 100%;
+      gap: clamp(9px, 1.6vh, 18px);
+    }
+
+    /* Caja de alto fijo: define dónde cae la línea en ambas columnas */
+    .plat-logo-caja {
+      width: 100%;
+      height: clamp(62px, 9vh, 104px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .plat-logo {
+      max-height: 100%;
+      max-width: min(230px, 82%);
+      width: auto;
+      height: auto;
+      opacity: 0;
+    }
+
+    .plat-linea {
+      width: 100%;
+      max-width: 330px;
+      height: 1px;
+      background: #a0d232;
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+
+    .plat-items {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 22px;
+      width: 100%;
+      max-width: 330px;
+      text-align: left;
+    }
+
+    .plat-item {
+      font-family: 'Rubik', sans-serif;
+      font-size: clamp(0.78rem, min(1.35vw, 1.9vh), 1.08rem);
+      font-weight: 300;
+      color: #fff;
+      opacity: 0;
+      display: flex;
+      align-items: baseline;
+      gap: 9px;
+    }
+
+    .plat-item::before {
+      content: '•';
+      color: #a0d232;
+      font-size: 1.15em;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .plat-btn-wrap {
+      opacity: 0;
+    }
+
+    .plat-btn-wrap .btn-primary {
+      padding: 10px 24px;
+      font-size: 12px;
+    }
+
+    /* Texto de origen bajo los números */
+    /* El texto comparte celda con el globo en vez de ubicarse con un
+       porcentaje fijo: así queda centrado sobre él exactamente, sin importar
+       el ancho de pantalla. Antes usaba left:74%, pero el centro real de esa
+       columna cae en el 76,3% según la proporción de la grilla y el gap.
+       Sigue fuera de .stats-globo, así que no viaja cuando el globo se
+       desplaza en el cierre. */
+    .stats-origen-wrap {
+      grid-column: 2;
+      grid-row: 1;
+      justify-self: center;
+      align-self: center;
+      width: min(430px, 94%);
+      z-index: 2;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .stats-origen {
+      text-align: center;
+      font-family: 'Rubik', sans-serif;
+      font-size: clamp(0.9rem, min(1.8vw, 2.5vh), 1.45rem);
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: #a0d232;
+      text-shadow: 0 0 16px rgba(0,0,0,0.9), 0 0 38px rgba(0,0,0,0.7);
+    }
+
+    /* ============================================================
+       SECCIÓN 7 — CTA / CIERRE
+    ============================================================ */
+    .cierre-section {
+      position: relative;
+      z-index: 2;
+      /* 100vh de pantalla + 70vh de recorrido: salida de los textos y viaje
+         del globo. La aparición inicial y los textos del cierre corren solos,
+         no consumen scroll. (svh: ver la nota en .soluciones-wrapper) */
+      height: 170vh;
+      height: 170svh;
+    }
+
+    /* Igual que en Soluciones: el sticky no recibe transform */
+    .cierre-sticky {
+      opacity: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      height: 100svh;
+    }
+
+    .cierre-sticky > .sticky-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Números animados en carrusel horizontal */
+    .stats-layout {
+      position: absolute;
+      top: calc(50% + 32px);
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(1080px, calc(100% - 110px));
+      display: grid;
+      grid-template-columns: 1fr 0.95fr;
+      gap: 28px;
+      align-items: center;
+      z-index: 1;
+    }
+
+    /* Globo con el texto de origen encima */
+    .stats-globo { position: relative; grid-column: 2; grid-row: 1; }
+
+    .globo-container {
+      position: relative;
+      width: 100%;
+      max-width: min(700px, 66vh);
+      aspect-ratio: 1 / 1;
+      margin: 0 auto;
+      opacity: 0;
+      overflow: visible;
+    }
+
+    /* Resplandor violeta alrededor del globo: el mismo de los íconos de
+       "Cómo trabajamos". Se extiende bastante más allá del contenedor para
+       que la luz quede por fuera del planeta y lo despegue del fondo.
+       'closest-side' hace que el degradado llegue a cero justo en el borde
+       de la caja: sin eso queda un círculo recortado y duro. */
+    .globo-container::before {
+      content: '';
+      position: absolute;
+      inset: -28%;
+      background: radial-gradient(circle closest-side,
+        rgba(163,116,245,0.26) 0%,
+        rgba(150,96,235,0.32)  52%,
+        rgba(132,76,222,0.26)  66%,
+        rgba(96,50,180,0.14)   80%,
+        rgba(70,36,140,0.04)   92%,
+        rgba(57,31,82,0)      100%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    #globo-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stats-texto { text-align: left; }
+
+    /* Contenedores de entrada: separan la aparición (sobre el contenedor)
+       de la salida (sobre el elemento), para que no se pisen */
+    #stats-intro-wrap,
+    #stats-track-wrap { opacity: 0; }
+
+    .stats-intro {
+      text-align: left;
+      max-width: 560px;
+      margin: 0 0 clamp(18px, 4.5vh, 42px);
+      font-family: 'Rubik', sans-serif;
+      font-size: clamp(1.05rem, min(2.5vw, 3.4vh), 2.15rem);
+      font-weight: 300;
+      color: #fff;
+    }
+
+    /* Las tres cifras, una debajo de otra */
+    .stats-grid {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(8px, 2.4vh, 20px);
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+    }
+
+    .stat-numero {
+      font-size: clamp(2.2rem, min(7.5vw, 10.5vh), 6rem);
+      font-weight: 300;
+      color: #a0d232;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-label {
+      font-size: clamp(0.78rem, min(1.5vw, 2vh), 1.2rem);
+      font-weight: 400;
+      color: rgba(255,255,255,0.75);
+      text-transform: uppercase;
+    }
+
+    .cta-contenido {
+      position: absolute;
+      top: calc(50% + 32px);
+      right: clamp(24px, 11vw, 210px);
+      transform: translateY(-50%);
+      max-width: 620px;
+      text-align: left;
+      z-index: 1;
+    }
+
+    .cta-titulo {
+      font-size: clamp(1.15rem, min(3.4vw, 4.4vh), 2.6rem);
+      font-weight: 300;
+      color: #fff;
+      margin-bottom: 20px;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .cta-subtitulo {
+      font-size: clamp(1.15rem, min(3.4vw, 4.4vh), 2.6rem);
+      font-weight: 300;
+      color: #a0d232;
+      margin-bottom: 48px;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .cta-subtitulo strong { font-weight: 500; }
+
+    .cta-btn-wrap {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+
+    /* ============================================================
+       MOBILE NAV
+    ============================================================ */
+    @media (max-width: 768px) {
+
+      /* En el teléfono tampoco hay encaje, y la card mide 16vh en vez de 30:
+         con menos sección alcanza para la misma velocidad. */
+      .soluciones-wrapper { height: 130vh; height: 130svh; }
+
+      .clientes-oval { padding: clamp(110px, 18vh, 170px) 24px 60px; border-radius: 50% 50% 0 0 / 60px 60px 0 0; }
+      .soluciones-grid { grid-template-columns: 1fr; padding: 0 24px; }
+      .solucion-card:nth-child(4), .solucion-card:nth-child(5) { grid-column: auto; }
+      .vision-section { height: auto; }
+      .clientes-section { height: auto; display: block; overflow: visible; }
+      .vision-sticky { position: static; height: auto; padding: 90px 24px; }
+      .vision-grid { grid-template-columns: 1fr; gap: 36px; }
+      .cierre-section { height: 200vh; height: 200svh; }
+      .cta-contenido { position: absolute; top: 50%; left: 24px; right: 24px; max-width: 100%; text-align: center; }
+      .stats-layout { width: calc(100% - 48px); }
+      .plataformas-sticky { padding: 90px 24px 40px; }
+      /* En el teléfono, arriba las cifras y abajo el mundito. En una sola
+         columna el orden lo deciden las filas, no el HTML. */
+      .stats-layout { grid-template-columns: 1fr; gap: 40px; }
+      .stats-texto { grid-column: 1; grid-row: 1; }
+      .stats-globo { grid-column: 1; grid-row: 2; }
+      /* El texto de origen va sobre el mundito, así que baja con él */
+      .stats-origen-wrap {
+        position: absolute; grid-area: auto;
+        left: 50%; top: 74%; transform: translate(-50%, -50%);
+        width: min(400px, 86%);
+      }
+      .stats-intro { text-align: center; margin: 0 auto 32px; }
+      .stat-item { justify-content: center; }
+      .plataformas-section { height: auto; }
+      .plataformas-sticky { position: static; height: auto; padding: 90px 0 60px; }
+      .plataformas-header { position: static; transform: none; margin-bottom: 48px; }
+      /* En el teléfono las cuatro quedan una debajo de otra y el encabezado
+         repetido de la segunda pantalla se lee como un título duplicado. */
+      #plat-p2 .plataformas-header { display: none; }
+      #plat-p2 { padding-top: 0; }
+      .plataformas-sticky { display: block; }
+      .plat-escenas { display: block; }
+      .plat-duo { grid-template-columns: 1fr; grid-template-rows: none; gap: 40px; width: calc(100% - 48px); margin: 0 auto 40px; }
+      .plat-escena { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+      #esc-qp > *, #esc-lx > *, #esc-om > *, #esc-rx > * { grid-column: auto; }
+      .plat-info, .plat-mocks, .plat-btn-wrap { grid-row: auto; }
+      .plat-mocks { width: min(100%, 340px); } .tel-b { left: 46%; } .plat-escena-inv .tel-b { right: 8%; }
+      .plat-mocks-om { width: min(88%, 300px); }
+
+      #cohete { display: none; }
+
+      /* En móvil el título ocupa casi todo el ancho para no verse diminuto */
+      .hero-titulo-svg { width: 92vw; }
+      .hero-subtitulo  { font-size: clamp(0.95rem, 3.4vw, 1.2rem); width: 90%; }
+      /* Tres renglones: "…organizaciones" / "mediante … Transformación" /
+         "Digital AI-First." El más largo mide 320 px sobre 337 de caja. */
+      .hero-subtitulo br.br-esc { display: none; }
+      .hero-subtitulo br.br-mov { display: inline; }
+    }
+
+    /* ============================================================
+       RESPONSIVO — PANTALLAS BAJAS
+       Solo lo imprescindible para que nada se corte: se recortan paddings
+       y espacios, NO el tamaño de los elementos (achicarlos dejaba las
+       secciones vacías y desbalanceadas en notebooks).
+    ============================================================ */
+    @media (max-height: 820px) and (min-width: 769px) {
+      /* Hero */
+      .hero-stack { gap: clamp(14px, 2.4vh, 30px); }
+      .hero-titulo-svg { width: min(1000px, 74vw); }
+
+      /* Visión */
+      .vision-sticky { padding: 88px 48px 60px; }
+      .vision-grid { gap: 40px; }
+
+      /* Cómo trabajamos: el título sube menos y la constelación respira */
+      .constel-titulo { top: clamp(120px, 19vh, 170px); }
+
+      /* Clientes */
+      .clientes-oval { padding: clamp(88px, 11vh, 130px) 48px clamp(64px, 8vh, 100px); }
+      .logos-bloque { margin-bottom: 30px; }
+      .logos-seccion-titulo { margin-bottom: 12px; }
+
+      /* Plataformas */
+      .plataformas-sticky { padding-top: clamp(116px, 15vh, 160px); gap: clamp(14px, 2.6vh, 30px); }
+
+      /* Números y cierre */
+      .stats-intro { margin-bottom: 30px; }
+      .stats-grid { gap: 14px; }
+      .globo-container { max-width: 560px; }
+    }
+
+    /* ============================================================
+       RESPONSIVO — ANCHOS INTERMEDIOS (tablet / notebook chica)
+    ============================================================ */
+    @media (max-width: 1100px) and (min-width: 769px) {
+      .vision-sticky { padding: 90px 40px 70px; }
+      .vision-grid { gap: 32px; }
+      .stats-layout { width: calc(100% - 72px); gap: 20px; }
+      .globo-container { max-width: 480px; }
+      .stats-origen-wrap { width: min(360px, 50%); }
+      .cta-contenido { max-width: 520px; }
+      .plat-duo { gap: 26px; width: calc(100% - 56px); }
+      .plat-items { gap: 7px 16px; }
+    }
+
+    /* ============================================================
+       MÓVIL — SCROLL SIN VIBRACIÓN
+       'background-attachment: fixed' obliga al navegador a repintar todo
+       el fondo en cada frame de scroll: en móvil eso produce el temblor.
+       Se suman: un canvas fijo menos y sin will-change en los sticky.
+    ============================================================ */
+    @media (max-width: 900px), (pointer: coarse) {
+      #planetas-canvas { display: none; }
+      .cierre-sticky,
+      .vision-sticky,
+      .constel-inner { will-change: auto; }
+      .mock-grupo { animation: none; }
+      .mock-img { filter: none; will-change: auto; }
+    }
+
+    /* ============================================================
+       CLICS: los contenedores sticky se adelantan 100vh para evitar el
+       deslizamiento, así que quedan sobre la sección anterior aunque estén
+       invisibles. Sin esto bloquean botones y enlaces de esa sección.
+    ============================================================ */
+    /* En Retina cada capa promovida de 100vh son cuatro veces los píxeles.
+       La misma liberación que ya se hacía en móvil, ahora también en Mac.
+       Las dos .sticky-inner conservan el will-change a propósito: son las
+       únicas que reciben un transform en cada cuadro, que es justo el caso
+       para el que sirve la propiedad. */
+    .es-mac .vision-sticky,
+    .es-mac .cierre-sticky,
+    .es-mac .constel-inner { will-change: auto; }
+
+    /* Sin encaje de scroll no hay nada que empuje al visitante fuera de la
+       sección, así que puede ser más corta y la secuencia de cards se
+       extiende hasta el final (ver 'bottom top' en el JS). */
+    .es-mac .soluciones-wrapper { height: 140vh; height: 140svh; }
+
+    .vision-sticky,
+    .soluciones-sticky,
+    .plataformas-sticky,
+    .cierre-sticky,
+    .constel-inner { pointer-events: none; }
+
+    .vision-sticky.seccion-activa,
+    .soluciones-sticky.seccion-activa,
+    .plataformas-sticky.seccion-activa,
+    .cierre-sticky.seccion-activa,
+    .constel-inner.seccion-activa { pointer-events: auto; }
+
+    /* ============================================================
+       MAC — SCROLL SIN TEMBLOR
+       Safari recalcula backdrop-filter en cada frame mientras las cards se
+       mueven: es de lo más caro que hay y produce tirones. Se reemplaza por
+       un fondo sólido equivalente. El fondo fijo también se libera.
+    ============================================================ */
+    .es-mac .sol-card {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      background: rgba(28,22,40,0.82);
+    }
+
+
+    /* El degradado del fondo anima cinco radiales a pantalla completa: cada
+       frame obliga a repintar todo el viewport. Es la operación más cara de
+       la página en Safari, así que ahí queda fijo (se ve casi igual). */
+
+    .es-mac .mock-img { filter: none; will-change: auto; }
+  </style>
+</head>
+<body>
+
+
+  <!-- FLECHA: LLEVA A LA SECCIÓN SIGUIENTE -->
+  <button class="flecha-baja" id="flecha-baja" type="button"
+          data-cursor="Down" aria-label="Go to the next section">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <line x1="12" y1="4" x2="12" y2="20"></line>
+      <polyline points="6 14 12 20 18 14"></polyline>
+    </svg>
+  </button>
+
+  <!-- HEADER -->
+  <header class="site-header" id="site-header">
+    <a href="/en/" class="header-logo" aria-label="Vortex IT">
+      <img src="/assets/Logo%20VX_blanco%20y%20violeta.svg" alt="Vortex IT" class="logo-img">
+    </a>
+
+    <nav aria-label="Main navigation">
+      <ul class="header-nav" id="header-nav">
+        <li><a href="/en/" class="active">Home</a></li>
+        <li><a href="/en/solutions.html">Solutions</a></li>
+        <li><a href="/en/how-we-work.html">How we work</a></li>
+        <li><a href="/en/about.html">About Vortex</a></li>
+        <li><a href="/en/blog.html">Blog</a></li>
+        <li><a href="/en/platforms.html">Platforms</a></li>
+        <li><a href="/en/contact.html" class="nav-cta" data-cursor="Let&#039;s talk">Let's talk</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-right">
+      <!-- Conmutador de idioma: son links reales a la misma página en el
+           otro idioma, no botones. Así se puede compartir la dirección y
+           Google puede seguirlos. -->
+      <div class="lang-switch">
+        <a class="lang-btn"
+           href="/" hreflang="es" lang="es">ES</a>
+        <span class="lang-sep">|</span>
+        <a class="lang-btn active"
+           href="/en/" hreflang="en" lang="en">EN</a>
+      </div>
+      <div class="social-links">
+        <a href="https://www.linkedin.com/company/vortex-it-ok" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="https://www.instagram.com/vortex.it/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@vortexit" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#333"/></svg>
+        </a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- SECCIÓN 1: HERO -->
+    <section class="hero-wrapper" id="inicio" data-cursor="Scroll">
+      <div class="hero-sticky">
+        <img id="cohete" src="/assets/cohete.webp" alt="" aria-hidden="true">
+        <div class="hero-halo" aria-hidden="true"></div>
+        <div class="hero-stack">
+        <div class="hero-titulo-svg" id="hero-titulo">
+          <svg viewBox="0 22 1000 120" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
+            <text x="500" y="46" text-anchor="middle" dominant-baseline="middle"
+              font-family="Rubik, sans-serif" font-weight="500" font-size="72" fill="#a0d232">
+              AI CHANGED            </text>
+            <text x="500" y="118" text-anchor="middle" dominant-baseline="middle"
+              font-family="Rubik, sans-serif" font-weight="500" font-size="72" fill="#a0d232">
+              THE RULES.            </text>
+          </svg>
+        </div>
+
+        <!-- Los cortes de renglón son distintos según la pantalla: en
+             escritorio va en dos, en el teléfono en tres. Se controla con
+             qué <br> se muestra en cada caso, sin repetir el texto. -->
+        <p class="hero-subtitulo" id="hero-subtitulo">We drive the evolution of organizations<br class="br-mov"> through<br class="br-esc"> AI-First digital<br class="br-mov"> transformation strategies.</p>
+
+        <button class="hero-scroll" id="hero-scroll" type="button" data-cursor="Down" aria-label="See our vision">
+          See our vision          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 5v14M6 13l6 6 6-6"/>
+          </svg>
+        </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 2: NUESTRA VISIÓN -->
+    <section class="vision-section" id="vision">
+      <div class="vision-sticky" id="vision-sticky">
+      <div class="vision-grid">
+        <div class="vision-texto">
+          <h2 class="vision-titulo" id="vision-titulo">Our vision</h2>
+          <p class="vision-lead" id="vision-lead">Technology is not the starting point.<br>The business is.</p>
+          <p class="vision-bajada" id="vision-bajada">That is why we combine strategy and artificial intelligence<br>to turn challenges into opportunities for growth.</p>
+        </div>
+        <div class="vision-img-wrap" id="vision-img">
+          <!-- El reproductor de YouTube pesa más de un mega y se trae aunque
+               nadie toque play. Acá se muestra primero la miniatura y el
+               iframe se inserta recién al hacer click: la home no paga ese
+               costo salvo que alguien quiera ver el video. -->
+          <button class="vision-video" id="vision-video" type="button"
+                  data-video="s-Rfc8M-V60"
+                  data-cursor="Play"
+                  aria-label="Watch the Vortex IT video">
+            <img class="vision-video-tapa"
+                 src="https://i.ytimg.com/vi/s-Rfc8M-V60/maxresdefault.jpg"
+                 onerror="this.src='https://i.ytimg.com/vi/s-Rfc8M-V60/hqdefault.jpg'"
+                 alt="Watch the Vortex IT video" loading="lazy" decoding="async">
+            <span class="vision-video-play" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </span>
+          </button>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 3: SOLUCIONES -->
+    <section class="soluciones-section" id="soluciones" data-cursor="Scroll">
+      <div class="soluciones-wrapper">
+        <div class="soluciones-sticky">
+         <div class="sticky-inner">
+
+          <div class="soluciones-header">
+            <h2 class="soluciones-titulo" id="sol-titulo">Solutions</h2>
+            <p class="soluciones-subtitulo" id="sol-subtitulo">Designed to turn strategy into results.</p>
+          </div>
+
+          <div class="sol-cards-container">
+
+            <a href="/en/solutions.html#apps" class="sol-card sol-card-1" id="sol-c1" data-cursor="See more">
+              <img class="sol-card-img" src="/assets/sol-apps.webp" alt="Web and mobile applications">
+              <span class="sol-card-nombre">Web and mobile applications</span>
+            </a>
+
+            <a href="/en/solutions.html#ia" class="sol-card sol-card-2" id="sol-c2" data-cursor="See more">
+              <img class="sol-card-img" src="/assets/sol-ia.webp" alt="Artificial intelligence and innovation">
+              <span class="sol-card-nombre">Artificial intelligence and innovation</span>
+            </a>
+
+            <a href="/en/solutions.html#rpa" class="sol-card sol-card-3" id="sol-c3" data-cursor="See more">
+              <img class="sol-card-img" src="/assets/sol-rpa.webp" alt="Automation with RPA + AI">
+              <span class="sol-card-nombre">Automation with RPA + AI</span>
+            </a>
+
+            <a href="/en/solutions.html#integracion" class="sol-card sol-card-4" id="sol-c4" data-cursor="See more">
+              <img class="sol-card-img" src="/assets/sol-integracion.webp" alt="Application and data integration">
+              <span class="sol-card-nombre">Application and data integration</span>
+            </a>
+
+          </div>
+         </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 4: CÓMO TRABAJAMOS — CONSTELACIÓN -->
+    <section class="constel-section" id="como-trabajamos" data-cursor="Click">
+      <div class="constel-sticky">
+      <div class="constel-inner" id="constel-inner">
+      <canvas id="constel-canvas" aria-hidden="true"></canvas>
+
+      <h2 class="constel-titulo" id="constel-titulo">How we work</h2>
+
+      <div class="constel-item" id="cn1" data-cursor="Click"><img src="/assets/boton_rompecabezas.webp" alt="" aria-hidden="true"><span class="constel-num">We understand<br>the business</span></div>
+      <div class="constel-item" id="cn2" data-cursor="Click"><img src="/assets/boton_brujula.webp" alt="" aria-hidden="true"><span class="constel-num">We design<br>the strategy</span></div>
+      <div class="constel-item" id="cn3" data-cursor="Click"><img src="/assets/boton_engranaje.webp" alt="" aria-hidden="true"><span class="constel-num">We build<br>the solution</span></div>
+      <div class="constel-item" id="cn4" data-cursor="Click"><img src="/assets/boton_crecimiento.webp" alt="" aria-hidden="true"><span class="constel-num">We keep<br>evolving</span></div>
+
+      <!-- La ficha se rellena al clickear un ícono -->
+      <article class="constel-ficha" id="constel-ficha" aria-hidden="true">
+        <button class="constel-cerrar" type="button" id="constel-cerrar" aria-label="Close">&times;</button>
+        <img id="constel-ficha-img" src="" alt="" width="512" height="512">
+        <div>
+          <p class="constel-ficha-num" id="constel-ficha-num"></p>
+          <h3 id="constel-ficha-tit"></h3>
+          <p id="constel-ficha-txt"></p>
+          <a class="constel-ficha-btn" id="constel-ficha-btn" href="/en/how-we-work.html"
+             data-cursor="See more">Learn more</a>
+        </div>
+      </article>
+
+      </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 5: CONFÍAN EN NOSOTROS -->
+    <section class="clientes-section" id="clientes">
+      <div class="clientes-oval">
+        <h2 class="clientes-titulo">Trusted by</h2>
+
+        <!-- Clientes -->
+        <div class="logos-bloque logos-clientes">
+          <p class="logos-seccion-titulo">Clients</p>
+          <div class="logos-track" id="track-clientes">
+            <div class="logo-item"><img src="/assets/Galicia.svg" alt="Galicia"></div><div class="logo-item"><img src="/assets/Carrefour_Blanco.svg" alt="Carrefour"></div><div class="logo-item"><img src="/assets/Correo%20Argentino.svg" alt="Correo Argentino"></div><div class="logo-item"><img src="/assets/DirecTV.svg" alt="DirecTV"></div><div class="logo-item"><img src="/assets/NaranjaX.svg" alt="Naranja X"></div><div class="logo-item"><img src="/assets/Arcor.svg" alt="Arcor"></div><div class="logo-item"><img src="/assets/Galicia.svg" alt="Galicia"></div><div class="logo-item"><img src="/assets/Carrefour_Blanco.svg" alt="Carrefour"></div><div class="logo-item"><img src="/assets/Correo%20Argentino.svg" alt="Correo Argentino"></div><div class="logo-item"><img src="/assets/DirecTV.svg" alt="DirecTV"></div><div class="logo-item"><img src="/assets/NaranjaX.svg" alt="Naranja X"></div><div class="logo-item"><img src="/assets/Arcor.svg" alt="Arcor"></div>
+          </div>
+        </div>
+
+        <div class="logos-divisor"></div>
+
+        <!-- Partners -->
+        <div class="logos-bloque logos-partners">
+          <p class="logos-seccion-titulo">Partners</p>
+          <div class="logos-track" id="track-partners" style="animation-direction: reverse;">
+            <div class="logo-item"><img src="/assets/Google.svg" alt="Google"></div><div class="logo-item"><img src="/assets/RedHat.svg" alt="Red Hat"></div><div class="logo-item"><img src="/assets/Mercado%20Libre_Blanco.svg" alt="Mercado Libre"></div><div class="logo-item"><img src="/assets/Be%20Aware.svg" alt="BeAware"></div><div class="logo-item"><img src="/assets/Rocketbot.svg" alt="Rocketbot"></div><div class="logo-item"><img src="/assets/AWS.svg" alt="AWS"></div><div class="logo-item"><img src="/assets/Oracle.svg" alt="Oracle"></div><div class="logo-item"><img src="/assets/Google.svg" alt="Google"></div><div class="logo-item"><img src="/assets/RedHat.svg" alt="Red Hat"></div><div class="logo-item"><img src="/assets/Mercado%20Libre_Blanco.svg" alt="Mercado Libre"></div><div class="logo-item"><img src="/assets/Be%20Aware.svg" alt="BeAware"></div><div class="logo-item"><img src="/assets/Rocketbot.svg" alt="Rocketbot"></div><div class="logo-item"><img src="/assets/AWS.svg" alt="AWS"></div><div class="logo-item"><img src="/assets/Oracle.svg" alt="Oracle"></div>
+          </div>
+        </div>
+
+        <div class="logos-divisor"></div>
+
+        <!-- Miembros de -->
+        <p class="logos-seccion-titulo" id="camaras-titulo">Members of</p>
+        <div class="logos-fila-estatica logos-miembros">
+          <div class="logo-item"><img src="/assets/Logo%20Cessi.svg" alt="CESSI"></div>
+          <div class="logo-item"><img src="/assets/C%C3%B3rdoba%20Cluster.svg" alt="Córdoba Technology Cluster"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 6: PLATAFORMAS
+         Dos pantallas apiladas: QuickPass y Loyalix arriba, Omnia y Rutex
+         abajo. El encabezado se repite en la segunda —marcado como
+         decorativo para que no cuente como un segundo título— porque si no
+         esa pantalla queda huérfana. -->
+    <section class="plataformas-section" id="plataformas">
+
+      <div class="plataformas-sticky plataformas-pantalla" id="plat-p1">
+
+      <div class="plataformas-header">
+        <h2 class="section-title" id="plat-titulo">Platforms</h2>
+        <p class="plataformas-subtitulo" id="plat-subtitulo">Solutions built by Vortex for specific industries.</p>
+      </div>
+
+      <div class="plat-escenas">
+      <div class="plat-duo">
+      <div class="plat-escena" id="esc-qp">
+          <div class="plat-info">
+            <div class="plat-logo-caja"><img class="plat-logo" src="/assets/logoQP.svg" alt="QuickPass"></div>
+            <div class="plat-linea"></div>
+            <ul class="plat-items">
+              <li class="plat-item">Digital ticketing</li>
+              <li class="plat-item">Loyalty</li>
+              <li class="plat-item">Wallet &amp; cashless</li>
+              <li class="plat-item">Analytics</li>
+            </ul>
+          </div>
+        <div class="plat-mocks plat-mocks-qp">
+          <div class="mock-grupo mock-a">
+              <img class="mock-img activa" src="/assets/mock-quickpass-a1.webp?v=2" alt="" loading="lazy" decoding="async">
+              <img class="mock-img" src="/assets/mock-quickpass-a2.webp?v=2" alt="" loading="lazy" decoding="async">
+              <img class="mock-img" src="/assets/mock-quickpass-a3.webp?v=2" alt="" loading="lazy" decoding="async">
+          </div>
+          <div class="mock-grupo mock-b">
+              <img class="mock-img activa" src="/assets/mock-quickpass-b1.webp?v=2" alt="" loading="lazy" decoding="async">
+              <img class="mock-img" src="/assets/mock-quickpass-b2.webp?v=2" alt="" loading="lazy" decoding="async">
+              <img class="mock-img" src="/assets/mock-quickpass-b3.webp?v=2" alt="" loading="lazy" decoding="async">
+              <img class="mock-img" src="/assets/mock-quickpass-b4.webp?v=2" alt="" loading="lazy" decoding="async">
+          </div>
+        </div>
+            <div class="plat-btn-wrap">
+              <a href="https://quickpass.app/" target="_blank" rel="noopener" class="btn-primary" data-cursor="See more">Explore QuickPass</a>
+            </div>
+      </div>
+
+      <div class="plat-escena plat-escena-inv" id="esc-lx">
+          <div class="plat-info">
+            <div class="plat-logo-caja"><img class="plat-logo" src="/assets/logoLX.svg" alt="Loyalix"></div>
+            <div class="plat-linea"></div>
+            <ul class="plat-items">
+              <li class="plat-item">Points programs</li>
+              <li class="plat-item">Personalization</li>
+              <li class="plat-item">Smart coupons</li>
+              <li class="plat-item">Analytics</li>
+            </ul>
+          </div>
+        <div class="plat-mocks plat-mocks-lx">
+          <div class="mock-grupo mock-a">
+              <img class="mock-img activa" src="/assets/mock-loyalix-a1.webp?v=2" alt="" loading="lazy" decoding="async">
+              <img class="mock-img" src="/assets/mock-loyalix-a2.webp?v=2" alt="" loading="lazy" decoding="async">
+              <img class="mock-img" src="/assets/mock-loyalix-a3.webp?v=2" alt="" loading="lazy" decoding="async">
+              <img class="mock-img" src="/assets/mock-loyalix-a4.webp?v=2" alt="" loading="lazy" decoding="async">
+          </div>
+          <div class="mock-grupo mock-b">
+              <img class="mock-img activa" src="/assets/mock-loyalix-b1.webp?v=2" alt="" loading="lazy" decoding="async">
+              <img class="mock-img" src="/assets/mock-loyalix-b2.webp?v=2" alt="" loading="lazy" decoding="async">
+              <img class="mock-img" src="/assets/mock-loyalix-b3.webp?v=2" alt="" loading="lazy" decoding="async">
+              <img class="mock-img" src="/assets/mock-loyalix-b4.webp?v=2" alt="" loading="lazy" decoding="async">
+          </div>
+        </div>
+            <div class="plat-btn-wrap">
+              <a href="https://loyalix.app/" target="_blank" rel="noopener" class="btn-primary" data-cursor="See more">Explore Loyalix</a>
+            </div>
+      </div>
+      </div>
+      </div>
+
+      </div>
+
+      <!-- ── SEGUNDA PANTALLA: OMNIA TALENTS Y RUTEX AI ── -->
+      <div class="plataformas-sticky plataformas-pantalla" id="plat-p2">
+
+      <div class="plataformas-header" aria-hidden="true">
+        <p class="section-title plat-titulo-eco">Platforms</p>
+        <p class="plataformas-subtitulo">Solutions built by Vortex for specific industries.</p>
+      </div>
+
+      <div class="plat-escenas">
+      <div class="plat-duo">
+      <div class="plat-escena" id="esc-om">
+          <div class="plat-info">
+            <div class="plat-logo-caja"><img class="plat-logo" src="/assets/logoOmnia.svg" alt="Omnia Talents"></div>
+            <div class="plat-linea"></div>
+            <ul class="plat-items">
+              <li class="plat-item">Resume analysis</li>
+              <li class="plat-item">AI interviews</li>
+              <li class="plat-item">Identity verification</li>
+              <li class="plat-item">Professional development</li>
+            </ul>
+          </div>
+        <div class="plat-mocks plat-mocks-om">
+          <div class="mock-grupo mock-a">
+              <img class="mock-img activa" src="/assets/mock-omnia.webp?v=2" alt="" loading="lazy" decoding="async">
+          </div>
+        </div>
+            <div class="plat-btn-wrap">
+              <a href="https://omniatalents.com/" target="_blank" rel="noopener" class="btn-primary" data-cursor="See more">Explore Omnia Talents</a>
+            </div>
+      </div>
+
+      <div class="plat-escena plat-escena-inv" id="esc-rx">
+          <div class="plat-info">
+            <div class="plat-logo-caja"><img class="plat-logo plat-logo-rx" src="/assets/logoRutex.svg" alt="Rutex AI"></div>
+            <div class="plat-linea"></div>
+            <ul class="plat-items">
+              <li class="plat-item">Model management</li>
+              <li class="plat-item">Cost control</li>
+              <li class="plat-item">Security</li>
+              <li class="plat-item">Traceability</li>
+            </ul>
+          </div>
+        <div class="plat-mocks plat-mocks-rx">
+          <div class="mock-grupo mock-a">
+              <img class="mock-img activa" src="/assets/mock-rutex.webp?v=3" alt="" loading="lazy" decoding="async">
+          </div>
+        </div>
+            <!-- Rutex todavía no tiene web propia: el botón lleva a Hablemos -->
+            <div class="plat-btn-wrap">
+              <a href="/en/contact.html" class="btn-primary" data-cursor="See more">Explore Rutex AI</a>
+            </div>
+      </div>
+      </div>
+      </div>
+
+      </div>
+
+    </section>
+
+    <!-- SECCIÓN 7 y 8: NÚMEROS + CIERRE -->
+    <section class="cierre-section" id="hablemos">
+      <div class="cierre-sticky">
+       <div class="sticky-inner">
+        <div class="stats-layout">
+          <div class="stats-texto">
+            <div id="stats-intro-wrap">
+              <p class="stats-intro" id="stats-intro">More than 25 years driving the evolution of businesses through technology and innovation.</p>
+            </div>
+
+            <div id="stats-track-wrap">
+            <div class="stats-grid" id="stats-track">
+              <div class="stat-item" role="text" aria-label="More than 250 active accounts">
+                <span class="stat-numero" data-target="250" aria-hidden="true">+250</span>
+                <span class="stat-label" aria-hidden="true">Active accounts</span>
+              </div>
+              <div class="stat-item" role="text" aria-label="More than 600 projects delivered">
+                <span class="stat-numero" data-target="600" aria-hidden="true">+600</span>
+                <span class="stat-label" aria-hidden="true">Projects delivered</span>
+              </div>
+              <div class="stat-item" role="text" aria-label="More than 130 professionals">
+                <span class="stat-numero" data-target="130" aria-hidden="true">+130</span>
+                <span class="stat-label" aria-hidden="true">Professionals</span>
+              </div>
+            </div>
+            </div>
+          </div>
+
+          <div class="stats-globo">
+            <div class="globo-container" id="globo-wrap" aria-hidden="true">
+              <canvas id="globo-canvas"></canvas>
+            </div>
+          </div>
+
+          <!-- Fuera de .stats-globo: no viaja con el orbe -->
+          <div class="stats-origen-wrap" id="stats-origen-wrap">
+            <p class="stats-origen" id="stats-origen">Founded in Córdoba, Argentina, we deliver projects for clients across Latin America, the United States and Europe.</p>
+          </div>
+        </div>
+
+        <div class="cta-contenido">
+          <h2 class="cta-titulo" id="cta-titulo">
+            Digital transformation<br> is not a technical project.<br> It is a strategic decision.          </h2>
+          <p class="cta-subtitulo" id="cta-subtitulo">
+            If you are working out how to bring in<br> artificial intelligence, automate<br> processes or speed up your<br> organization's evolution, <strong>let's talk.</strong>          </p>
+          <div class="cta-btn-wrap" id="cta-btn-wrap">
+            <a href="/en/contact.html#formulario" class="btn-primary" data-cursor="Book a call">Book a call</a>
+          </div>
+        </div>
+       </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo-wrap">
+          <img src="/assets/Logo%20VX_blanco%20y%20violeta.svg" alt="Vortex IT" class="logo-img">
+        </div>
+        <p class="footer-logo-desc">Founded in Córdoba, Argentina. We operate across Latin America, Europe and the United States.</p>
+      </div>
+
+      <div>
+        <p class="footer-col-title">Vortex IT</p>
+        <ul class="footer-links">
+          <li><a href="/en/">Home</a></li>
+          <li><a href="/en/solutions.html">Solutions</a></li>
+          <li><a href="/en/how-we-work.html">How we work</a></li>
+          <li><a href="/en/about.html">About Vortex</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="footer-col-title">Community</p>
+        <ul class="footer-links">
+          <li><a href="/en/blog.html">Blog</a></li>
+          <li><a href="/en/platforms.html">Platforms</a></li>
+          <li><a href="/en/careers.html">Careers</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="footer-col-title">Let's talk</p>
+        <ul class="footer-contact-list">
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <a href="mailto:info@vortex-it.com">info@vortex-it.com</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 014.69 12 19.79 19.79 0 011.61 3.42 2 2 0 013.6 1.24h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.91 8.96a16 16 0 006.02 6.02l.95-.95a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0121.73 16.92z"/></svg>
+            <a href="tel:+5493515104734">+54 9 351 510-4734</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.122 1.523 5.855L.057 23.943l6.272-1.443A11.953 11.953 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.656-.51-5.176-1.4l-.37-.22-3.725.857.884-3.617-.242-.373A9.956 9.956 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+            <a href="https://wa.me/5493515104734" target="_blank" rel="noopener">WhatsApp</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            <a href="https://www.linkedin.com/company/vortex-it-ok" target="_blank" rel="noopener">LinkedIn</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            <a href="https://www.instagram.com/vortex.it/" target="_blank" rel="noopener">Instagram</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 Vortex IT. All rights reserved.</p>
+      <div class="footer-social">
+        <a href="https://www.linkedin.com/company/vortex-it-ok" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="https://www.instagram.com/vortex.it/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@vortexit" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#333"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/vortex.js?v=23"></script>
+  <script>
+
+    /* ── SECCIÓN 1: HERO ZOOM ── */
+    /* ── EL TÍTULO, MÁS GRANDE EN EL TELÉFONO ──
+       El SVG tiene un viewBox de 1000 de ancho pero el renglón más largo
+       ("LA IA CAMBIÓ") mide 470: o sea que más de la mitad de la caja es
+       aire, y al achicarla a 92vw en un teléfono las letras quedaban
+       diminutas. Recortando el viewBox al ancho real del texto, con un
+       margen de 25 a cada lado, las mismas letras pasan a medir el doble
+       sin tocar el diseño de escritorio. */
+    (function() {
+      if (!ES_MOVIL) return;
+      var svgTit = document.querySelector('.hero-titulo-svg svg');
+      if (svgTit) svgTit.setAttribute('viewBox', '240 22 520 120');
+    })();
+
+    var heroTitulo   = document.getElementById('hero-titulo');
+    var heroWrapper  = document.querySelector('.hero-wrapper');
+
+    var clientesOvalEl = document.querySelector('.clientes-oval');
+    gsap.set(clientesOvalEl, { opacity: 1, scale: 1 });
+
+    /* Subtítulo y botón: la opacidad la maneja un proxy y se aplica a mano.
+       Así el estado siempre se recalcula (entrada al cargar y reversa del
+       scrub al volver al tope), sin depender de valores capturados por GSAP. */
+    var heroSub = document.getElementById('hero-subtitulo');
+    var heroBtnScroll = document.getElementById('hero-scroll');
+    var heroFade = { v: 0 };
+
+    function aplicarHeroFade() {
+      var o = heroFade.v;
+      var ty = (1 - o) * 16;
+      heroSub.style.opacity = o;
+      heroSub.style.transform = 'translateY(' + ty + 'px)';
+      heroBtnScroll.style.opacity = o;
+      heroBtnScroll.style.transform = 'translateY(' + ty + 'px)';
+    }
+    aplicarHeroFade();
+
+    /* Entrada al cargar, después del título */
+    gsap.to(heroFade, { v: 1, duration: 1.2, ease: 'power2.out', delay: 0.6, onUpdate: aplicarHeroFade });
+
+    /* Botón del hero: baja a Nuestra visión */
+    document.getElementById('hero-scroll').addEventListener('click', function() {
+      var dest = document.getElementById('vision');
+      if (dest) window.scrollTo({ top: dest.getBoundingClientRect().top + window.pageYOffset, behavior: 'smooth' });
+    });
+
+    var tlHero = window.tlHero = gsap.timeline({
+      scrollTrigger: {
+        trigger: heroWrapper,
+        start: 'top top',
+        end: 'bottom bottom',
+        /* scrub: true (y no un número) ata la animación al scroll cuadro a
+           cuadro. Con un valor numérico queda persiguiendo la posición y,
+           al volver hacia arriba, la sección se va más lento que el scroll
+           y se cruza con la anterior. */
+        scrub: true,
+        invalidateOnRefresh: true,
+        refreshPriority: 5
+      }
+    });
+
+    /* Todo arranca visible (scale 1 / opacity 1) y todos los tweens son fromTo
+       con immediateRender:false, para que la reversa al tope restaure el estado
+       inicial exacto. Los tres van solapados: zoom del título + fade del
+       subtítulo/botón, sincronizados en un mismo recorrido corto. */
+    tlHero
+      .to({}, { duration: 0.35 })
+      .fromTo(heroTitulo,
+        { scale: 1, opacity: 1 },
+        { scale: ES_MOVIL ? 5 : 8, opacity: 0, ease: 'power3.in', duration: 2, immediateRender: false }, 0.35)
+      .fromTo(heroFade,
+        { v: 1 },
+        { v: 0, ease: 'power2.in', duration: 1.2, immediateRender: false, onUpdate: aplicarHeroFade }, 0.35);
+
+
+    /* ── SECCIÓN 2: CLIENTES CON PIN ── */
+    var clientesOval  = document.querySelector('.clientes-oval');
+    var clientesTitulo = document.querySelector('.clientes-titulo');
+    var logosBloque    = document.querySelectorAll('.logos-bloque');
+    var logosFilaEst   = document.querySelector('.logos-fila-estatica');
+    var camarasTitulo  = document.getElementById('camaras-titulo');
+
+    gsap.set(clientesTitulo, { opacity: 0, y: 20 });
+    gsap.set(logosBloque,    { opacity: 0, y: 20 });
+    gsap.set(camarasTitulo,  { opacity: 0, y: 20 });
+    gsap.set(logosFilaEst,   { opacity: 0, y: 20 });
+
+    /* Ocupa una pantalla: sin pin y sin scroll. Al llegar la sección, los
+       bloques aparecen solos y en orden. */
+    var clientesTl = gsap.timeline({ paused: true })
+      /* 1. Título  2. Clientes  3. Partners  4. Miembros de */
+      .to(clientesTitulo, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.55 })
+      .to(logosBloque[0], { opacity: 1, y: 0, ease: 'power2.out', duration: 0.5 }, '-=0.2')
+      .to(logosBloque[1], { opacity: 1, y: 0, ease: 'power2.out', duration: 0.5 }, '-=0.25')
+      .to([camarasTitulo, logosFilaEst], { opacity: 1, y: 0, ease: 'power2.out', duration: 0.5 }, '-=0.25');
+
+    ScrollTrigger.create({
+      trigger: '.clientes-section',
+      start: ES_MOVIL ? 'top 92%' : 'top 65%',
+      onEnter:     function() { clientesTl.play(); },
+      onEnterBack: function() { clientesTl.play(); },
+      onLeaveBack: function() { clientesTl.pause(0); }
+    });
+
+    /* ── FONDO DEL HERO: ORBE DE PARTÍCULAS ──
+       Esfera de puntos en malla lat/long, con degradado violeta → lima,
+       giro lento sobre el eje Y y repulsión elástica alrededor del puntero.
+       (El fondo de galaxia anterior quedó guardado en galaxia-fondo.js) */
+    (function() {
+      var canvas = document.createElement('canvas');
+      canvas.id = 'orbe-fondo';
+      canvas.setAttribute('aria-hidden', 'true');
+      document.body.insertBefore(canvas, document.body.firstChild);
+      var ctx = canvas.getContext('2d');
+
+      var W = 0, H = 0, R = 0, CX = 0, CY = 0;
+      var dpr = Math.min(window.devicePixelRatio || 1, DPR_MAX);
+
+      /* Malla: los meridianos convergen en los polos */
+      /* cuantasPart ya recorta al 60%, pero 6.600 partículas en un canvas a
+         pantalla completa con 'lighter' seguían siendo el trabajo más caro de
+         la página. En modo ligero se topea en 3.500. */
+      var N = MODO_LIGERO ? Math.min(3500, cuantasPart(11000)) : cuantasPart(11000);
+
+      /* Paleta: la misma del globo de la sección 7 (#8a3ce0 con destellos #c07df0) */
+      var PASOS = 14;
+      var PALETA = [];
+      for (var c = 0; c < PASOS; c++) {
+        var u = c / (PASOS - 1), rr, gg, bb;
+        if (u < 0.5) {                        /* #6a3ac7 → #8a3ce0 */
+          var v = u / 0.5;
+          rr = 106 + (138 - 106) * v; gg = 58 + (60 - 58) * v; bb = 199 + (224 - 199) * v;
+        } else {                              /* #8a3ce0 → #c07df0 */
+          var v2 = (u - 0.5) / 0.5;
+          rr = 138 + (192 - 138) * v2; gg = 60 + (125 - 60) * v2; bb = 224 + (240 - 224) * v2;
+        }
+        PALETA.push('rgb(' + (rr | 0) + ',' + (gg | 0) + ',' + (bb | 0) + ')');
+      }
+
+      /* Datos en arrays tipados: memoria contigua y sin objetos por partícula */
+      var bx = new Float32Array(N), by = new Float32Array(N), bz = new Float32Array(N);
+      var col = new Uint8Array(N);
+      var bri = new Float32Array(N);                            /* brillo propio de cada partícula */
+      var tam = new Float32Array(N);                            /* tamaño propio */
+      var fas = new Float32Array(N), vel = new Float32Array(N); /* titileo desfasado */
+      var ox = new Float32Array(N), oy = new Float32Array(N);   /* desplazamiento por el puntero */
+      var vx = new Float32Array(N), vy = new Float32Array(N);   /* velocidad del desplazamiento */
+
+      (function construir() {
+        var tmp = [];
+        /* Espiral de Fibonacci: densidad pareja en toda la esfera (sin polos
+           sobrecargados), con ruido para que no se lea el patrón */
+        var phiOro = Math.PI * (3 - Math.sqrt(5));
+        for (var i = 0; i < N; i++) {
+          var yy = 1 - (i + 0.5) / N * 2;
+          yy += (Math.random() - 0.5) * (1.6 / N) * 40;
+          if (yy > 1) yy = 1; else if (yy < -1) yy = -1;
+          var anillo = Math.sqrt(Math.max(0, 1 - yy * yy));
+          var th = phiOro * i + (Math.random() - 0.5) * 0.32;
+          var rr = 1 + (Math.random() - 0.5) * 0.06;   /* radio ligeramente irregular */
+          tmp.push([
+            anillo * Math.cos(th) * rr, yy * rr, anillo * Math.sin(th) * rr,
+            0,
+            /* Brillo sesgado: la mayoría tenues, unas pocas encendidas */
+            0.45 + Math.random() * Math.random() * 1.9,
+            0.8 + Math.random() * Math.random() * 1.6,
+            Math.random() * 6.2832,
+            0.4 + Math.random() * 1.5
+          ]);
+        }
+        /* Ordenados por color: el fillStyle cambia 14 veces por frame, no N */
+        tmp.forEach(function(p) { p[3] = Math.min(PASOS - 1, ((p[0] + 1) / 2 * PASOS) | 0); });
+        tmp.sort(function(a, b) { return a[3] - b[3]; });
+        for (var k = 0; k < N; k++) {
+          bx[k] = tmp[k][0]; by[k] = tmp[k][1]; bz[k] = tmp[k][2]; col[k] = tmp[k][3];
+          bri[k] = tmp[k][4]; tam[k] = tmp[k][5]; fas[k] = tmp[k][6]; vel[k] = tmp[k][7];
+        }
+      })();
+
+      function resize() {
+        W = window.innerWidth; H = window.innerHeight;
+        canvas.width = W * dpr; canvas.height = H * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        R = Math.min(W, H) * (ES_MOVIL ? 0.33 : 0.31);
+        CX = W * 0.5;
+      }
+      resize();
+      alRedimensionar(resize);
+
+      /* Puntero */
+      var mx = -9999, my = -9999, pX = 0, pY = 0, tX = 0, tY = 0;
+      window.addEventListener('mousemove', function(e) {
+        mx = e.clientX; my = e.clientY;
+        tX = mx / (window.innerWidth  || 1) - 0.5;
+        tY = my / (window.innerHeight || 1) - 0.5;
+      }, { passive: true });
+      window.addEventListener('mouseleave', function() { mx = -9999; my = -9999; }, { passive: true });
+
+      /* Centro y atenuación: los mueve el scroll (ver tween sobre cam) */
+      var cam = { cx: 0.5, cy: 0.5, dim: 1 };
+
+      var ang = 0;
+      var RADIO_MOUSE = ES_MOVIL ? 0 : 165;
+      var despMax = 0;          /* cuánto queda desplazada la partícula más movida */
+
+      function tick(t) {
+        actualizarCam();
+
+        ang += 0.0016;
+        var tt = t * 0.001;
+        var ca = Math.cos(ang), sa = Math.sin(ang);
+        pX += (tX - pX) * 0.045;
+        pY += (tY - pY) * 0.045;
+        CX = W * cam.cx;
+        CY = H * cam.cy;
+        var dim = cam.dim;
+        var despX = -pX * 26, despY = -pY * 20;
+
+        ctx.clearRect(0, 0, W, H);
+        ctx.globalCompositeOperation = 'lighter';
+
+        /* El resorte de repulsión son seis operaciones y una raíz cuadrada por
+           partícula. No hacía falta correrlo siempre: ninguna partícula puede
+           moverse si el puntero está más lejos que el radio del orbe más el
+           alcance del efecto. Una sola comparación por cuadro ahorra el trabajo
+           entero mientras el mouse anda por otro lado. */
+        var dcx = mx - CX, dcy = my - CY;
+        var alcance = R * 1.18 + RADIO_MOUSE;
+        var punteroCerca = (dcx * dcx + dcy * dcy) < alcance * alcance;
+        var conRepulsion = RADIO_MOUSE && (punteroCerca || despMax > 0.05);
+        if (RADIO_MOUSE && !conRepulsion && despMax !== 0) {
+          /* Se apaga: se limpian los restos para que no quede nada torcido */
+          ox.fill(0); oy.fill(0); vx.fill(0); vy.fill(0);
+          despMax = 0;
+        }
+        var nuevoMax = 0;
+
+        var colActual = -1;
+        for (var i = 0; i < N; i++) {
+          /* Giro sobre el eje Y */
+          var x = bx[i] * ca + bz[i] * sa;
+          var z = -bx[i] * sa + bz[i] * ca;
+          var y = by[i];
+
+          var k = 1.9 / (1.9 + z);                    /* perspectiva suave */
+          var sx = CX + x * R * k + despX;
+          var sy = CY + y * R * k + despY;
+
+          /* Repulsión elástica alrededor del puntero (vuelve sola a su lugar) */
+          if (conRepulsion) {
+            var dx = sx + ox[i] - mx, dy = sy + oy[i] - my;
+            var d2 = dx * dx + dy * dy;
+            if (d2 < RADIO_MOUSE * RADIO_MOUSE) {
+              var d = Math.sqrt(d2) || 1;
+              var f = (1 - d / RADIO_MOUSE);
+              f = f * f * 3.2;
+              vx[i] += (dx / d) * f;
+              vy[i] += (dy / d) * f;
+            }
+            /* Resorte de retorno blando + mucho rozamiento: vuelve sin rebotar */
+            vx[i] = (vx[i] - ox[i] * 0.028) * 0.8;
+            vy[i] = (vy[i] - oy[i] * 0.028) * 0.8;
+            ox[i] += vx[i];
+            oy[i] += vy[i];
+            sx += ox[i]; sy += oy[i];
+            var mo = (ox[i] < 0 ? -ox[i] : ox[i]) + (oy[i] < 0 ? -oy[i] : oy[i]);
+            if (mo > nuevoMax) nuevoMax = mo;
+          }
+
+          if (sx < -4 || sx > W + 4 || sy < -4 || sy > H + 4) continue;
+
+          /* Brillo: tenue al frente, denso y encendido hacia el borde,
+             con intensidad propia y titileo desfasado por partícula */
+          var rho = Math.sqrt(x * x + y * y);
+          var a = (0.32 + rho * rho * 1.25) * (z < 0 ? 1 : 0.88) * bri[i] * dim;
+          /* El titileo es una lectura de tabla y una multiplicación POR
+             PARTÍCULA POR CUADRO: a 3.500 partículas y 40 fps son 140.000
+             operaciones por segundo solo para eso. Fuera en modo ligero. */
+          if (!ES_MOVIL && !MODO_LIGERO) a *= 0.78 + 0.22 * senoRapido(tt * vel[i] + fas[i]);
+          if (a <= 0.015) continue;
+
+          if (col[i] !== colActual) {
+            colActual = col[i];
+            ctx.fillStyle = PALETA[colActual];
+          }
+          ctx.globalAlpha = a > 1 ? 1 : a;
+          var s = tam[i] * k;
+          ctx.fillRect(sx, sy, s, s);
+        }
+
+        if (conRepulsion) despMax = nuevoMax;
+
+        ctx.globalAlpha = 1;
+        ctx.globalCompositeOperation = 'source-over';
+      }
+
+      /* Solo dibuja mientras se lo ve */
+      LOOP.add(tick, function() {
+        return canvas.style.opacity === '' || parseFloat(canvas.style.opacity) >= 0.01;
+      });
+
+      /* Posición del orbe calculada directamente desde el scroll.
+         (Con dos tweens de GSAP sobre las mismas propiedades, el del hero
+         volvía a aplicarse en cada refresco y pisaba al de Visión.) */
+      var heroEl   = document.querySelector('.hero-wrapper');
+      var visionEl = document.querySelector('.vision-section');
+
+      function lim(v) { return v < 0 ? 0 : (v > 1 ? 1 : v); }
+
+      /* offsetHeight y offsetTop obligan al navegador a recalcular el layout
+         para responder. Leerlos DENTRO del bucle de animación, sobre un DOM
+         de tres mil líneas, es un reflow forzado en cada cuadro. Se miden una
+         vez y se vuelven a medir solo cuando algo pudo haber cambiado. */
+      var altoHero = 1, topeVision = 0;
+      function medirCam() {
+        if (!heroEl || !visionEl) return;
+        altoHero   = heroEl.offsetHeight;
+        topeVision = visionEl.offsetTop;
+      }
+      medirCam();
+      alRedimensionar(medirCam);
+      if (window.ScrollTrigger) ScrollTrigger.addEventListener('refresh', medirCam);
+      window.addEventListener('load', medirCam);
+
+      function actualizarCam() {
+        if (!heroEl || !visionEl) return;
+        var y = window.pageYOffset;
+
+        /* Tramo 1 — hero: el orbe sube y se atenúa mientras el título hace zoom */
+        var recorridoHero = Math.max(1, altoHero - H);
+        var t1 = lim(y / recorridoHero);
+        t1 = t1 * t1 * (3 - 2 * t1);
+
+        /* Tramo 2 — visión: se corre a la izquierda y baja, de fondo del texto */
+        var topVision = topeVision;
+        var a = topVision - H, b = topVision - H * 0.55;
+        var t2 = lim((y - a) / Math.max(1, b - a));
+        t2 = t2 * t2 * (3 - 2 * t2);
+
+        cam.cx  = 0.5 + (0.24 - 0.5)  * t2;
+        cam.cy  = 0.5 + (0.30 - 0.5)  * t1 + (0.55 - 0.30) * t2;
+        cam.dim = 1   + (0.6  - 1)    * t1 + (0.5  - 0.6)  * t2;
+      }
+
+      /* Al salir de Visión se apaga y no vuelve */
+      gsap.to(canvas, {
+        opacity: 0, ease: 'none',
+        scrollTrigger: { trigger: '.vision-section', start: 'bottom bottom', end: 'bottom 25%', scrub: true }
+      });
+
+      /* ── COHETE: una pasada guiada por el scroll del hero ──
+         La punta está en la esquina superior derecha del PNG: con transform-origin
+         en 100% 0 esa esquina es la que recorre la diagonal. */
+      var cohete = document.getElementById('cohete');
+      if (cohete && window.tlHero && !ES_MOVIL) {
+        var NARIZ_DEG = 52;         /* inclinación de la punta dentro del PNG */
+
+        function geo() {
+          var vw = window.innerWidth, vh = window.innerHeight;
+          var w  = cohete.offsetWidth || vw * 0.06;
+          var x0 = -0.14 * vw, y0 = 1.14 * vh;      /* punta: fuera abajo-izquierda */
+          var x1 =  1.14 * vw, y1 = -0.14 * vh;     /* punta: fuera arriba-derecha */
+          var a2 = Math.atan2(y0 - y1, x1 - x0) * 180 / Math.PI;
+          return { x0: x0 - w, y0: y0, x1: x1 - w, y1: y1, rot: NARIZ_DEG - a2 };
+        }
+
+        /* Posición inicial explícita: sin esto queda en 0,0 (esquina) hasta
+           que el scroll hace renderizar el tween. */
+        gsap.set(cohete, {
+          opacity: 0.5, transformOrigin: '100% 0%',
+          x: function() { return geo().x0; },
+          y: function() { return geo().y0; },
+          rotation: function() { return geo().rot; }
+        });
+
+        var twCohete = tlHero.fromTo(cohete,
+          { x: function() { return geo().x0; },
+            y: function() { return geo().y0; },
+            rotation: function() { return geo().rot; } },
+          { x: function() { return geo().x1; },
+            y: function() { return geo().y1; },
+            rotation: function() { return geo().rot; },
+            ease: 'none', duration: tlHero.duration(), immediateRender: false }, 0);
+
+        alRedimensionar(function() { twCohete.invalidate(); });
+        if (!cohete.complete) cohete.addEventListener('load', function() { twCohete.invalidate(); });
+      }
+    })();
+
+
+    /* ── SECCIÓN 2: NUESTRA VISIÓN ──
+       Ocupa una pantalla. Al llegar, los elementos aparecen solos y en orden
+       (título, texto 1, texto 2, imagen). Al salir hacia arriba se reinicia
+       de golpe, para que al volver la secuencia se vea entera. */
+    /* ── EL VIDEO DE LA SECCIÓN 2 ──
+       Al hacer click se reemplaza la miniatura por el reproductor.
+       'autoplay=1' arranca solo, ya con sonido, porque el click del
+       visitante cuenta como permiso del navegador.
+       youtube-nocookie.com no deja cookies hasta que se reproduce. */
+    (function() {
+      var caja = document.getElementById('vision-video');
+      if (!caja) return;
+      caja.addEventListener('click', function() {
+        var id = caja.getAttribute('data-video');
+        var marco = document.createElement('iframe');
+        marco.src = 'https://www.youtube-nocookie.com/embed/' + id +
+                    '?autoplay=1&rel=0&modestbranding=1';
+        marco.title = caja.getAttribute('aria-label') || 'Video';
+        marco.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; ' +
+                      'gyroscope; picture-in-picture; web-share';
+        marco.setAttribute('allowfullscreen', '');
+        caja.innerHTML = '';
+        caja.appendChild(marco);
+        caja.style.cursor = 'default';
+        caja.removeAttribute('data-cursor');
+      }, { once: true });
+    })();
+
+    gsap.set('#vision-sticky', { opacity: 1 });
+
+    var tlVision = gsap.timeline({ paused: true })
+      .to('#vision-titulo', { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' })
+      .to('#vision-lead',   { opacity: 1, y: 0, duration: 0.5,  ease: 'power2.out' }, '-=0.25')
+      .to('#vision-bajada', { opacity: 1, y: 0, duration: 0.5,  ease: 'power2.out' }, '-=0.25')
+      .to('#vision-img',    { opacity: 1, y: 0, duration: 0.6,  ease: 'power2.out' }, '-=0.35');
+
+    ScrollTrigger.create({
+      trigger: '.vision-section',
+      start: ES_MOVIL ? 'top 92%' : 'top 65%',
+      onEnter:     function() { tlVision.play(); },
+      onEnterBack: function() { tlVision.play(); },
+      onLeaveBack: function() { tlVision.pause(0); }
+    });
+
+    /* ── Planetas de partículas: viaje continuo por el eje Z ── */
+    (function() {
+      /* Es el tercer canvas a pantalla completa de la página, sumado al orbe
+         y a las estrellas: tres capas de composición del tamaño del viewport,
+         que en Retina son cuatro veces los píxeles. En móvil ya no corría
+         (el CSS lo escondía), pero en Mac seguía creándose y dibujando sus
+         cinco planetas. Ahora directamente no existe. */
+      if (MODO_LIGERO) return;
+
+      var pcv = document.createElement('canvas');
+      pcv.id = 'planetas-canvas';
+      pcv.setAttribute('aria-hidden', 'true');
+      var gcv = document.getElementById('orbe-fondo');
+      if (gcv) gcv.parentNode.insertBefore(pcv, gcv.nextSibling);
+      else document.body.insertBefore(pcv, document.body.firstChild);
+      var pctx = pcv.getContext('2d');
+      var pdpr = Math.min(window.devicePixelRatio || 1, DPR_MAX);
+      var PW = 0, PH = 0;
+
+      var ZMAX = 2.6, ZMIN = 0.42;          /* recorrido en profundidad */
+      var VZ   = 0.055;                     /* velocidad de acercamiento (z por segundo) */
+
+      /* s: tamaño a z=1 · n: partículas · sp: giro · t: momento en la timeline */
+      var PLANETAS = [
+        { s: 0.052, n: 620, sp: 0.0052, t: 0.4, opMax: 0.85 },
+        { s: 0.030, n: 320, sp: 0.0080, t: 1.6, opMax: 0.7  },
+        { s: 0.068, n: 820, sp: 0.0040, t: 2.8, opMax: 0.9  },
+        { s: 0.038, n: 420, sp: 0.0062, t: 4.0, opMax: 0.75 },
+        { s: 0.022, n: 240, sp: 0.0100, t: 5.0, opMax: 0.6  }
+      ];
+      /* En móvil y en modo ligero, menos partículas por planeta */
+      if (ES_MOVIL || MODO_LIGERO) {
+        PLANETAS.forEach(function(p) { p.n = cuantasPart(p.n); });
+      }
+
+      /* Reubica un planeta en el fondo, listo para volver a acercarse */
+      function reaparecer(p, z) {
+        p.z = z;
+        var a = Math.random() * 6.28;
+        var r = 0.3 + Math.random() * 0.42;
+        p.wx = Math.cos(a) * r;
+        p.wy = Math.sin(a) * r * 0.72;
+      }
+
+      PLANETAS.forEach(function(p, idx) {
+        p.op = 0; p.ang = Math.random() * 6.28; p.scatter = 0; p.objetivo = 0;
+        p.tilt = Math.random() * 6.28;
+        p.vtilt = 0.1 + Math.random() * 0.12;
+        /* Escalonados en profundidad para que nunca lleguen todos juntos */
+        reaparecer(p, ZMIN + ((idx + 0.5) / PLANETAS.length) * (ZMAX - ZMIN));
+
+        p.pts = [];
+        var phi = Math.PI * (3 - Math.sqrt(5));
+        for (var i = 0; i < p.n; i++) {
+          var y = 1 - (i / (p.n - 1)) * 2;
+          var rad = Math.sqrt(Math.max(0, 1 - y * y));
+          var th = phi * i;
+          var dx = Math.random() - 0.5, dy = Math.random() - 0.5, dz = Math.random() - 0.5;
+          var dl = Math.hypot(dx, dy, dz) || 1;
+          /* Radio con ruido: rompe la regularidad de la espiral */
+          var jit = 0.9 + Math.random() * 0.22;
+          var rnd = Math.random();
+          p.pts.push({
+            x: Math.cos(th) * rad * jit, y: y * jit, z: Math.sin(th) * rad * jit,
+            dx: dx / dl, dy: dy / dl, dz: dz / dl,
+            d: 0.5 + Math.random() * 1.6,
+            /* br 2 = destello blanco · 1 = lila claro · 0 = lila base */
+            br: rnd < 0.07 ? 2 : (rnd < 0.3 ? 1 : 0),
+            g: 0.5 + Math.random() * Math.random() * 1.5,
+            fase: Math.random() * 6.28,
+            vel: 0.5 + Math.random() * 1.6
+          });
+        }
+      });
+
+      function pResize() {
+        PW = window.innerWidth; PH = window.innerHeight;
+        pcv.width = PW * pdpr; pcv.height = PH * pdpr;
+        pctx.setTransform(pdpr, 0, 0, pdpr, 0, 0);
+        PLANETAS.forEach(function(p) { p.R0 = Math.min(PW, PH) * p.s; });
+      }
+      pResize();
+      alRedimensionar(pResize);
+
+      /* Hover (se desarman) + parallax con el puntero */
+      var ppX = 0, ppY = 0, ptX = 0, ptY = 0, pmx = -9999, pmy = -9999;
+      window.addEventListener('mousemove', function(e) {
+        pmx = e.clientX; pmy = e.clientY;
+        ptX = pmx / (window.innerWidth  || 1) - 0.5;
+        ptY = pmy / (window.innerHeight || 1) - 0.5;
+      }, { passive: true });
+
+      var pPrev = 0;
+      function pTick(ts) {
+        var tt = ts * 0.001;
+        var dt = pPrev ? Math.min(0.05, (ts - pPrev) / 1000) : 0.016;
+        pPrev = ts;
+
+        pctx.clearRect(0, 0, PW, PH);
+        ppX += (ptX - ppX) * 0.045;
+        ppY += (ptY - ppY) * 0.045;
+
+        for (var i = 0; i < PLANETAS.length; i++) {
+          var p = PLANETAS[i];
+          p.ang += p.sp;
+
+          /* Viaje en Z: se acercan lentamente y reaparecen al fondo */
+          p.z -= VZ * dt;
+          if (p.z <= ZMIN) reaparecer(p, ZMAX);
+
+          /* Cuanto más cerca, más grande y más desplazado del centro */
+          var esc = 1 / p.z;
+          p.R = p.R0 * esc;
+          p.cx = PW / 2 + p.wx * PW * esc - ppX * (16 + esc * 46);
+          p.cy = PH / 2 + p.wy * PH * esc - ppY * (16 + esc * 46);
+
+          /* Aparece al fondo y se desvanece al pasar de largo */
+          var vida = 1;
+          if (p.z > 2.05)      vida = (ZMAX - p.z) / (ZMAX - 2.05);
+          else if (p.z < 0.85) vida = (p.z - ZMIN) / (0.85 - ZMIN);
+          if (vida < 0) vida = 0; else if (vida > 1) vida = 1;
+
+          var opTotal = p.op * vida;
+          if (opTotal < 0.01) continue;
+
+          var d = Math.hypot(pmx - p.cx, pmy - p.cy);
+          p.objetivo = d < p.R * 2.1 ? 1 : 0;
+          p.scatter += (p.objetivo - p.scatter) * 0.07;
+
+          var ca = Math.cos(p.ang), sa = Math.sin(p.ang);
+          /* Cabeceo lento del eje: el planeta muestra polos y ecuador */
+          var tl = Math.sin(tt * p.vtilt + p.tilt) * 0.34;
+          var ct = Math.cos(tl), st = Math.sin(tl);
+          var sc = p.scatter;
+
+          /* Halo de fondo: llena los huecos entre partículas */
+          var gl = pctx.createRadialGradient(p.cx, p.cy, 0, p.cx, p.cy, p.R * (1.7 + sc));
+          var ga = opTotal * 0.3 * (1 - sc * 0.7);
+          gl.addColorStop(0,    'rgba(176,130,255,' + (ga * 0.85).toFixed(3) + ')');
+          gl.addColorStop(0.42, 'rgba(138,80,220,'  + (ga * 0.42).toFixed(3) + ')');
+          gl.addColorStop(0.72, 'rgba(106,58,199,'  + (ga * 0.14).toFixed(3) + ')');
+          gl.addColorStop(1,    'rgba(106,58,199,0)');
+          pctx.fillStyle = gl;
+          pctx.beginPath();
+          pctx.arc(p.cx, p.cy, p.R * (1.7 + sc), 0, 6.2832);
+          pctx.fill();
+
+          for (var j = 0; j < p.pts.length; j++) {
+            var q = p.pts[j];
+            /* Rotación sobre el eje Y */
+            var rx = q.x * ca + q.z * sa;
+            var rz0 = -q.x * sa + q.z * ca;
+            /* Cabeceo sobre X: inclina el eje y aporta volumen */
+            var ry = q.y * ct - rz0 * st;
+            var rz = q.y * st + rz0 * ct;
+            var disp = sc * q.d * p.R * 1.5;
+            /* Perspectiva interna: lo cercano se agranda */
+            var persp = 1 + rz * 0.16;
+            var sx = p.cx + (rx * p.R * persp) + q.dx * disp;
+            var sy = p.cy + (ry * p.R * persp) + q.dy * disp;
+            if (sx < -6 || sx > PW + 6 || sy < -6 || sy > PH + 6) continue;
+
+            var prof = (rz + 1) / 2;
+            var pulso = 0.75 + 0.25 * Math.sin(tt * q.vel + q.fase);
+            var a = opTotal * (0.26 + prof * 0.74) * (1 - sc * 0.55) * q.g * pulso;
+            if (a <= 0.012) continue;
+            if (a > 1) a = 1;
+            var rr = (0.32 + prof * 0.42) * esc * (1 - sc * 0.3) * (q.br === 2 ? 1.5 : 1);
+            pctx.beginPath();
+            pctx.arc(sx, sy, rr, 0, 6.2832);
+            pctx.fillStyle = q.br === 2
+              ? 'rgba(245,238,255,' + a.toFixed(3) + ')'
+              : (q.br === 1
+                  ? 'rgba(196,158,255,' + a.toFixed(3) + ')'
+                  : 'rgba(138,80,220,' + a.toFixed(3) + ')');
+            pctx.fill();
+          }
+        }
+      }
+
+      /* Solo se dibuja mientras alguna de sus dos secciones está en pantalla.
+         Antes seguía corriendo toda la página, y en móvil incluso con el
+         canvas en display:none. */
+      var pZonas = [];
+      ['.vision-section', '.soluciones-wrapper'].forEach(function(sel, idx) {
+        var el = document.querySelector(sel);
+        if (!el) return;
+        pZonas[idx] = false;
+        new IntersectionObserver(function(e) {
+          pZonas[idx] = e[0].isIntersecting;
+        }, { rootMargin: '250px' }).observe(el);
+      });
+
+      LOOP.add(pTick, function() {
+        if (ES_MOVIL) return false;                 /* el canvas está oculto */
+        if (pZonas.indexOf(true) === -1) { pPrev = 0; return false; }
+        return parseFloat(pcv.style.opacity || '1') >= 0.01;
+      });
+
+      /* Se encienden solos al entrar la sección Visión, uno detrás de otro.
+         Antes se encendían con el scroll dentro de la sección; ahora la
+         sección mide una pantalla y no hay recorrido que repartir. */
+      var tlPlanetas = gsap.timeline({ paused: true });
+      PLANETAS.forEach(function(p, i) {
+        tlPlanetas.to(p, { op: p.opMax, duration: 0.9, ease: 'power2.out' }, i * 0.22);
+      });
+
+      ScrollTrigger.create({
+        trigger: '.vision-section',
+        start: ES_MOVIL ? 'top 95%' : 'top 78%',
+        onEnter:     function() { tlPlanetas.play(); },
+        onEnterBack: function() { tlPlanetas.play(); },
+        onLeaveBack: function() { tlPlanetas.pause(0); }
+      });
+    })();
+
+
+    /* ── SECCIÓN 4: SOLUCIONES ── */
+    var solWrapper  = document.querySelector('.soluciones-wrapper');
+    var solTitulo   = document.getElementById('sol-titulo');
+    var solSubtitulo = document.getElementById('sol-subtitulo');
+    var solCards    = ['#sol-c1','#sol-c2','#sol-c3','#sol-c4'];
+
+    gsap.set(solTitulo,    { opacity: 0, y: 20 });
+    gsap.set(solSubtitulo, { opacity: 0, y: 15 });
+
+    /* Posiciones horizontales: alternan izquierda y derecha. Eran cinco
+       (3 y 2); al sacar Transformación digital quedan cuatro, 2 y 2. */
+    var solPositions = [
+      { x: '19%',  side: 'left'  },
+      { x: '19%',  side: 'right' },
+      { x: '19%',  side: 'left'  },
+      { x: '19%',  side: 'right' },
+    ];
+
+    solCards.forEach(function(id, i) {
+      var el = document.querySelector(id);
+      gsap.set(el, { opacity: 1, y: '105vh' });
+    });
+
+    /* Dónde termina la secuencia de cards. Depende de si el encaje de scroll
+       está activo, porque son dos situaciones distintas:
+
+       · CON encaje (Windows/Chrome): el navegador no deja descansar en el
+         medio de la sección, así que la animación tiene que caber dentro de
+         la mitad alcanzable. 'bottom bottom' la termina justo cuando el
+         sticky se despega, a los 100vh de una sección de 200: entra exacta.
+         La pantalla vacía que viene después la recorre el propio salto del
+         encaje, así que no se percibe.
+
+       · SIN encaje (Mac, Safari, teléfono): no hay nada que empuje, y esos
+         100vh finales sí se ven. Por eso ahí la sección es más corta y la
+         secuencia se estira hasta que termina de salir de pantalla. */
+    var SNAP_ACTIVO = !ES_MOVIL && !document.documentElement.classList.contains('es-mac');
+
+    var tlSol = gsap.timeline({
+      scrollTrigger: {
+        trigger: solWrapper,
+        start: 'top top',
+        end: SNAP_ACTIVO ? 'bottom bottom' : 'bottom top',
+        scrub: true,
+        invalidateOnRefresh: true,
+        refreshPriority: 3,
+      }
+    });
+
+    /* La pantalla no se desliza: el sticky compensa su recorrido de entrada */
+    gsap.fromTo('.soluciones-sticky', { opacity: 0 },
+      { opacity: 1, ease: 'none', immediateRender: false,
+        scrollTrigger: { trigger: '.soluciones-wrapper', start: 'top bottom', end: 'top 76%', scrub: true } });
+
+    /* Acá había una compensación: mientras la sección se acercaba, su
+       contenido se desplazaba 100vh hacia arriba para quedar quieto en
+       pantalla. En la práctica hacía dos cosas malas.
+
+       Una: el sticky tiene overflow:hidden, así que ese contenido subido
+       quedaba recortado por la caja. El título no se veía entero hasta el
+       final del recorrido: aparecía de a poco, empujado por el borde del
+       recorte. Eso era el tramo largo entre "Nuestra visión" y la primera
+       card.
+
+       Dos: el desplazamiento lo escribía GSAP en el hilo principal mientras
+       el scroll lo resolvía el compositor. En Mac los dos se desfasan un
+       cuadro y el título vibraba.
+
+       Sin compensación la sección entra como cualquier otra —se ve llegar—
+       y cuando el borde de arriba toca el del viewport queda fija y arrancan
+       las cards. No hay transform atado al scroll, así que no hay nada que
+       pueda desfasarse. */
+
+    /* Título y subtítulo aparecen con animación propia, sin deslizarse */
+    gsap.to([solTitulo, solSubtitulo], {
+      opacity: 1, y: 0, duration: 0.7, ease: 'power2.out', stagger: 0.18,
+      scrollTrigger: { trigger: solWrapper, start: 'top 62%', end: 'bottom 40%', toggleActions: 'play reverse play reverse' }
+    });
+
+    /* Cards subiendo sin detenerse, layout 3 izquierda 2 derecha.
+       El destino es -85vh y no -110vh: a -85vh la card ya salió por arriba,
+       así que con -110vh el tween seguía corriendo un buen rato después de
+       que dejara de verse. Ese sobrante era la pantalla vacía al final de
+       la sección. Ahora cada card termina justo cuando desaparece. */
+    solCards.forEach(function(id, i) {
+      /* El 0.40 es la separación entre una card y la siguiente. Con 0.26
+         quedaban casi pegadas: a 190vh de recorrido en 2.4 de duración, la
+         distancia entre dos cards era 0.26/2.4 × 190 ≈ 21vh, o sea unos
+         200 px en una pantalla normal, menos que el alto de una card.
+         Con 0.40 la distancia pasa a ≈ 32vh. */
+      /* La card sale de pantalla cuando su borde de abajo cruza el cero:
+         a -30vh en escritorio (mide unos 30vh) y a -16vh en el teléfono
+         (mide 16vh). Llevarla hasta -85vh era animar por veinte segundos
+         algo que ya nadie veía, y ese sobrante quedaba como sección vacía.
+         Se le deja un poco de margen y nada más. */
+      tlSol.to(id, {
+        y: ES_MOVIL ? '-30vh' : '-45vh',
+        ease: 'none',
+        duration: 2.1
+      }, 0.15 + i * 0.40);
+    });
+
+    /* El título se desliza hacia arriba junto con las últimas cards */
+    tlSol.to('.soluciones-header', {
+      y: '-42vh', opacity: 0, ease: 'power2.in', duration: 0.55
+    }, 3.0);
+
+    /* ── SECCIÓN 4: CÓMO TRABAJAMOS — CONSTELACIÓN CON PROFUNDIDAD ──
+       Los 4 íconos flotan dispersos, cada uno con su profundidad (escala,
+       opacidad y desenfoque propios). El scroll mueve el foco de uno al
+       siguiente: el enfocado viaja al centro, crece y muestra su texto,
+       rodeado de chispas dibujadas en el canvas. */
+    var constelSection = document.querySelector('.constel-sticky');
+    var constelCv      = document.getElementById('constel-canvas');
+    var constelItems   = [1,2,3,4].map(function(n){ return document.getElementById('cn'+n); });
+
+    /* En el teléfono la constelación se reemplaza por una cuadrícula de dos
+       por dos: los cuatro íconos quietos, sin profundidad, sin flotación y
+       sin las líneas del canvas. En una pantalla angosta la dispersión no se
+       entendía y además era el efecto más caro de la sección. El click sigue
+       abriendo la misma ficha. */
+    var CONSTEL_SIMPLE = ES_MOVIL;
+    var constelInner   = document.getElementById('constel-inner');
+    if (CONSTEL_SIMPLE && constelInner) constelInner.classList.add('constel-simple');
+
+    /* Lo que muestra la ficha de cada etapa. El botón lleva a su bloque
+       dentro de la página "Cómo trabajamos". */
+    var ETAPAS = [
+      /* Los textos salen de partes/textos.php como en el resto del sitio.
+         json_encode se encarga de las comillas y los acentos. */
+      { num: '01', tit: "We understand the business", txt: "Before designing a solution, we work out what needs to change: we look at goals, processes, platforms and challenges to find where the opportunities are.", ancla: 'entendemos' },
+      { num: '02', tit: "We design the strategy", txt: "We map the route before choosing the technology: the priorities, capabilities and solutions needed to reach the business goals.", ancla: 'estrategia' },
+      { num: '03', tit: "We build the solution", txt: "We turn the strategy into working capabilities, bringing technology, data and artificial intelligence together on platforms built to evolve.", ancla: 'desarrollamos' },
+      { num: '04', tit: "We keep evolving", txt: "We measure results, fold in what we learn and adjust the solutions to meet new needs, new data and new opportunities.", ancla: 'evolucionamos' }
+    ];
+
+    var cficha  = document.getElementById('constel-ficha');
+    var cfImg   = document.getElementById('constel-ficha-img');
+    var cfNum   = document.getElementById('constel-ficha-num');
+    var cfTit   = document.getElementById('constel-ficha-tit');
+    var cfTxt   = document.getElementById('constel-ficha-txt');
+    var cfBtn   = document.getElementById('constel-ficha-btn');
+    var cfCerrar = document.getElementById('constel-cerrar');
+
+    function abrirFicha(i) {
+      var e = ETAPAS[i], ic = constelItems[i].querySelector('img');
+      cfImg.src = ic ? ic.getAttribute('src') : '';
+      cfImg.alt = e.tit;
+      cfNum.textContent = e.num;
+      cfTit.textContent = e.tit;
+      cfTxt.textContent = e.txt;
+      cfBtn.href = 'como-trabajamos.html#' + e.ancla;
+      cficha.classList.add('abierta');
+      cficha.setAttribute('aria-hidden', 'false');
+    }
+
+    function cerrarFicha() {
+      cficha.classList.remove('abierta');
+      cficha.setAttribute('aria-hidden', 'true');
+    }
+    var cctx = constelCv.getContext('2d');
+    var cdpr = Math.min(window.devicePixelRatio || 1, DPR_MAX);
+    var CW = 0, CH = 0;
+
+    /* Foco por hover: cada ícono tiene su propio valor 0→1 que se acerca
+       suavemente al objetivo (1 si el mouse está encima). Sin ciclo automático:
+       la constelación queda quieta y el usuario elige qué mirar. */
+    var focoObj = [0, 0, 0, 0];
+    var focoVal = [0, 0, 0, 0];
+    var proy = [];
+
+    /* Dos niveles: el hover solo ilumina el ícono (queda en su lugar) y el
+       click lo amplía llevándolo al centro. Volver a clickearlo lo cierra. */
+    var iluObj = [0, 0, 0, 0];
+    var iluVal = [0, 0, 0, 0];
+    var activo = -1;
+
+    constelItems.forEach(function(el, idx) {
+      el.addEventListener('pointerenter', function() { iluObj[idx] = 1; });
+      el.addEventListener('pointerleave', function() { iluObj[idx] = 0; });
+      el.addEventListener('click', function(ev) {
+        ev.stopPropagation();
+        activo = (activo === idx) ? -1 : idx;
+        if (activo === -1) cerrarFicha(); else abrirFicha(idx);
+      });
+    });
+
+    cfCerrar.addEventListener('click', function(ev) {
+      ev.stopPropagation();
+      activo = -1;
+      cerrarFicha();
+    });
+    cficha.addEventListener('click', function(ev) { ev.stopPropagation(); });
+    /* Un click en cualquier otro lado, o Escape, la cierran */
+    document.addEventListener('click', function() {
+      if (activo !== -1) { activo = -1; cerrarFicha(); }
+    });
+    document.addEventListener('keydown', function(ev) {
+      if (ev.key === 'Escape' && activo !== -1) { activo = -1; cerrarFicha(); }
+    });
+
+    /* Aparición de la constelación, después del título */
+    var constelFade = { v: 0 };
+
+    /* Chispas: cada ícono tiene su propio grupo orbitando siempre */
+    var POR_ICONO = cuantasPart(9);
+    var CHISPAS = [];
+    for (var ci = 0; ci < POR_ICONO * 4; ci++) {
+      CHISPAS.push({
+        ang:  Math.random() * 6.2832,
+        r:    Math.random(),
+        vel:  (0.18 + Math.random() * 0.42) * (Math.random() < 0.5 ? -1 : 1),
+        vd:   0.5 + Math.random() * 1.2,
+        vb:   0.6 + Math.random() * 1.6,
+        fase: Math.random() * 6.2832,
+        br:   0.35 + Math.random() * Math.random() * 0.75,
+        s:    0.9 + Math.random() * 1.6,
+        tipo: Math.random() < 0.45 ? 1 : 0
+      });
+    }
+
+    /* baseW se leía con offsetWidth DENTRO de renderConstel, que además
+       escribe con gsap.set sobre esos mismos íconos: leer → escribir → leer
+       en cada cuadro es el patrón que obliga al navegador a recalcular el
+       layout de forma sincrónica. El ancho del ícono solo cambia con el
+       tamaño de la ventana, así que se mide acá y se guarda. */
+    var baseW = 100;
+    function resizeConstel() {
+      if (CONSTEL_SIMPLE) return;      /* no hay canvas que medir */
+      CW = constelSection.clientWidth;
+      CH = constelSection.clientHeight;
+      constelCv.width = CW * cdpr; constelCv.height = CH * cdpr;
+      cctx.setTransform(cdpr, 0, 0, cdpr, 0, 0);
+      baseW = constelItems[0].offsetWidth || 100;
+      renderConstel();
+    }
+
+    /* Lugares de reposo: ángulo, distancia relativa y profundidad propios.
+       prof 1 = más cerca (grande y nítido) · 0 = más lejos (chico y difuso) */
+    /* Disposición: línea horizontal en zig zag. dx/dy son fracciones del
+       radio, prof es la profundidad (escala, luz y nitidez en reposo). */
+    var SLOTS = [
+      { dx: -1.00, dy:  0.60, prof: 0.76 },
+      { dx: -0.34, dy: -0.72, prof: 0.28 },
+      { dx:  0.34, dy:  0.68, prof: 0.66 },
+      { dx:  1.00, dy: -0.56, prof: 0.40 }
+    ];
+
+    function renderConstel() {
+      if (CONSTEL_SIMPLE || !CW) return;
+      var cx = CW / 2, cy = CH * 0.56;
+      var t  = performance.now() * 0.001;
+      cctx.clearRect(0, 0, CW, CH);
+      proy.length = 0;
+
+      /* Ancho de la línea y amplitud del zig zag */
+      var Rx = Math.min(CW * 0.25, 375, CW / 2 - baseW * 0.85 - 20);
+      var Ry = Math.min(CH * 0.135, 128);
+
+      if (constelFade.v < 0.6 && activo !== -1) { activo = -1; cerrarFicha(); }
+
+      /* Easing de ambos niveles. focoMax indica si hay alguno ampliado,
+         para apartar levemente a los demás */
+      var focoMax = 0;
+      for (var f = 0; f < 4; f++) {
+        focoObj[f] = (f === activo) ? 1 : 0;
+        focoVal[f] += (focoObj[f] - focoVal[f]) * 0.10;
+        if (Math.abs(focoObj[f] - focoVal[f]) < 0.001) focoVal[f] = focoObj[f];
+        if (focoVal[f] > focoMax) focoMax = focoVal[f];
+        iluVal[f] += (iluObj[f] - iluVal[f]) * 0.16;
+        if (Math.abs(iluObj[f] - iluVal[f]) < 0.001) iluVal[f] = iluObj[f];
+      }
+
+      for (var i = 0; i < 4; i++) {
+        var foco = focoVal[i];
+        foco = foco * foco * (3 - 2 * foco);          /* suavizado */
+        var ilum = iluVal[i];
+        ilum = ilum * ilum * (3 - 2 * ilum);
+        var brillo = Math.max(foco, ilum);            /* luz y nitidez */
+
+        /* Posición en la línea, con flotación lenta propia. Al ampliarse uno,
+           los otros se abren para no quedar tapados por el del centro. */
+        var sl = SLOTS[i];
+        var grupo = 1 + focoMax * 0.22;
+        var rx = cx + sl.dx * Rx * grupo + Math.sin(t * 0.47 + i * 1.7) * 12;
+        var ry = cy + sl.dy * Ry * (1 + Math.sin(t * 0.19 + i * 1.3) * 0.07)
+                    + Math.cos(t * 0.41 + i * 2.3) * 10;
+
+        /* Al abrirse su ficha crece en el lugar: el centro lo ocupa la tarjeta */
+        var sx = rx, sy = ry;
+        /* Cada uno conserva su profundidad: los cercanos más grandes, nítidos
+           y opacos que los lejanos. Con el hover se acerca a la cámara. */
+        var escBase = (0.52 + sl.prof * 0.54) * (1 + ilum * 0.10);
+        var esc = escBase + (1.28 - escBase) * foco;
+        var luzBase = 0.34 + sl.prof * 0.44;
+        /* Mientras uno está ampliado, los demás bajan la opacidad y se
+           desenfocan un poco más para no competir con el del centro */
+        var atenua = 1 - focoMax * (1 - Math.max(foco, ilum * 0.9)) * 0.68;
+        var luz = (luzBase + (1 - luzBase) * brillo) * constelFade.v * atenua;
+        var desenfoque = (1 - brillo) * (2.4 - sl.prof * 2.05)
+                       + focoMax * (1 - Math.max(foco, ilum)) * 1.1;
+
+        gsap.set(constelItems[i], {
+          x: sx, y: sy, xPercent: -50, yPercent: -50,
+          scale: esc,
+          opacity: luz,
+          /* El desenfoque se redondea a medio píxel: así el valor deja de
+             cambiar en cada cuadro y el navegador no repinta el ícono salvo
+             cuando de verdad cambia la profundidad. */
+          filter: 'blur(' + (Math.round(desenfoque * 2) / 2) + 'px)',
+          zIndex: Math.min(6, 3 + Math.round(sl.prof * 2) + Math.round(Math.max(foco, ilum) * 2)),
+          pointerEvents: constelFade.v > 0.6 ? 'auto' : 'none'
+        });
+
+        proy.push({ x: sx, y: sy, luz: luz, foco: foco, ilum: ilum,
+                    prof: sl.prof, rad: baseW * esc * 0.5 });
+      }
+
+      /* Líneas que unen los nodos en orden, como una constelación.
+         Se dibujan primero, en modo normal, para que queden por detrás de
+         las luces. Al ampliar un ícono se atenúan: si no, la línea que lo
+         sigue al centro se vuelve el elemento más largo de la pantalla. */
+      cctx.globalCompositeOperation = 'source-over';
+      cctx.lineCap = 'round';
+      var atenuaLinea = 1 - focoMax * 0.78;
+      for (var k = 0; k < proy.length - 1; k++) {
+        var A = proy[k], B = proy[k + 1];
+        var aA = A.luz * atenuaLinea * 0.55;
+        var aB = B.luz * atenuaLinea * 0.55;
+        if (aA < 0.015 && aB < 0.015) continue;
+
+        /* Arranca y termina en el borde del ícono, no en su centro */
+        var dx = B.x - A.x, dy = B.y - A.y;
+        var d  = Math.sqrt(dx * dx + dy * dy) || 1;
+        var ux = dx / d, uy = dy / d;
+        var x1 = A.x + ux * (A.rad * 0.92), y1 = A.y + uy * (A.rad * 0.92);
+        var x2 = B.x - ux * (B.rad * 0.92), y2 = B.y - uy * (B.rad * 0.92);
+        if ((x2 - x1) * ux + (y2 - y1) * uy <= 0) continue;   /* se tocan */
+
+        var gl = cctx.createLinearGradient(x1, y1, x2, y2);
+        gl.addColorStop(0,    'rgba(160,210,50,' + aA.toFixed(3) + ')');
+        gl.addColorStop(0.5,  'rgba(150,120,225,' + (((aA + aB) / 2) * 0.8).toFixed(3) + ')');
+        gl.addColorStop(1,    'rgba(160,210,50,' + aB.toFixed(3) + ')');
+        cctx.strokeStyle = gl;
+        cctx.lineWidth = 1.1;
+        cctx.beginPath();
+        cctx.moveTo(x1, y1);
+        cctx.lineTo(x2, y2);
+        cctx.stroke();
+      }
+
+      cctx.globalCompositeOperation = 'lighter';
+
+      /* Luz violeta detrás: tenue al iluminarse con el hover, plena al
+         ampliarse con el click */
+      for (var b = 0; b < proy.length; b++) {
+        var nb = proy[b];
+        var gl = Math.max(nb.foco, nb.ilum * 0.55) * constelFade.v;
+        if (gl < 0.02) continue;
+        var Rg = nb.rad * (2.5 + nb.foco * 0.7 + Math.sin(t * 1.05) * 0.16);
+        var grd = cctx.createRadialGradient(nb.x, nb.y, nb.rad * 0.12, nb.x, nb.y, Rg);
+        grd.addColorStop(0,    'rgba(163, 116, 245,' + (0.50 * gl).toFixed(3) + ')');
+        grd.addColorStop(0.28, 'rgba(120, 66, 214,'  + (0.28 * gl).toFixed(3) + ')');
+        grd.addColorStop(0.62, 'rgba(78, 40, 152,'   + (0.10 * gl).toFixed(3) + ')');
+        grd.addColorStop(1,    'rgba(57, 31, 82, 0)');
+        cctx.fillStyle = grd;
+        cctx.beginPath();
+        cctx.arc(nb.x, nb.y, Rg, 0, 6.2832);
+        cctx.fill();
+      }
+
+      /* Partículas flotando alrededor de cada ícono: tenues siempre,
+         más brillantes al iluminarse y plenas al ampliarse */
+      for (var p = 0; p < proy.length; p++) {
+        var nodo = proy[p];
+        if (!nodo || nodo.luz < 0.04) continue;
+        var rad = nodo.rad;
+        var pico = Math.max(nodo.foco, nodo.ilum * 0.85);
+        var base = nodo.luz * (0.40 + 0.60 * pico);
+        var tam  = 0.42 + nodo.prof * 0.30 + pico * 0.62;
+        for (var q = 0; q < POR_ICONO; q++) {
+          var ch = CHISPAS[p * POR_ICONO + q];
+          var ang = ch.ang + t * ch.vel;
+          var orb = rad * (1.18 + ch.r * 0.75) + Math.sin(t * ch.vd + ch.fase) * rad * 0.07;
+          var px = nodo.x + Math.cos(ang) * orb;
+          var py = nodo.y + Math.sin(ang) * orb * 0.82;
+          var a2 = base * ch.br * (0.55 + 0.45 * Math.sin(t * ch.vb + ch.fase));
+          if (a2 <= 0.02) continue;
+          cctx.fillStyle = ch.tipo
+            ? 'rgba(214,190,255,' + a2.toFixed(3) + ')'
+            : 'rgba(160,210,50,' + a2.toFixed(3) + ')';
+          cctx.beginPath();
+          cctx.arc(px, py, ch.s * tam, 0, 6.2832);
+          cctx.fill();
+        }
+      }
+      cctx.globalCompositeOperation = 'source-over';
+    }
+
+    /* Ocupa una pantalla: ya no hay timeline atada al scroll. */
+
+    /* Secuencia propia: al llegar la sección aparece el título, se apagan
+       los planetitas para que no compitan, y detrás entra la constelación.
+       Nada de esto consume scroll: la sección mide una pantalla. */
+    gsap.set('#constel-inner', { y: 0, scale: 1, opacity: 1 });
+
+    /* El apagado de los planetas solo se agrega si los planetas existen:
+       en modo ligero no se crean y GSAP se quejaría de un target vacío. */
+    var tlConstelEntrada = gsap.timeline({ paused: true })
+      .fromTo('#constel-titulo', { opacity: 0 },
+                                 { opacity: 1, duration: 0.55, ease: 'power2.out' });
+    if (document.getElementById('planetas-canvas')) {
+      tlConstelEntrada.to('#planetas-canvas', { opacity: 0, duration: 0.5, ease: 'none' }, '<');
+    }
+    if (CONSTEL_SIMPLE) {
+      /* Los cuatro aparecen en orden, uno detrás de otro */
+      tlConstelEntrada.fromTo(constelItems,
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', stagger: 0.09 }, '-=0.2');
+    } else {
+      tlConstelEntrada.fromTo(constelFade, { v: 0 },
+        { v: 1, duration: 0.9, ease: 'power2.out', onUpdate: renderConstel }, '-=0.2');
+    }
+
+    ScrollTrigger.create({
+      trigger: '.constel-section',
+      /* En el teléfono se dispara casi al asomar: si no, la sección subía
+         35vh completamente en blanco antes de que apareciera nada. */
+      start: ES_MOVIL ? 'top 92%' : 'top 65%',
+      onEnter:     function() { tlConstelEntrada.play(); },
+      onEnterBack: function() { tlConstelEntrada.play(); },
+      onLeaveBack: function() {
+        tlConstelEntrada.pause(0);
+        if (document.getElementById('planetas-canvas')) {
+          gsap.set('#planetas-canvas', { opacity: 1 });
+        }
+        renderConstel();
+      }
+    });
+
+
+    resizeConstel();
+    alRedimensionar(resizeConstel);
+    window.addEventListener('load', resizeConstel);
+
+    /* Loop propio: las chispas siguen flotando aunque el scroll esté quieto.
+       Solo corre mientras la sección está en pantalla. */
+    if (!CONSTEL_SIMPLE) (function() {
+      var vivo = false;
+      new IntersectionObserver(function(e) {
+        vivo = e[0].isIntersecting;
+      }, { rootMargin: '120px' }).observe(constelSection);
+      LOOP.add(renderConstel, function() { return vivo; });
+    })();
+
+    /* ── SECCIÓN 7: GLOBO 3D ── */
+    (function() {
+      if (!window.THREE) return;
+      var cont   = document.querySelector('.globo-container');
+      var canvas = document.getElementById('globo-canvas');
+      if (!cont || !canvas) return;
+
+      /* El antialias de WebGL multiplica el trabajo por muestra: en modo
+         ligero se apaga, que en un globo de puntos casi no se nota. */
+      var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true,
+                                               antialias: !MODO_LIGERO,
+                                               powerPreference: 'low-power' });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, DPR_MAX));
+      var scene  = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera(38, 1, 0.1, 10);
+      /* Alejada para que arcos y partículas desplazadas no toquen el borde
+         del canvas (era lo que producía el recorte rectangular) */
+      camera.position.z = 4.3;
+
+      var globoRepulsion = null;
+      var mouseDentro = false, mNdcX = 0, mNdcY = 0;
+      var _q = new THREE.Quaternion();
+      var _p = new THREE.Vector3();
+
+      var globo = new THREE.Group();
+      globo.rotation.x = 0.18;
+      /* Con rotation.y = R (grados), la longitud que mira a cámara es -90 - R.
+         R = -10° deja el continente americano (lon ≈ -80) al frente. */
+      var ANG_AMERICA = -10 * Math.PI / 180;
+      var modoAmerica = false;
+      window.globoModoAmerica = function(activo) { modoAmerica = activo; };
+      globo.rotation.y = ANG_AMERICA;
+      scene.add(globo);
+
+      function latLon(lat, lon, r) {
+        var phi = (90 - lat) * Math.PI / 180;
+        var theta = (lon + 180) * Math.PI / 180;
+        return new THREE.Vector3(
+          -r * Math.sin(phi) * Math.cos(theta),
+           r * Math.cos(phi),
+           r * Math.sin(phi) * Math.sin(theta)
+        );
+      }
+
+      /* Esfera interior: oculta el reverso y deja traslucir el fondo */
+      var esfera = new THREE.Mesh(
+        new THREE.SphereGeometry(0.985, 48, 48),
+        new THREE.MeshBasicMaterial({ color: 0x140a24, transparent: true, opacity: 0.42 })
+      );
+      esfera.renderOrder = 0;
+      globo.add(esfera);
+
+      /* Continentes: partículas violeta desde la máscara */
+      var img = new Image();
+      img.src = '/assets/land-mask.png';
+      img.onload = function() {
+        var W = img.width, H = img.height;
+        var c2 = document.createElement('canvas'); c2.width = W; c2.height = H;
+        var cx2 = c2.getContext('2d');
+        cx2.drawImage(img, 0, 0);
+        var data = cx2.getImageData(0, 0, W, H).data;
+        var pos = [], col = [];
+        var base = new THREE.Color(0x8a3ce0), brillo = new THREE.Color(0xc07df0);
+        for (var y = 0; y < H; y++) {
+          var lat = 90 - (y + 0.5) * 180 / H;
+          var paso = 1 / Math.max(0.35, Math.cos(lat * Math.PI / 180));
+          for (var x = 0; x < W; x += paso) {
+            var xi = Math.floor(x);
+            if (data[(y * W + xi) * 4] > 128 && Math.random() < (ES_MOVIL ? 0.4 : (MODO_LIGERO ? 0.62 : 0.85))) {
+              var lon = -180 + (xi + 0.5) * 360 / W;
+              var v = latLon(lat + (Math.random() - 0.5) * 0.4, lon + (Math.random() - 0.5) * 0.4, 1);
+              pos.push(v.x, v.y, v.z);
+              var c = Math.random() < 0.06 ? brillo : base;
+              col.push(c.r, c.g, c.b);
+            }
+          }
+        }
+        var N0 = pos.length / 3;
+        var g = new THREE.BufferGeometry();
+        g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+        g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+        /* Tamaños variados por partícula, como en el orbe del hero.
+           PointsMaterial solo admite un tamaño único, así que va un shader. */
+        var tamanos = new Float32Array(N0);
+        for (var ti = 0; ti < N0; ti++) {
+          /* Distribución sesgada: la mayoría chicas, unas pocas grandes */
+          tamanos[ti] = 0.9 + Math.random() * Math.random() * 2.4;
+        }
+        g.setAttribute('tam', new THREE.Float32BufferAttribute(tamanos, 1));
+
+        var matPuntos = new THREE.ShaderMaterial({
+          uniforms: { uOpacidad: { value: 0.85 } },
+          vertexShader: [
+            'attribute float tam;',
+            'attribute vec3 color;',
+            'varying vec3 vColor;',
+            'void main() {',
+            '  vColor = color;',
+            '  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
+            '  gl_PointSize = tam;',
+            '}'
+          ].join('\n'),
+          fragmentShader: [
+            'uniform float uOpacidad;',
+            'varying vec3 vColor;',
+            'void main() {',
+            '  gl_FragColor = vec4(vColor, uOpacidad);',
+            '}'
+          ].join('\n'),
+          transparent: true,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false
+        });
+        var puntos = new THREE.Points(g, matPuntos);
+        puntos.renderOrder = 1;
+        globo.add(puntos);
+
+        /* ── MORPH A ORBE ──
+           Posiciones destino: esfera uniforme (espiral de Fibonacci). Las
+           mismas partículas del globo se redistribuyen, así que el globo
+           "se convierte" en el orbe en lugar de cambiarse por otro objeto. */
+        var N = pos.length / 3;
+        var origen  = new Float32Array(pos);
+        var destino = new Float32Array(N * 3);
+        var phiOro = Math.PI * (3 - Math.sqrt(5));
+        for (var m = 0; m < N; m++) {
+          var yy = 1 - (m + 0.5) / N * 2;
+          var anillo = Math.sqrt(Math.max(0, 1 - yy * yy));
+          var th = phiOro * m + (Math.random() - 0.5) * 0.55;
+          /* Radio con más dispersión: la superficie deja de leerse como
+             una cáscara compacta y gana profundidad, como el orbe del hero */
+          var rr = 1 + (Math.random() - 0.5) * 0.16;
+          destino[m * 3]     = anillo * Math.cos(th) * rr;
+          destino[m * 3 + 1] = yy * rr;
+          destino[m * 3 + 2] = anillo * Math.sin(th) * rr;
+        }
+
+        var attr = g.getAttribute('position');
+
+        /* Desplazamiento por el puntero: base = mezcla origen/destino, y encima
+           un empuje elástico alrededor del cursor (igual que el orbe del hero) */
+        var desp = new Float32Array(N * 3);
+        var velo = new Float32Array(N * 3);
+        var base = new Float32Array(N * 3);
+        var morphV = 0;
+
+        function calcularBase() {
+          for (var i = 0; i < base.length; i++) {
+            base[i] = origen[i] + (destino[i] - origen[i]) * morphV;
+          }
+        }
+        calcularBase();
+
+        /* Devuelve true si tocó el buffer. Antes escribía y marcaba
+           needsUpdate SIEMPRE, así que Three.js re-subía las N posiciones
+           enteras a la GPU en cada cuadro incluso con el globo en reposo y
+           el mouse en otra pantalla. */
+        var globoQuieto = false;
+        globoRepulsion = function(px, py, pz, hay) {
+          /* Con el puntero afuera y todo ya en su lugar, no hay nada que
+             recalcular: se sale antes de tocar un solo byte. */
+          if (!hay && globoQuieto) return false;
+
+          var arr = attr.array;
+          var RAD = 0.42, R2 = RAD * RAD;
+          var maxDesp = 0;
+          for (var i = 0, j = 0; i < N; i++, j += 3) {
+            if (hay) {
+              var dx = base[j] + desp[j] - px;
+              var dy = base[j + 1] + desp[j + 1] - py;
+              var dz = base[j + 2] + desp[j + 2] - pz;
+              var d2 = dx * dx + dy * dy + dz * dz;
+              if (d2 < R2) {
+                var d = Math.sqrt(d2) || 0.001;
+                var f = (1 - d / RAD);
+                f = f * f * 0.06;
+                velo[j]     += (dx / d) * f;
+                velo[j + 1] += (dy / d) * f;
+                velo[j + 2] += (dz / d) * f;
+              }
+            }
+            /* Resorte blando + rozamiento: vuelve a su lugar sin rebotar */
+            velo[j]     = (velo[j]     - desp[j]     * 0.028) * 0.8;
+            velo[j + 1] = (velo[j + 1] - desp[j + 1] * 0.028) * 0.8;
+            velo[j + 2] = (velo[j + 2] - desp[j + 2] * 0.028) * 0.8;
+            desp[j]     += velo[j];
+            desp[j + 1] += velo[j + 1];
+            desp[j + 2] += velo[j + 2];
+            arr[j]     = base[j]     + desp[j];
+            arr[j + 1] = base[j + 1] + desp[j + 1];
+            arr[j + 2] = base[j + 2] + desp[j + 2];
+
+            var m = (desp[j] < 0 ? -desp[j] : desp[j]) +
+                    (desp[j + 1] < 0 ? -desp[j + 1] : desp[j + 1]) +
+                    (desp[j + 2] < 0 ? -desp[j + 2] : desp[j + 2]);
+            if (m > maxDesp) maxDesp = m;
+          }
+          /* Por debajo de este umbral el desplazamiento es menos de un píxel
+             en pantalla: se da por terminado el retorno y se deja de trabajar. */
+          globoQuieto = !hay && maxDesp < 0.0004;
+          attr.needsUpdate = true;
+          return true;
+        };
+        /* Un morph reacomoda las posiciones base: hay que volver a moverse */
+        window.globoDespertar = function() { globoQuieto = false; };
+
+        window.morphGlobo = function(v) {
+          v = v < 0 ? 0 : (v > 1 ? 1 : v);
+          morphV = v;
+          globoQuieto = false;
+          calcularBase();
+          /* Al volverse orbe se apagan arcos y ciudades, y se aclara el interior */
+          var inv = 1 - v;
+          esfera.material.opacity = 0.42 * inv;
+          for (var q = 0; q < sprites.length; q++) sprites[q].material.opacity = inv;
+          for (var w = 0; w < arcos.length; w++) arcos[w].material.opacity = 0.45 * inv;
+          matPuntos.uniforms.uOpacidad.value = 0.85 + 0.15 * v;
+        };
+      };
+
+      /* Ciudades con glow lima */
+      var ciudades = {
+        cordoba:     [-31.4, -64.2],
+        buenosAires: [-34.6, -58.4],
+        saoPaulo:    [-23.5, -46.6],
+        bogota:      [  4.7, -74.1],
+        costaRica:   [  9.9, -84.1],
+        mexico:      [ 19.4, -99.1],
+        miami:       [ 25.8, -80.2],
+        madrid:      [ 40.4,  -3.7]
+      };
+
+      var glowCanvas = document.createElement('canvas');
+      glowCanvas.width = glowCanvas.height = 64;
+      var gctx = glowCanvas.getContext('2d');
+      var grad = gctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+      grad.addColorStop(0,    'rgba(255,255,255,1)');
+      grad.addColorStop(0.25, 'rgba(160,210,50,0.9)');
+      grad.addColorStop(0.6,  'rgba(160,210,50,0.25)');
+      grad.addColorStop(1,    'rgba(160,210,50,0)');
+      gctx.fillStyle = grad;
+      gctx.fillRect(0, 0, 64, 64);
+      var glowTex = new THREE.CanvasTexture(glowCanvas);
+
+      var sprites = [];
+      Object.keys(ciudades).forEach(function(k, i) {
+        var sp = new THREE.Sprite(new THREE.SpriteMaterial({
+          map: glowTex, transparent: true,
+          blending: THREE.AdditiveBlending, depthWrite: false
+        }));
+        sp.position.copy(latLon(ciudades[k][0], ciudades[k][1], 1.01));
+        sp.scale.setScalar(0.09);
+        sp.userData.fase = i * 0.8;
+        sp.renderOrder = 2;
+        globo.add(sp);
+        sprites.push(sp);
+      });
+
+      /* Arcos lima entre ciudades */
+      var arcos = [];
+      [['cordoba','miami'], ['cordoba','madrid'], ['buenosAires','miami'],
+       ['saoPaulo','madrid'], ['bogota','miami'], ['cordoba','mexico'],
+       ['buenosAires','bogota'], ['cordoba','costaRica']].forEach(function(p) {
+        var a = latLon(ciudades[p[0]][0], ciudades[p[0]][1], 1);
+        var b = latLon(ciudades[p[1]][0], ciudades[p[1]][1], 1);
+        var mid = a.clone().add(b).multiplyScalar(0.5).normalize()
+                   .multiplyScalar(1 + a.distanceTo(b) * 0.38);
+        var geo = new THREE.BufferGeometry().setFromPoints(
+          new THREE.QuadraticBezierCurve3(a, mid, b).getPoints(60));
+        var linea = new THREE.Line(geo, new THREE.LineBasicMaterial({
+          color: 0xa0d232, transparent: true, opacity: 0.45,
+          blending: THREE.AdditiveBlending, depthWrite: false
+        }));
+        linea.renderOrder = 1;
+        globo.add(linea);
+        arcos.push(linea);
+      });
+
+      function resizeGlobo() {
+        var w = cont.clientWidth, h = cont.clientHeight;
+        if (!w || !h) return;
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+      }
+      resizeGlobo();
+      alRedimensionar(resizeGlobo);
+      window.addEventListener('load', resizeGlobo);
+
+      /* Franja suave: 1 dentro de la banda, 0 fuera, con bordes difuminados */
+      function franja(lon, a, b) {
+        var borde = 12;
+        var t = Math.min((lon - a) / borde, (b - lon) / borde, 1);
+        return t < 0 ? 0 : (t > 1 ? 1 : t);
+      }
+
+      /* 1 sobre tierra (lento) · hasta 2.4 sobre océano (rápido) */
+      function factorVelocidad() {
+        var lon = -90 - globo.rotation.y * 180 / Math.PI;
+        lon = ((lon + 180) % 360 + 360) % 360 - 180;
+        var oceano = Math.max(
+          franja(lon, -34, -16),                      /* Atlántico */
+          franja(lon,  52,  70),                      /* Índico occidental */
+          franja(lon, 146, 215),                      /* Pacífico */
+          franja(lon + 360, 146, 215)                 /* Pacífico (al dar la vuelta) */
+        );
+        return 1 + 1.4 * oceano;
+      }
+
+      /* getBoundingClientRect fuerza al navegador a recalcular el layout para
+         responder. Llamarlo en CADA mousemove —con un trackpad de Mac, cientos
+         de veces por segundo, sobre un DOM de tres mil líneas— era uno de los
+         reflows forzados más caros de la página. El evento ahora solo anota
+         dónde está el puntero; la medición se hace una vez por cuadro. */
+      var mClientX = -9999, mClientY = -9999, hayPuntero = false;
+      window.addEventListener('mousemove', function(e) {
+        mClientX = e.clientX; mClientY = e.clientY; hayPuntero = true;
+      }, { passive: true });
+      window.addEventListener('mouseleave', function() {
+        hayPuntero = false; mouseDentro = false;
+      }, { passive: true });
+
+      function ubicarPuntero() {
+        if (!hayPuntero) { mouseDentro = false; return; }
+        var r = cont.getBoundingClientRect();
+        if (!r.width) { mouseDentro = false; return; }
+        mNdcX = ((mClientX - r.left) / r.width) * 2 - 1;
+        mNdcY = -(((mClientY - r.top) / r.height) * 2 - 1);
+        mouseDentro = Math.abs(mNdcX) < 1.35 && Math.abs(mNdcY) < 1.35;
+      }
+
+      /* Render solo mientras la sección está en pantalla */
+      var activo = false;
+      function tickGlobo(t) {
+        if (modoAmerica) {
+          /* En la sección final el globo se queda mostrando América, con un
+             balanceo mínimo. Se busca el camino angular más corto para que
+             no dé vueltas de más al frenar. */
+          var deseado = ANG_AMERICA + Math.sin(t * 0.00022) * 0.10;
+          var dif = ((deseado - globo.rotation.y + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI;
+          globo.rotation.y += dif * 0.022;
+        } else {
+          /* Gira de América hacia el este (Atlántico → África → Asia → China).
+             Sobre océano acelera para no quedarse mucho tiempo en zonas vacías. */
+          globo.rotation.y -= 0.0011 * factorVelocidad();
+        }
+
+        /* Empuje de partículas alrededor del cursor */
+        ubicarPuntero();
+        if (globoRepulsion) {
+          var px = 0, py = 0, pz = 0, hay = false;
+          if (mouseDentro) {
+            var sx = mNdcX * 1.05, sy = mNdcY * 1.05;
+            var r2 = sx * sx + sy * sy;
+            if (r2 < 1.6) {
+              _p.set(sx, sy, Math.sqrt(Math.max(0.02, 1 - Math.min(1, r2))));
+              _q.copy(globo.quaternion).invert();   /* pantalla → espacio del globo */
+              _p.applyQuaternion(_q);
+              px = _p.x; py = _p.y; pz = _p.z; hay = true;
+            }
+          }
+          globoRepulsion(px, py, pz, hay);
+        }
+        var tt = t * 0.002;
+        for (var i = 0; i < sprites.length; i++) {
+          sprites[i].scale.setScalar(0.085 + 0.02 * Math.sin(tt + sprites[i].userData.fase));
+        }
+        renderer.render(scene, camera);
+      }
+      new IntersectionObserver(function(entries) {
+        activo = entries[0].isIntersecting;
+      }, { rootMargin: '150px' }).observe(cont);
+      /* addRapido y no add: el globo tiene que dibujarse al MISMO ritmo al
+         que se mueve su caja.
+
+         '.stats-globo' recibe un transform de GSAP atado al scroll, que se
+         actualiza en cada cuadro de pantalla. El contenido del canvas, en
+         cambio, se dibujaba a 40 por segundo por el tope del modo ligero.
+         Resultado: la caja se desplazaba suave pero los píxeles de adentro
+         llegaban uno o dos cuadros tarde, y eso es lo que se veía vibrar.
+
+         Sale barato: el trabajo caro era volver a subir el buffer entero a
+         la GPU en cada cuadro, y eso ya no pasa cuando el globo está en
+         reposo. Además solo corre mientras la sección está en pantalla. */
+      /* El 'o LOOP.add' es una red de seguridad: si en el servidor quedara
+         una copia vieja de vortex.js sin addRapido, esta línea tiraba un
+         error y con él moría TODO el código que viene después —Plataformas
+         y el cierre quedaban invisibles—. Así, en el peor caso, el globo se
+         dibuja algo más lento y el resto de la página sigue viva. */
+      (LOOP.addRapido || LOOP.add).call(LOOP, tickGlobo, function() { return activo; });
+    })();
+
+    /* ── SECCIONES 7 y 8: NÚMEROS + CIERRE ──
+       Una sola secuencia sobre un sticky:
+       entrada (globo y primer texto) → números → texto sobre el globo →
+       salida de los textos → el globo se convierte en orbe y viaja →
+       entran los textos del cierre. */
+    var statsTrack = document.getElementById('stats-track');
+
+    /* La pantalla no se desliza: el sticky se adelanta 100vh, así su contenido
+       ya está centrado cuando la sección asoma y solo aparecen los elementos */
+    /* Fundido cruzado con Plataformas. Los dos tramos son EL MISMO —el
+       borde de abajo de Plataformas es el borde de arriba del cierre—, así
+       que mientras una baja la otra sube y la suma es siempre 1.
+       Antes el cierre empezaba a aparecer en 'bottom+=35%': cuando
+       Plataformas recién terminaba de encuadrarse, el cierre ya estaba al
+       74% de opacidad encima. */
+    gsap.fromTo('.cierre-sticky', { opacity: 0 },
+      { opacity: 1, ease: 'none', immediateRender: false,
+        scrollTrigger: { trigger: '.cierre-section', start: 'top bottom', end: 'top 62%', scrub: true } });
+
+    /* Misma compensación que en Soluciones, y acá tenía un efecto peor: el
+       cierre NO tiene overflow:hidden, así que su contenido quedaba entero y
+       centrado en pantalla mientras Plataformas todavía estaba ahí. Eso es
+       la superposición entre las dos secciones. Sin compensación el cierre
+       llega desde abajo como corresponde y nunca se pisan. */
+
+    /* ENTRADA: una vez que la sección llega, los elementos aparecen solos y en
+       orden (globo → texto → números → texto sobre el globo). No depende del
+       scroll: se dispara una vez y se revierte si se vuelve hacia arriba. */
+    /* Contadores numéricos.
+       El HTML ya trae el valor final (+250, +600, +130) para que buscadores y
+       usuarios sin JavaScript lo lean correctamente; el conteo desde 0 corre
+       solo en pantalla y arranca justo cuando las cifras aparecen. */
+    var contadoresLanzados = false;
+    function arrancarContadores() {
+      if (contadoresLanzados) return;
+      contadoresLanzados = true;
+      document.querySelectorAll('.stat-numero[data-target]').forEach(function(el) {
+        var target = parseInt(el.getAttribute('data-target'), 10);
+        var final  = el.textContent;
+        var t0 = 0;
+        function paso(ts) {
+          if (!t0) t0 = ts;
+          var p = Math.min(1, (ts - t0) / 1700);
+          var eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = '+' + Math.round(target * eased);
+          if (p < 1) requestAnimationFrame(paso);
+          else el.textContent = final;
+        }
+        el.textContent = '+0';
+        requestAnimationFrame(paso);
+      });
+    }
+
+    var tlEntradaCierre = gsap.timeline({ paused: true })
+      .to('#globo-wrap',   { opacity: 0.6, duration: 0.6, ease: 'power2.out' })
+      .fromTo('#stats-intro-wrap', { opacity: 0, y: 18 },
+                                   { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, '-=0.3')
+      .fromTo('#stats-track-wrap', { opacity: 0, y: 18 },
+                                   { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, '-=0.28')
+      .call(arrancarContadores, null, '<+=0.1')
+      .to('#stats-origen-wrap', { opacity: 1, duration: 0.5, ease: 'power2.out' }, '-=0.22');
+
+    ScrollTrigger.create({
+      trigger: '.cierre-section',
+      /* Antes en 75%: con la compensación el contenido ya estaba centrado
+         ahí. Ahora llega desde abajo, así que a esa altura la secuencia
+         corría fuera de pantalla. */
+      start: 'top 25%',
+      /* Al volver hacia arriba la secuencia se reinicia de golpe, como en
+         la página de Soluciones: no se reproduce en reversa. Reproducirla
+         al revés tarda lo mismo que al derecho, y para cuando termina el
+         scroll ya está en la sección anterior: por eso se cruzaban. */
+      onEnter:      function() { tlEntradaCierre.play(); },
+      onLeaveBack:  function() { tlEntradaCierre.pause(0); }
+    });
+
+    /* ── CUÁNTO SE CORRE EL MUNDITO EN LA SECCIÓN 8 ──
+       Antes era un valor fijo, -34vw. El problema es que el viaje se medía
+       en ancho de ventana pero el bloque que lo contiene está topeado en
+       1080 px: cuanto más angosta la ventana, menos se corría el mundito y
+       más se encimaba con el texto. Por eso en la Mac quedaba pegado.
+
+       Ahora se calcula: se corre exactamente lo necesario para que su borde
+       derecho quede a una distancia cómoda del borde izquierdo del texto,
+       con dos topes —un mínimo para que el movimiento se siga notando y un
+       máximo para que no se vaya por el borde izquierdo de la pantalla—.
+       GSAP la vuelve a llamar en cada refresco por invalidateOnRefresh. */
+    function viajeGlobo() {
+      var caja  = document.querySelector('.stats-globo');
+      var globo = document.getElementById('globo-wrap');
+      var texto = document.querySelector('.cta-contenido');
+      var vw    = window.innerWidth;
+      if (!caja || !globo || !texto) return -vw * 0.34;
+
+      /* Se mide sin desplazamiento: si quedó uno puesto de antes, las
+         medidas saldrían corridas. */
+      var previo = gsap.getProperty(caja, 'x');
+      gsap.set(caja, { x: 0 });
+      var g = globo.getBoundingClientRect();
+      var t = texto.getBoundingClientRect();
+      gsap.set(caja, { x: previo });
+
+      var aire       = Math.max(48, vw * 0.045);
+      var necesario  = (g.right + aire) - t.left;
+      /* En ventanas angostas el mundito y el texto no entran uno al lado del
+         otro. Se le permite asomar un 12% por el borde izquierdo: para
+         entonces ya está atenuado al 60% y se lee como fondo. */
+      var disponible = g.left + g.width * 0.12;
+      var d = Math.max(necesario, vw * 0.30);      /* que el viaje se note */
+      if (d > disponible) d = disponible;          /* que no se salga */
+      return -Math.max(0, d);
+    }
+
+    /* SECUENCIA sobre el sticky */
+    var tlCierre = gsap.timeline({
+      scrollTrigger: {
+        trigger: '.cierre-section',
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: true,
+        invalidateOnRefresh: true,
+        refreshPriority: -1
+      }
+    });
+
+    tlCierre
+      /* 1. Salida suave de los textos de la sección 7 */
+      .to('#stats-origen', { opacity: 0, ease: 'power1.in', duration: 0.6 })
+      .to(['#stats-intro', statsTrack], { opacity: 0, y: -26, ease: 'power1.in', duration: 0.7 }, '-=0.4')
+      /* 2. El globo se convierte en orbe y viaja en diagonal */
+      /* El globo se mantiene como globo (sin transformarse en orbe) y solo
+         viaja en diagonal hacia la izquierda */
+      /* El viaje del globo cierra la secuencia: antes había además una pausa
+         de 1.4 unidades al final, que sobre el recorrido total eran unos
+         43vh de scroll sin que pasara nada. */
+      .to('.stats-globo', { x: viajeGlobo, y: '2vh', ease: 'none', duration: 1.6 });
+
+    /* 3. Los textos del cierre aparecen solos, encadenados, cuando el orbe
+       terminó su recorrido. El scroll solo dispara la secuencia. */
+    var tlCierreTextos = gsap.timeline({ paused: true })
+      .fromTo('#cta-titulo',    { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' })
+      .fromTo('#cta-subtitulo', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' }, '-=0.26')
+      .fromTo('#cta-btn-wrap',  { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.42, ease: 'power2.out' }, '-=0.22');
+
+    /* Al empezar el viaje del globo, se frena mostrando América */
+    ScrollTrigger.create({
+      trigger: '.cierre-section',
+      start: 'top -10%',
+      onEnter:     function() { if (window.globoModoAmerica) window.globoModoAmerica(true); },
+      onLeaveBack: function() { if (window.globoModoAmerica) window.globoModoAmerica(false); }
+    });
+
+    ScrollTrigger.create({
+      trigger: '.cierre-section',
+      start: 'top -40%',
+      onEnter:     function() { tlCierreTextos.play(); },
+      onLeaveBack: function() { tlCierreTextos.pause(0); }
+    });
+
+    /* ── SECCIÓN 6: PLATAFORMAS ──
+       Las animaciones NO están atadas al scroll: el scroll solo dispara
+       cada tramo y los elementos aparecen solos, en orden. */
+    /* Cada pantalla tiene su propia secuencia, acotada a sus elementos con
+       el segundo argumento de gsap.utils.toArray. Antes la timeline era una
+       sola y apuntaba a '.plat-logo', '.plat-item', etc. sin acotar: al
+       haber cuatro marcas, las dos de la segunda pantalla se habrían
+       animado estando fuera de cuadro y aparecerían ya quietas. */
+    /* Orden: título → subtítulo → logos y línea → items, mockups y botón.
+       Los tres últimos entran juntos: son el bloque de cada marca. */
+    function secuenciaPlat(pantalla) {
+      function en(sel) { return gsap.utils.toArray(sel, pantalla); }
+      return gsap.timeline({ paused: true })
+        .fromTo(en('.section-title'),          { opacity: 0, y: 18 },
+          { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' })
+        .fromTo(en('.plataformas-subtitulo'),  { opacity: 0, y: 14 },
+          { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, '-=0.22')
+        .fromTo(en('.plat-logo'),              { opacity: 0, y: 16 },
+          { opacity: 1, y: 0, duration: 0.4, stagger: 0.1, ease: 'power2.out' }, '-=0.16')
+        .fromTo(en('.plat-linea'),             { scaleX: 0 },
+          { scaleX: 1, duration: 0.45, stagger: 0.1, ease: 'power2.out' }, '<+=0.08')
+        .fromTo(en('.plat-item'),              { opacity: 0, y: 12 },
+          { opacity: 1, y: 0, duration: 0.35, stagger: 0.05, ease: 'power2.out' }, '-=0.14')
+        /* Solo opacidad: mover un subárbol con sombras obliga a volver a
+           rasterizarlo en cada cuadro */
+        .fromTo(en('.plat-mocks'),             { opacity: 0 },
+          { opacity: 1, duration: 0.55, stagger: 0.12, ease: 'power2.out' }, '<')
+        .fromTo(en('.plat-btn-wrap'),          { opacity: 0, y: 12 },
+          { opacity: 1, y: 0, duration: 0.4, stagger: 0.1, ease: 'power2.out' }, '<+=0.2');
+    }
+
+    var pantallasPlat = gsap.utils.toArray('.plataformas-pantalla');
+    pantallasPlat.forEach(function(pantalla) {
+      var tl = secuenciaPlat(pantalla);
+      /* En el teléfono la secuencia arranca ANTES de que la pantalla asome
+         ('top 110%') y corre 3,4 veces más rápido. Medido sobre el sitio a
+         1.100 px/s, que es la velocidad de un scroll con el dedo: con los
+         valores de escritorio los mockups se veían el 12% del recorrido y
+         los de Omnia y Rutex no se veían nunca; con estos, 100% y 95%.
+         En el escritorio no hace falta: la sección es sticky y te retiene. */
+      if (ES_MOVIL) tl.timeScale(3.4);
+      ScrollTrigger.create({
+        trigger: pantalla,
+        start: ES_MOVIL ? 'top 110%' : 'top 65%',
+        onEnter:     function() { tl.play(); },
+        onEnterBack: function() { tl.play(); },
+        onLeaveBack: function() { tl.pause(0); }
+      });
+    });
+
+    /* Salida: se apaga en el lugar, sin deslizarse, para no superponerse con
+       la sección siguiente. Solo la ÚLTIMA pantalla: si se apagaran las dos,
+       la primera desaparecería al pasar a la segunda.
+
+       En el teléfono NO va. Acá las pantallas no son sticky, así que no hay
+       nada que pueda superponerse, y el fundido hacía daño: la sección mide
+       más que la ventana, 'bottom bottom' ocurre cuando todavía falta media
+       pantalla por leer, y Omnia y Rutex se apagaban antes de que llegaras
+       a verlas. */
+    var ultimaPlat = ES_MOVIL ? null : pantallasPlat[pantallasPlat.length - 1];
+    if (ultimaPlat) {
+      gsap.to(ultimaPlat.querySelectorAll('.plataformas-header, .plat-escenas'), {
+        opacity: 0, ease: 'none',
+        scrollTrigger: { trigger: ultimaPlat, start: 'bottom bottom', end: 'bottom 62%', scrub: true }
+      });
+    }
+
+    /* ── DECODIFICAR LOS MOCKUPS ANTES DE QUE HAGAN FALTA ──
+       Son catorce imágenes con transparencia. Con loading="lazy" el
+       navegador recién las descarga y decodifica cuando la sección se
+       acerca, y ese trabajo caía justo encima de la animación de entrada.
+       Acá se adelanta: dos pantallas antes se piden y se decodifican, de a
+       una, para que al llegar ya estén listas en memoria. */
+    (function() {
+      var sec = document.querySelector('.plataformas-section');
+      if (!sec) return;
+      var hecho = false;
+
+      function preparar() {
+        if (hecho) return;
+        hecho = true;
+        var imgs = Array.prototype.slice.call(document.querySelectorAll('.mock-img'));
+        (function siguiente() {
+          var img = imgs.shift();
+          if (!img) return;
+          img.loading = 'eager';
+          var seguir = function() {
+            /* Una por vez y en tiempo ocioso: decodificarlas todas juntas
+               produce el mismo tirón que se quiere evitar */
+            if (window.requestIdleCallback) requestIdleCallback(siguiente, { timeout: 300 });
+            else setTimeout(siguiente, 60);
+          };
+          if (img.decode) img.decode().then(seguir, seguir);
+          else if (img.complete) seguir();
+          else { img.addEventListener('load', seguir, { once: true });
+                 img.addEventListener('error', seguir, { once: true }); }
+        })();
+      }
+
+      new IntersectionObserver(function(e) {
+        if (e[0].isIntersecting) preparar();
+      }, { rootMargin: '200% 0px' }).observe(sec);
+    })();
+
+    /* Crossfade entre las variantes de cada mockup.
+       Se pausa cuando la sección no está en pantalla. */
+    (function() {
+      var PASO = 1800;   /* cada grupo cambia cada 3.6 s, alternándose */
+      var grupos = [];
+
+      document.querySelectorAll('.mock-grupo').forEach(function(cont) {
+        var imgs = cont.querySelectorAll('.mock-img');
+        if (imgs.length < 2) return;
+        cont.classList.add('js-listo');
+        /* Desfasados entre sí para que no cambien todos a la vez */
+        grupos.push({ imgs: imgs, i: 0, salto: grupos.length % 2 });
+      });
+
+      var timer = null, ciclo = 0;
+      function avanzar() {
+        ciclo++;
+        grupos.forEach(function(g) {
+          if ((ciclo + g.salto) % 2) return;   /* alterna: A en un paso, B en el otro */
+          var saliente = g.imgs[g.i];
+          g.i = (g.i + 1) % g.imgs.length;
+          var entrante = g.imgs[g.i];
+          /* La nueva se enciende ENCIMA de la anterior: nunca hay un momento
+             en que las dos estén a media opacidad y la imagen desaparezca */
+          entrante.style.zIndex = 2;
+          entrante.classList.add('activa');
+          setTimeout(function() {
+            saliente.classList.remove('activa');
+            saliente.style.zIndex = 1;
+          }, 1000);
+        });
+      }
+
+      var sec = document.querySelector('.plataformas-section');
+      if (!sec) return;
+      new IntersectionObserver(function(e) {
+        var visible = e[0].isIntersecting;
+        document.querySelectorAll('.mock-grupo').forEach(function(m) {
+          m.style.animationPlayState = visible ? 'running' : 'paused';
+        });
+        if (visible && !timer) timer = setInterval(avanzar, PASO);
+        if (!visible && timer) { clearInterval(timer); timer = null; }
+      }, { rootMargin: '120px' }).observe(sec);
+    })();
+
+    /* Habilita los clics de cada sección solo mientras está en pantalla */
+    [['.vision-section', '#vision-sticky'],
+     ['.soluciones-wrapper', '.soluciones-sticky'],
+     /* Plataformas no va acá: tiene dos pantallas y cada una se habilita
+        sola, unas líneas más abajo. */
+     ['.cierre-section', '.cierre-sticky'],
+     ['.constel-section', '#constel-inner']].forEach(function(par) {
+      var sec = document.querySelector(par[0]);
+      var caja = document.querySelector(par[1]);
+      if (!sec || !caja) return;
+      new IntersectionObserver(function(e) {
+        caja.classList.toggle('seccion-activa', e[0].intersectionRatio > 0.35);
+      }, { threshold: [0, 0.35, 0.7] }).observe(sec);
+    });
+
+    /* Las dos pantallas de Plataformas: cada una se habilita cuando está en
+       cuadro. Si no, los botones de la pantalla de abajo seguirían siendo
+       clicables mientras se mira la de arriba. */
+    document.querySelectorAll('.plataformas-pantalla').forEach(function(p) {
+      new IntersectionObserver(function(e) {
+        p.classList.toggle('seccion-activa', e[0].intersectionRatio > 0.35);
+      }, { threshold: [0, 0.35, 0.7] }).observe(p);
+    });
+
+    /* ── REDUCED MOTION ── */
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      gsap.globalTimeline.timeScale(0);
+      document.querySelectorAll('.vision-titulo, .vision-lead, .vision-bajada, .vision-img-wrap, .plat-logo, .plat-item, .plat-btn-wrap, .plat-mocks, .plataformas-subtitulo, #plat-titulo, .plat-titulo-eco, .stats-origen, .stats-intro, .cta-titulo, .cta-subtitulo, .cta-btn-wrap, #stats-track').forEach(function(el) {
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      });
+    }
+  </script>
+
+</body>
+</html>

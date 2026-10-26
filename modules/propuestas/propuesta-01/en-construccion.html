@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sitio en construcción · Vortex IT · Propuesta 01</title>
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Rubik:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/landing.css">
+</head>
+<body class="vx">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M4 8h16M4 16h16"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></symbol>
+  </svg>
+
+  <header class="vx-nav" id="nav">
+    <div class="vx-nav-bar">
+      <a class="vx-nav-logo" href="index.html" aria-label="Vortex IT, inicio"><img src="assets/brand/vortex-logo.svg" alt="Vortex IT" width="112" height="17"></a>
+      <nav aria-label="Principal">
+        <ul class="vx-nav-links">
+          <li><a href="en-construccion.html#soluciones">Soluciones</a></li>
+          <li><a href="en-construccion.html#como-trabajamos">Cómo trabajamos</a></li>
+          <li><a href="en-construccion.html#plataformas">Plataformas</a></li>
+          <li><a href="en-construccion.html#sobre-vortex">Sobre Vortex</a></li>
+          <li><a href="en-construccion.html#blog">Blog</a></li>
+        </ul>
+      </nav>
+      <div class="vx-nav-right">
+        <div class="vx-lang" aria-label="Idioma"><span aria-current="true">ES</span><a href="en-construccion.html#en" lang="en">EN</a></div>
+        <a class="vx-btn vx-btn--glass vx-btn--sm" href="en-construccion.html#trabaja-con-nosotros">Sumate al equipo</a>
+        <a class="vx-btn vx-btn--lime vx-btn--sm" href="en-construccion.html#hablemos">Hablemos <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <button class="vx-nav-toggle" type="button" aria-expanded="false" aria-controls="nav-panel" aria-label="Abrir menú">
+          <svg aria-hidden="true"><use href="#i-menu"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="vx-nav-panel" id="nav-panel">
+      <ul>
+        <li><a href="en-construccion.html#soluciones">Soluciones</a></li>
+        <li><a href="en-construccion.html#como-trabajamos">Cómo trabajamos</a></li>
+        <li><a href="en-construccion.html#plataformas">Plataformas</a></li>
+        <li><a href="en-construccion.html#sobre-vortex">Sobre Vortex</a></li>
+        <li><a href="en-construccion.html#blog">Blog</a></li>
+        <li><a href="en-construccion.html#trabaja-con-nosotros">Trabajá con nosotros</a></li>
+      </ul>
+      <div class="vx-nav-panel-foot">
+        <div class="vx-lang" aria-label="Idioma"><span aria-current="true">ES</span><a href="en-construccion.html#en" lang="en">EN</a></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="vx-wip vx-dark" id="contenido">
+    <div class="vx-wip-card">
+      <img class="vx-wip-orb" src="assets/img/boton_engranaje.webp" alt="" width="120" height="120">
+      <h1 class="vx-h2"><span class="vx-glow-text">Sitio en construcción</span></h1>
+      <p class="vx-lead" id="wip-text">Esta sección todavía no forma parte de la propuesta. Por ahora podés recorrer la página de inicio.</p>
+      <div class="vx-wip-actions">
+        <a class="vx-btn vx-btn--lime" href="index.html"><svg aria-hidden="true"><use href="#i-back"/></svg> Volver al inicio</a>
+      </div>
+    </div>
+  </main>
+
+  <a class="vx-proto-chip" href="../../../index.html"><b>P01</b> Volver al Hub</a>
+
+  <script src="assets/js/site.js"></script>
+  <script>
+    // Nombra la sección pedida según el ancla del enlace
+    (() => {
+      const names = {
+        'soluciones': 'Soluciones', 'como-trabajamos': 'Cómo trabajamos', 'plataformas': 'Plataformas',
+        'sobre-vortex': 'Sobre Vortex', 'blog': 'Blog', 'hablemos': 'Hablemos',
+        'trabaja-con-nosotros': 'Trabajá con nosotros', 'en': 'Versión en inglés'
+      };
+      const render = () => {
+        const name = names[location.hash.slice(1)];
+        document.getElementById('wip-text').innerHTML = name
+          ? 'La sección <span class="vx-wip-section"></span> todavía no forma parte de la propuesta. Por ahora podés recorrer la página de inicio.'
+          : 'Esta sección todavía no forma parte de la propuesta. Por ahora podés recorrer la página de inicio.';
+        const slot = document.querySelector('.vx-wip-section');
+        if (slot) slot.textContent = '«' + name + '»';
+        document.title = (name ? name + ' · ' : '') + 'Sitio en construcción · Vortex IT';
+        const nav = document.getElementById('nav');
+        if (nav.classList.contains('is-open')) nav.querySelector('.vx-nav-toggle').click();
+      };
+      window.addEventListener('hashchange', render);
+      render();
+    })();
+  </script>
+</body>
+</html>

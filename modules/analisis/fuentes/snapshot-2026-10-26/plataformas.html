@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="alternate" hreflang="es" href="https://vortex-it.com/plataformas.html">
+  <link rel="alternate" hreflang="en" href="https://vortex-it.com/en/platforms.html">
+  <link rel="alternate" hreflang="x-default" href="https://vortex-it.com/plataformas.html">
+  <title>Vortex — Plataformas</title>
+  <meta name="description" content="QuickPass, Loyalix, Omnia Talents y Rutex AI: plataformas propias nacidas de desafíos concretos de la industria de eventos, la fidelización, el reclutamiento y la gestión de IA.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+/* Móvil o cualquier cosa con dedo en vez de puntero */
+var ES_MOVIL = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
+var CPU_BAJA = (navigator.hardwareConcurrency || 4) <= 4;
+var CALIDAD  = ES_MOVIL ? (CPU_BAJA ? 0.18 : 0.3) : (CPU_BAJA ? 0.65 : 1);
+
+/* macOS resuelve el scroll y los sticky en el compositor con inercia,
+   mientras GSAP aplica los transform en el hilo principal: ese desfasaje
+   es lo que se ve como temblor. Se detecta para corregirlo. */
+var ES_MAC = /Mac|iPad|iPhone|iPod/.test(navigator.platform || '') ||
+             (navigator.userAgent.indexOf('Mac') !== -1);
+
+/* Safari (cualquier plataforma) entra al mismo perfil liviano: es el que
+   más sufre el backdrop-filter, el fondo fijo y el degradado animado. */
+var ES_SAFARI = /^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i
+                  .test(navigator.userAgent || '');
+if (ES_SAFARI) ES_MAC = true;
+
+/* Interruptor para probar sin tener una Mac:
+   ?perfil=mac    fuerza el modo Mac (para ver los cambios visuales)
+   ?perfil=normal lo desactiva aunque estés en Mac (para comparar) */
+var _perfilForzado = new URLSearchParams(location.search).get('perfil');
+if (_perfilForzado === 'mac')    ES_MAC = true;
+if (_perfilForzado === 'normal') ES_MAC = false;
+
+/* ── MODO LIGERO ──
+   Mac, Safari y las máquinas de pocos núcleos entran acá. Es el interruptor
+   que usan todos los canvas del sitio para bajar partículas, saltear frames
+   y evitar el desenfoque por frame. */
+var MODO_LIGERO = ES_MAC || CPU_BAJA;
+
+/* En pantallas Retina, dibujar los canvas al doble multiplica por cuatro el
+   trabajo por frame. En modo ligero se baja a 1.35x: sigue viéndose nítido
+   —a 1x los puntos quedaban gruesos— y cuesta la mitad que a 2x. */
+var DPR_MAX = ES_MOVIL ? 1 : (MODO_LIGERO ? 1.35 : (window.devicePixelRatio > 1.5 ? 1.5 : 2));
+
+/* Cuánto se recorta la cantidad de partículas de cada efecto. Con 0.6 el
+   orbe conserva su densidad; por debajo se empezaba a ver ralo. */
+var FACTOR_PART = MODO_LIGERO ? 0.6 : (ES_MOVIL ? 0.4 : 1);
+function cuantasPart(n) { return Math.max(3, Math.round(n * FACTOR_PART)); }
+
+/* La clase se pone en <html> y no en <body>, porque <body> todavía no
+   existe cuando esto corre. Es lo que apaga backdrop-filter, el degradado
+   animado y el encaje de scroll antes del primer pintado. */
+if (ES_MAC) document.documentElement.classList.add('es-mac');
+</script>
+  <link rel="stylesheet" href="/assets/vortex.css?v=23">
+  <style>
+    /* ============================================================
+       PLATAFORMAS
+       Tres pantallas: portada, QuickPass y Loyalix. El orbe de
+       partículas del fondo es el mismo del hero de la home y se
+       reposiciona según la sección que se esté mirando.
+    ============================================================ */
+
+    html{scroll-snap-type:y mandatory}
+    /* El footer también tiene que ser punto de anclaje: si no, el encaje
+       devuelve al último bloque y no se llega a verlo */
+    .site-footer{scroll-snap-align:end;scroll-snap-stop:normal}
+    @media(max-width:900px),(pointer:coarse){html{scroll-snap-type:none}}
+
+    main,.site-footer{position:relative;z-index:1}
+    #orbe-fondo{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+    /* ══════════ PORTADA ══════════ */
+    .pl-hero{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;
+      justify-content:center;padding:clamp(70px,7.8vh,96px) 48px clamp(100px,14vh,170px);
+      scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden}
+    .pl-hero-inner{position:relative;z-index:1;width:100%}
+
+    /* Misma grilla que la sección 7 de la home */
+    .pl-hero-grid{width:min(980px,calc(100% - 110px));margin:0 auto;
+      display:grid;grid-template-columns:1fr .95fr;gap:24px;align-items:center}
+    /* Caja vacía: marca dónde y de qué tamaño va el orbe. El canvas la mide. */
+    .pl-hero-orbe{position:relative;width:100%;max-width:min(560px,52vh);
+      aspect-ratio:1;margin:0 auto}
+
+    .pl-hero-tit{text-align:center;margin-bottom:clamp(14px,2.4vh,32px)}
+    .pl-hero-tit h1{font-size:clamp(2.6rem,min(5.6vw,7.4vh),4.6rem);font-weight:500;color:#a0d232;
+      text-transform:uppercase;line-height:1.05}
+
+    .pl-hero-texto{max-width:430px;justify-self:end;text-align:left}
+    .pl-lead{font-size:clamp(1.3rem,min(2.4vw,3.1vh),2rem);font-weight:500;line-height:1.3;
+      color:#fff;margin-bottom:clamp(16px,2.6vh,26px)}
+    .pl-sub{font-size:clamp(1rem,min(1.55vw,2.1vh),1.25rem);font-weight:300;line-height:1.6;
+      color:rgba(255,255,255,.86)}
+    .pl-sub + .pl-sub{margin-top:clamp(12px,1.8vh,20px)}
+    .pl-sub strong{font-weight:600;color:#fff}
+
+    /* ══════════ CADA PLATAFORMA ══════════ */
+    /* El encaje va por el centro, no por el arranque: si la sección llegara a
+       medir más de una pantalla, al bajar se veía su borde de arriba y todo el
+       contenido quedaba corrido hacia abajo. Centrado, siempre se ve el medio,
+       se llegue desde arriba o desde abajo. */
+    .pl-seccion{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;
+      justify-content:center;padding:clamp(84px,9.5vh,118px) 48px clamp(50px,6.5vh,84px);
+      scroll-snap-align:center;scroll-snap-stop:always;overflow:hidden}
+    /* Las dos columnas miden SIEMPRE lo mismo en las cuatro secciones, y el
+       grupo va centrado. Antes eran 'auto auto', o sea que cada columna
+       medía lo que medía su contenido: como los cuatro mockups tienen
+       anchos distintos, el bloque entero se corría y el texto arrancaba en
+       un lugar diferente en cada sección. La columna del mockup se fija en
+       el más ancho de los cuatro (el de Rutex) y cada mockup se centra
+       adentro. */
+    .pl-grid{position:relative;z-index:1;width:100%;max-width:1240px;margin:0 auto;
+      --h:min(62vh,520px);
+      /* El ancho de la columna del mockup. El max() de afuera es el seguro:
+         en pantallas medianas el tope de 38vw dejaba la columna más angosta
+         que el mockup de QuickPass y se salía por el costado. */
+      --colmock:max(var(--h) * 1.045, min(var(--h) * 1.24, 38vw));
+      display:grid;grid-template-columns:min(520px,46vw) var(--colmock);
+      justify-content:center;
+      gap:clamp(28px,4vw,72px);align-items:center}
+    .pl-col{width:min(520px,46vw)}
+
+    /* La marca es el logo. El nombre escrito queda de reserva: solo aparece
+       si el SVG no está subido. */
+    .pl-logo{height:clamp(38px,4.8vh,62px);width:auto;display:block;
+      margin-bottom:clamp(16px,2.4vh,26px)}
+    /* Loyalix usa un logo horizontal: va algo más alto que el de QuickPass */
+    .pl-logo-lx{height:clamp(46px,5.8vh,76px)}
+    /* Cada marca tiene una proporción distinta: las alturas están puestas
+       para que los cuatro logos ocupen más o menos el mismo ancho. */
+    .pl-logo-om{height:clamp(44px,5.4vh,70px)}
+    .pl-logo-rx{height:clamp(28px,3.4vh,44px)}
+    .pl-nombre{display:none;font-family:'Rubik',sans-serif;
+      font-size:clamp(1.9rem,min(3.4vw,4.6vh),2.9rem);font-weight:600;color:#a0d232;
+      text-transform:uppercase;line-height:1;margin-bottom:clamp(16px,2.4vh,26px)}
+    .pl-frase{font-size:clamp(1.05rem,min(1.8vw,2.4vh),1.4rem);font-weight:500;line-height:1.35;
+      color:#fff;margin-bottom:clamp(14px,2vh,22px)}
+    .pl-txt{font-size:clamp(.92rem,min(1.35vw,1.85vh),1.08rem);font-weight:300;line-height:1.6;
+      color:rgba(255,255,255,.78)}
+    .pl-txt + .pl-txt{margin-top:clamp(10px,1.4vh,16px)}
+    .pl-txt strong{font-weight:500;color:#fff}
+
+    /* Qué permite */
+    .pl-permite{margin-top:clamp(18px,2.6vh,28px)}
+    .pl-permite h3{font-family:'Rubik',sans-serif;font-size:clamp(13px,1.15vw,15px);font-weight:400;
+      text-transform:uppercase;letter-spacing:.08em;color:#a0d232;padding-bottom:8px;
+      margin-bottom:14px;border-bottom:1px solid rgba(160,210,50,.22)}
+    .pl-permite ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:7px 20px}
+    .pl-permite li{position:relative;padding-left:16px;font-size:clamp(.88rem,1.25vw,1rem);
+      font-weight:300;color:rgba(255,255,255,.8)}
+    .pl-permite li::before{content:'•';position:absolute;left:0;color:#a0d232}
+
+    /* Remate + botón */
+    .pl-remate{margin-top:clamp(18px,2.6vh,28px);padding-left:clamp(14px,1.4vw,20px);
+      border-left:2px solid rgba(160,210,50,.6)}
+    .pl-remate b{display:block;font-family:'Rubik',sans-serif;font-weight:500;color:#a0d232;
+      font-size:clamp(.95rem,1.35vw,1.1rem);margin-bottom:5px}
+    .pl-remate span{font-size:clamp(.88rem,1.25vw,1rem);font-weight:300;line-height:1.55;
+      color:rgba(255,255,255,.72)}
+    .pl-btn-wrap{margin-top:clamp(20px,3vh,32px)}
+
+    /* Los mockups, superpuestos como en la home */
+    /* La caja mide exactamente lo que ocupan las imágenes: antes sobraba un
+       16% a la derecha en QuickPass y un 8% en Loyalix, y ese aire vacío
+       corría todo el grupo hacia la izquierda. */
+    .pl-mocks{position:relative;height:var(--h);width:auto;aspect-ratio:1.045;
+      margin:0 auto;flex-shrink:0}
+    .pl-mocks-lx{aspect-ratio:.867}
+    /* Omnia y Rutex vienen en una sola pieza, así que no hay nada que
+       montar. Y en los dos manda el ANCHO, no la altura: son más anchos
+       que altos, y fijándoles la altura como a los otros dos se comían
+       media sección. */
+    .pl-mocks-om,.pl-mocks-rx{height:auto;width:calc(var(--h) * 1.045)}
+    .pl-mocks-om{aspect-ratio:1.2}
+    /* Rutex es el más ancho de los cuatro a propósito: en su cuadro entran
+       la laptop Y el celular, así que al ancho de los demás cada equipo se
+       veía chico. Este mismo ancho es el que mide la columna del mockup en
+       .pl-grid, para que las cuatro secciones arranquen a la misma altura;
+       los otros tres quedan centrados adentro de esa columna. */
+    .pl-mocks-rx{aspect-ratio:1.22;width:var(--colmock)}
+    .pl-mocks img{position:absolute;display:block;height:auto;
+      filter:drop-shadow(0 10px 14px rgba(0,0,0,.5))}
+    .pl-mocks-qp .m-a{height:88%;left:0;bottom:8%;z-index:1;width:auto}
+    .pl-mocks-qp .m-b{height:66%;left:63.4%;bottom:6%;z-index:2;width:auto}
+    .pl-mocks-lx .m-a{height:96%;left:35.8%;bottom:0;z-index:2;width:auto}
+    .pl-mocks-lx .m-b{height:84%;left:0;bottom:12%;z-index:1;width:auto}
+    .pl-mocks .m-u{height:100%;left:0;bottom:0;z-index:1;width:auto}
+    /* La altura manda: el ancho lo pone la imagen */
+    .pl-mocks img{width:auto;max-width:none}
+
+    /* ── APARICIÓN DE CADA SECCIÓN ── */
+    .pl-hero-tit,.pl-hero-texto,.pl-col,.pl-mocks{
+      opacity:0;transform:translateY(22px);
+      transition:opacity .7s cubic-bezier(.22,.61,.36,1),transform .7s cubic-bezier(.22,.61,.36,1)}
+    .visible .pl-hero-tit,.visible .pl-hero-texto,.visible .pl-col,.visible .pl-mocks{
+      opacity:1;transform:none}
+    .visible .pl-hero-tit{transition-delay:.05s}
+    .visible .pl-hero-texto{transition-delay:.28s}
+    .visible .pl-col{transition-delay:.08s}
+    .visible .pl-mocks{transition-delay:.32s}
+
+    @media(prefers-reduced-motion:reduce){
+      .pl-hero-tit,.pl-hero-texto,.pl-col,.pl-mocks{opacity:1;transform:none;transition:none}
+    }
+
+    /* ── RESPONSIVO ── */
+    @media(max-width:1100px){
+      .pl-grid{gap:30px}
+      .pl-permite ul{grid-template-columns:1fr}
+      .pl-col{width:min(460px,48vw)}
+      .pl-grid{--h:min(54vh,430px)}
+    }
+    @media(max-width:900px){
+      html{scroll-snap-type:none}
+      .pl-hero,.pl-seccion{min-height:auto;padding:100px 24px 80px}
+      .pl-hero-grid,.pl-grid{grid-template-columns:1fr;gap:34px;width:100%}
+      .pl-col{width:100%}
+      .pl-hero-texto{max-width:100%;justify-self:stretch}
+      .pl-hero-orbe{max-width:min(460px,86vw)}
+      .pl-permite ul{grid-template-columns:1fr 1fr}
+      .pl-mocks{height:auto;width:min(100%,380px);aspect-ratio:1.045}
+      .pl-mocks-lx{aspect-ratio:.867}
+      .pl-mocks-om,.pl-mocks-rx{width:min(100%,380px)}
+      .pl-mocks-om{aspect-ratio:1.2}
+      .pl-mocks-rx{aspect-ratio:1.22}
+    }
+    /* Pantallas de menos de 740: el bloque no entraba y el botón quedaba
+       cortado abajo. Acá se recorta todo un punto más. */
+    @media(max-height:740px) and (min-width:901px){
+      .pl-seccion{padding:64px 48px 34px}
+      .pl-logo{height:38px;margin-bottom:12px}
+      .pl-logo-lx{height:44px}
+      .pl-logo-om{height:42px}
+      .pl-logo-rx{height:27px}
+      .pl-frase{font-size:1rem;margin-bottom:12px}
+      .pl-txt{font-size:.86rem;line-height:1.5}
+      .pl-txt + .pl-txt{margin-top:8px}
+      .pl-permite{margin-top:12px}
+      .pl-permite h3{margin-bottom:10px;padding-bottom:6px}
+      .pl-permite ul{gap:4px 16px}
+      .pl-permite li{font-size:.85rem}
+      .pl-remate{margin-top:12px}
+      .pl-remate b{font-size:.92rem}
+      .pl-remate span{font-size:.84rem;line-height:1.45}
+      .pl-btn-wrap{margin-top:14px}
+      .pl-btn-wrap .btn-primary{padding:11px 26px;font-size:13px}
+      .pl-grid{--h:min(56vh,400px)}
+    }
+
+    @media(max-height:820px) and (min-width:901px){
+      .pl-seccion{padding:clamp(80px,9vh,108px) 48px 42px}
+      .pl-permite ul{gap:5px 20px}
+      .pl-permite{margin-top:16px}
+      .pl-remate{margin-top:16px}
+      .pl-btn-wrap{margin-top:18px}
+      .pl-grid{--h:min(56vh,440px)}
+    }
+  </style>
+</head>
+<body>
+
+
+  <!-- FLECHA: LLEVA A LA SECCIÓN SIGUIENTE -->
+  <button class="flecha-baja" id="flecha-baja" type="button"
+          data-cursor="Bajar" aria-label="Ir a la sección siguiente">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <line x1="12" y1="4" x2="12" y2="20"></line>
+      <polyline points="6 14 12 20 18 14"></polyline>
+    </svg>
+  </button>
+
+  <!-- HEADER -->
+  <header class="site-header" id="site-header">
+    <a href="/" class="header-logo" aria-label="Vortex IT">
+      <img src="/assets/Logo%20VX_blanco%20y%20violeta.svg" alt="Vortex IT" class="logo-img">
+    </a>
+
+    <nav aria-label="Navegación principal">
+      <ul class="header-nav" id="header-nav">
+        <li><a href="/">Inicio</a></li>
+        <li><a href="/soluciones.html">Soluciones</a></li>
+        <li><a href="/como-trabajamos.html">Cómo trabajamos</a></li>
+        <li><a href="/sobre-vortex.html">Sobre Vortex</a></li>
+        <li><a href="/blog.html">Blog</a></li>
+        <li><a href="/plataformas.html" class="active">Plataformas</a></li>
+        <li><a href="/hablemos.html" class="nav-cta" data-cursor="Hablemos">Hablemos</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-right">
+      <!-- Conmutador de idioma: son links reales a la misma página en el
+           otro idioma, no botones. Así se puede compartir la dirección y
+           Google puede seguirlos. -->
+      <div class="lang-switch">
+        <a class="lang-btn active"
+           href="/plataformas.html" hreflang="es" lang="es">ES</a>
+        <span class="lang-sep">|</span>
+        <a class="lang-btn"
+           href="/en/platforms.html" hreflang="en" lang="en">EN</a>
+      </div>
+      <div class="social-links">
+        <a href="https://www.linkedin.com/company/vortex-it-ok" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="https://www.instagram.com/vortex.it/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@vortexit" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#333"/></svg>
+        </a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+<main>
+
+  <!-- ══════════ PORTADA ══════════ -->
+  <section class="pl-hero" id="plataformas">
+    <div class="pl-hero-inner">
+
+      <div class="pl-hero-tit">
+        <h1>Plataformas</h1>
+      </div>
+
+      <div class="pl-hero-grid">
+        <div class="pl-hero-texto">
+          <p class="pl-lead">De desafíos concretos a plataformas<br>que evolucionan.</p>
+          <p class="pl-sub">En <strong>VORTEX</strong> no solo desarrollamos soluciones para nuestros clientes. También construimos productos a partir de necesidades específicas que identificamos en distintas industrias.</p>
+          <p class="pl-sub">Conocemos el contexto, entendemos los procesos y transformamos esos desafíos en plataformas capaces de crecer y evolucionar junto con el negocio.</p>
+        </div>
+
+        <div class="pl-hero-orbe" id="pl-orbe-caja" aria-hidden="true"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════ 01 · QUICKPASS ══════════ -->
+  <section class="pl-seccion" id="quickpass">
+    <div class="pl-grid">
+
+      <div class="pl-col">
+        <!-- Si el SVG no está, la imagen se saca sola y aparece el nombre escrito -->
+        <img class="pl-logo" src="/assets/logoQP.svg" alt="QuickPass"
+             onerror="this.remove();document.getElementById('nom-qp').style.display='block'">
+        <h2 class="pl-nombre" id="nom-qp">QuickPass</h2>
+
+        <p class="pl-frase">Del desafío de gestionar un evento a una plataforma para toda la experiencia.</p>
+        <p class="pl-txt">Los eventos y espectáculos necesitan mucho más que vender entradas. La operación combina múltiples necesidades: accesos, tickets, pagos, consumos, usuarios y experiencia, que deben funcionar de manera integrada.</p>
+        <p class="pl-txt">A partir de estas necesidades desarrollamos <strong>QUICKPASS</strong>, una plataforma diseñada específicamente para la industria de espectáculos y eventos.</p>
+
+        <div class="pl-permite">
+          <h3>¿Qué permite?</h3>
+          <ul>
+            <li>Tickets digitales</li>
+            <li>Control de acceso</li>
+            <li>Wallet &amp; Cashless</li>
+            <li>Fidelización</li>
+            <li>Analíticas</li>
+            <li>Gestión de usuarios</li>
+          </ul>
+        </div>
+
+        <p class="pl-remate">
+          <b>Una plataforma que evoluciona con la industria</b>
+          <span>QUICKPASS incorpora nuevas capacidades a medida que evolucionan las necesidades de los eventos, sus operadores y sus públicos.</span>
+        </p>
+
+        <div class="pl-btn-wrap">
+          <a class="btn-primary" href="https://quickpass.app/" target="_blank" rel="noopener"
+             data-cursor="Ver más">Conocer QuickPass &rarr;</a>
+        </div>
+      </div>
+
+      <div class="pl-mocks pl-mocks-qp">
+        <img class="m-a" src="/assets/mock-quickpass-a1.webp?v=2" alt="" loading="lazy" decoding="async">
+        <img class="m-b" src="/assets/mock-quickpass-b1.webp?v=2" alt="" loading="lazy" decoding="async">
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════ 02 · LOYALIX ══════════ -->
+  <section class="pl-seccion" id="loyalix">
+    <div class="pl-grid">
+
+      <div class="pl-col">
+        <img class="pl-logo pl-logo-lx" src="/assets/Logo%20horizontal.png" alt="Loyalix"
+             onerror="this.remove();document.getElementById('nom-lx').style.display='block'">
+        <h2 class="pl-nombre" id="nom-lx">Loyalix</h2>
+
+        <p class="pl-frase">De programas de fidelización a relaciones más inteligentes con los clientes.</p>
+        <p class="pl-txt">Las marcas necesitan conocer mejor a sus clientes, personalizar beneficios y transformar cada interacción en una oportunidad para fortalecer la relación.</p>
+        <p class="pl-txt">A partir de este desafío desarrollamos <strong>LOYALIX</strong>, una plataforma de fidelización que permite diseñar experiencias personalizadas y gestionar programas de beneficios desde una misma solución.</p>
+
+        <div class="pl-permite">
+          <h3>¿Qué permite?</h3>
+          <ul>
+            <li>Programas de puntos</li>
+            <li>Cupones y promociones</li>
+            <li>Personalización</li>
+            <li>Segmentación</li>
+            <li>Analíticas</li>
+            <li>Integración con plataformas existentes</li>
+          </ul>
+        </div>
+
+        <p class="pl-remate">
+          <b>Una plataforma que se adapta a cada marca</b>
+          <span>LOYALIX puede integrarse mediante APIs a una aplicación o ecosistema existente, o implementarse como una solución personalizada bajo la identidad de la marca.</span>
+        </p>
+
+        <div class="pl-btn-wrap">
+          <a class="btn-primary" href="https://loyalix.app/" target="_blank" rel="noopener"
+             data-cursor="Ver más">Conocer Loyalix &rarr;</a>
+        </div>
+      </div>
+
+      <div class="pl-mocks pl-mocks-lx">
+        <img class="m-a" src="/assets/mock-loyalix-a1.webp?v=2" alt="" loading="lazy" decoding="async">
+        <img class="m-b" src="/assets/mock-loyalix-b1.webp?v=2" alt="" loading="lazy" decoding="async">
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════ 03 · OMNIA TALENTS ══════════ -->
+  <section class="pl-seccion" id="omnia">
+    <div class="pl-grid">
+
+      <div class="pl-col">
+        <img class="pl-logo pl-logo-om" src="/assets/logoOmnia.svg" alt="Omnia Talents"
+             onerror="this.remove();document.getElementById('nom-om').style.display='block'">
+        <h2 class="pl-nombre" id="nom-om">Omnia Talents</h2>
+
+        <p class="pl-frase">De revisar currículums a optimizar los procesos de selección con IA.</p>
+        <p class="pl-txt">Los equipos de Recursos Humanos necesitan analizar perfiles, validar candidatos y agilizar las distintas etapas de selección. Cuando el volumen de postulaciones crece, evaluar cada perfil requiere cada vez más tiempo y organización.</p>
+        <p class="pl-txt">A partir de este desafío desarrollamos <strong>OmnIA Talents</strong>, una plataforma que incorpora inteligencia artificial para agilizar el reclutamiento, la validación de candidatos y su desarrollo profesional.</p>
+
+        <div class="pl-permite">
+          <h3>¿Qué permite?</h3>
+          <ul>
+            <li>Análisis de CVs</li>
+            <li>Screening de candidatos</li>
+            <li>Entrevistas asincrónicas con IA</li>
+            <li>Validación de identidad</li>
+            <li>Recomendaciones basadas en perfiles</li>
+            <li>Desarrollo profesional</li>
+          </ul>
+        </div>
+
+        <p class="pl-remate">
+          <b>Una plataforma que potencia la gestión del talento</b>
+          <span>OmnIA Talents agiliza las etapas de evaluación y organiza información relevante para acompañar la selección y el desarrollo de las personas.</span>
+        </p>
+
+        <div class="pl-btn-wrap">
+          <a class="btn-primary" href="https://omniatalents.com/" target="_blank" rel="noopener"
+             data-cursor="Ver más">Conocer Omnia Talents &rarr;</a>
+        </div>
+      </div>
+
+      <div class="pl-mocks pl-mocks-om">
+        <img class="m-u" src="/assets/mock-omnia.webp?v=2" alt="" loading="lazy" decoding="async">
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════ 04 · RUTEX AI ══════════
+       Rutex todavía no tiene web propia, así que el botón lleva al
+       formulario de contacto en vez de a un sitio externo. -->
+  <section class="pl-seccion" id="rutex">
+    <div class="pl-grid">
+
+      <div class="pl-col">
+        <img class="pl-logo pl-logo-rx" src="/assets/logoRutex.svg" alt="Rutex AI"
+             onerror="this.remove();document.getElementById('nom-rx').style.display='block'">
+        <h2 class="pl-nombre" id="nom-rx">Rutex AI</h2>
+
+        <p class="pl-frase">De usar modelos de IA a gestionar su uso de forma centralizada.</p>
+        <p class="pl-txt">A medida que las empresas incorporan inteligencia artificial, necesitan administrar los modelos que utilizan, controlar los costos y mantener la calidad, la seguridad y la trazabilidad de las interacciones.</p>
+        <p class="pl-txt">A partir de este desafío desarrollamos <strong>RUTEX AI</strong>, una plataforma de IA empresarial que centraliza la gestión del uso de modelos y facilita su control dentro de la organización.</p>
+
+        <div class="pl-permite">
+          <h3>¿Qué permite?</h3>
+          <ul>
+            <li>Gestión centralizada de modelos</li>
+            <li>Control de costos</li>
+            <li>Seguimiento del rendimiento</li>
+            <li>Gestión de la calidad</li>
+            <li>Seguridad</li>
+            <li>Trazabilidad de las interacciones</li>
+          </ul>
+        </div>
+
+        <p class="pl-remate">
+          <b>Una plataforma para gestionar la IA empresarial</b>
+          <span>RUTEX AI permite centralizar la administración del uso de inteligencia artificial y mejorar la visibilidad y el control a medida que se extiende su adopción en la empresa.</span>
+        </p>
+
+        <div class="pl-btn-wrap">
+          <a class="btn-primary" href="/hablemos.html"
+             data-cursor="Ver más">Conocer Rutex AI &rarr;</a>
+        </div>
+      </div>
+
+      <div class="pl-mocks pl-mocks-rx">
+        <img class="m-u" src="/assets/mock-rutex.webp?v=3" alt="" loading="lazy" decoding="async">
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo-wrap">
+          <img src="/assets/Logo%20VX_blanco%20y%20violeta.svg" alt="Vortex IT" class="logo-img">
+        </div>
+        <p class="footer-logo-desc">Con origen en Córdoba, Argentina. Operamos en LATAM, Europa y Estados Unidos.</p>
+      </div>
+
+      <div>
+        <p class="footer-col-title">Vortex IT</p>
+        <ul class="footer-links">
+          <li><a href="/">Inicio</a></li>
+          <li><a href="/soluciones.html">Soluciones</a></li>
+          <li><a href="/como-trabajamos.html">Cómo trabajamos</a></li>
+          <li><a href="/sobre-vortex.html">Sobre Vortex</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="footer-col-title">Comunidad</p>
+        <ul class="footer-links">
+          <li><a href="/blog.html">Blog</a></li>
+          <li><a href="/plataformas.html">Plataformas</a></li>
+          <li><a href="/trabaja-con-nosotros.html">Trabajá con nosotros</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="footer-col-title">Hablemos</p>
+        <ul class="footer-contact-list">
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <a href="mailto:info@vortex-it.com">info@vortex-it.com</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 014.69 12 19.79 19.79 0 011.61 3.42 2 2 0 013.6 1.24h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.91 8.96a16 16 0 006.02 6.02l.95-.95a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0121.73 16.92z"/></svg>
+            <a href="tel:+5493515104734">+54 9 351 510-4734</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.122 1.523 5.855L.057 23.943l6.272-1.443A11.953 11.953 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.656-.51-5.176-1.4l-.37-.22-3.725.857.884-3.617-.242-.373A9.956 9.956 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+            <a href="https://wa.me/5493515104734" target="_blank" rel="noopener">WhatsApp</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            <a href="https://www.linkedin.com/company/vortex-it-ok" target="_blank" rel="noopener">LinkedIn</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            <a href="https://www.instagram.com/vortex.it/" target="_blank" rel="noopener">Instagram</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 Vortex IT. Todos los derechos reservados.</p>
+      <div class="footer-social">
+        <a href="https://www.linkedin.com/company/vortex-it-ok" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="https://www.instagram.com/vortex.it/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@vortexit" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#333"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+<script src="/assets/vortex.js?v=23"></script>
+<script>
+  /* ── APARICIÓN DE CADA SECCIÓN ── */
+  (function() {
+    var secciones = document.querySelectorAll('.pl-hero, .pl-seccion');
+    var io = new IntersectionObserver(function(entradas) {
+      entradas.forEach(function(e) { e.target.classList.toggle('visible', e.isIntersecting); });
+    }, { threshold: 0.3 });
+    secciones.forEach(function(s) { io.observe(s); });
+  })();
+
+  /* ── ORBE DE PARTÍCULAS ──
+     El mismo del hero de la home. En la portada ocupa la caja reservada en
+     la grilla; en las dos plataformas se agranda y se pone tenue, de fondo. */
+  (function() {
+    var canvas = document.createElement('canvas');
+    canvas.id = 'orbe-fondo';
+    canvas.setAttribute('aria-hidden', 'true');
+    document.body.insertBefore(canvas, document.body.firstChild);
+    var ctx = canvas.getContext('2d');
+
+    var W = 0, H = 0, R = 0, CX = 0, CY = 0;
+    var dpr = Math.min(window.devicePixelRatio || 1, DPR_MAX);
+    /* Mismo tope que en la home: 6.600 partículas en un canvas a pantalla
+       completa con 'lighter' era el trabajo más caro de la página. */
+    var N = MODO_LIGERO ? Math.min(3500, cuantasPart(11000)) : cuantasPart(11000);
+
+    var PASOS = 14, PALETA = [];
+    for (var c = 0; c < PASOS; c++) {
+      var u = c / (PASOS - 1), rr, gg, bb;
+      if (u < 0.5) { var v = u / 0.5;
+        rr = 106 + 32 * v; gg = 58 + 2 * v; bb = 199 + 25 * v;
+      } else { var v2 = (u - 0.5) / 0.5;
+        rr = 138 + 54 * v2; gg = 60 + 65 * v2; bb = 224 + 16 * v2; }
+      PALETA.push('rgb(' + (rr | 0) + ',' + (gg | 0) + ',' + (bb | 0) + ')');
+    }
+
+    var bx = new Float32Array(N), by = new Float32Array(N), bz = new Float32Array(N);
+    var col = new Uint8Array(N), bri = new Float32Array(N), tam = new Float32Array(N);
+    var fas = new Float32Array(N), vel = new Float32Array(N);
+    var ox = new Float32Array(N), oy = new Float32Array(N);
+    var vx = new Float32Array(N), vy = new Float32Array(N);
+
+    (function construir() {
+      var tmp = [], phiOro = Math.PI * (3 - Math.sqrt(5));
+      for (var i = 0; i < N; i++) {
+        var yy = 1 - (i + 0.5) / N * 2;
+        yy += (Math.random() - 0.5) * (1.6 / N) * 40;
+        if (yy > 1) yy = 1; else if (yy < -1) yy = -1;
+        var anillo = Math.sqrt(Math.max(0, 1 - yy * yy));
+        var th = phiOro * i + (Math.random() - 0.5) * 0.32;
+        var rr2 = 1 + (Math.random() - 0.5) * 0.06;
+        tmp.push([anillo * Math.cos(th) * rr2, yy * rr2, anillo * Math.sin(th) * rr2, 0,
+                  0.45 + Math.random() * Math.random() * 1.9,
+                  0.8 + Math.random() * Math.random() * 1.6,
+                  Math.random() * 6.2832, 0.4 + Math.random() * 1.5]);
+      }
+      tmp.forEach(function(p) { p[3] = Math.min(PASOS - 1, ((p[0] + 1) / 2 * PASOS) | 0); });
+      tmp.sort(function(a, b) { return a[3] - b[3]; });
+      for (var k = 0; k < N; k++) {
+        bx[k] = tmp[k][0]; by[k] = tmp[k][1]; bz[k] = tmp[k][2]; col[k] = tmp[k][3];
+        bri[k] = tmp[k][4]; tam[k] = tmp[k][5]; fas[k] = tmp[k][6]; vel[k] = tmp[k][7];
+      }
+    })();
+
+    function resize() {
+      W = window.innerWidth; H = window.innerHeight;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      R = Math.min(W, H) * (ES_MOVIL ? 0.33 : 0.31);
+    }
+    resize();
+    alRedimensionar(resize);
+
+    var mx = -9999, my = -9999, pX = 0, pY = 0, tX = 0, tY = 0;
+    window.addEventListener('mousemove', function(e) {
+      mx = e.clientX; my = e.clientY;
+      tX = mx / (window.innerWidth  || 1) - 0.5;
+      tY = my / (window.innerHeight || 1) - 0.5;
+    }, { passive: true });
+    window.addEventListener('mouseleave', function() { mx = -9999; my = -9999; }, { passive: true });
+
+    var DESTINOS = {
+      'plataformas': null,      /* se calcula: ocupa la caja de la grilla */
+      'quickpass':   { cx: 0.50, cy: 0.52, esc: 1.95, dim: 0.42 },
+      'loyalix':     { cx: 0.50, cy: 0.52, esc: 1.95, dim: 0.42 },
+      'omnia':       { cx: 0.50, cy: 0.52, esc: 1.95, dim: 0.42 },
+      'rutex':       { cx: 0.50, cy: 0.52, esc: 1.95, dim: 0.42 }
+    };
+    var FUERA = { cx: 0.5, cy: 0.5, esc: 1.8, dim: 0 };
+
+    var zonas = [];
+    for (var id in DESTINOS) {
+      var el = document.getElementById(id);
+      if (el) zonas.push({ el: el, d: DESTINOS[id] });
+    }
+
+    /* El disco que se ve no mide R: la perspectiva empuja hacia afuera las
+       partículas del frente y el borde queda en 1.176 · R. */
+    var DISCO = 1.176;
+    var cajaOrbe = document.getElementById('pl-orbe-caja');
+    var portada = { cx: 0.72, cy: 0.5, esc: 1, dim: 1 };
+
+    function metaPortada() {
+      if (!cajaOrbe || !R) return portada;
+      var r = cajaOrbe.getBoundingClientRect();
+      if (!r.width) return portada;
+      portada.cx  = (r.left + r.right) / 2 / W;
+      portada.cy  = (r.top + r.bottom) / 2 / H;
+      portada.esc = (r.width / 2) / (R * DISCO);
+      portada.dim = ES_MOVIL ? 0.6 : 1;
+      return portada;
+    }
+
+    var cam = { cx: 0.72, cy: 0.5, esc: 1, dim: 0 }, meta = FUERA;
+
+    function elegirMeta() {
+      var medio = H * 0.5, elegida = FUERA;
+      for (var i = 0; i < zonas.length; i++) {
+        var r = zonas[i].el.getBoundingClientRect();
+        if (r.top <= medio && r.bottom >= medio) {
+          elegida = zonas[i].d || metaPortada();
+          break;
+        }
+      }
+      meta = elegida;
+      cam.cx  += (meta.cx  - cam.cx)  * 0.08;
+      cam.cy  += (meta.cy  - cam.cy)  * 0.08;
+      cam.esc += (meta.esc - cam.esc) * 0.08;
+      cam.dim += (meta.dim - cam.dim) * 0.08;
+    }
+
+    var ang = 0, RADIO_MOUSE = ES_MOVIL ? 0 : 165, despMax = 0, limpio = false;
+
+    function tick(t) {
+      elegirMeta();
+      if (cam.dim < 0.015) {
+        if (!limpio) { ctx.clearRect(0, 0, W, H); limpio = true; }
+        return;
+      }
+      limpio = false;
+
+      ang += 0.0016;
+      var tt = t * 0.001;
+      var ca = Math.cos(ang), sa = Math.sin(ang);
+      pX += (tX - pX) * 0.045;
+      pY += (tY - pY) * 0.045;
+      CX = W * cam.cx; CY = H * cam.cy;
+      var Rc = R * cam.esc, dim = cam.dim;
+      var despX = -pX * 26, despY = -pY * 20;
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.globalCompositeOperation = 'lighter';
+
+      /* Ninguna partícula puede moverse si el puntero está más lejos que el
+         radio del orbe más el alcance del efecto: una comparación por cuadro
+         evita el resorte y la raíz cuadrada de las 3.500. */
+      var dcx = mx - CX, dcy = my - CY;
+      var alcance = Rc * 1.18 + RADIO_MOUSE;
+      var conRepulsion = RADIO_MOUSE && ((dcx * dcx + dcy * dcy) < alcance * alcance || despMax > 0.05);
+      if (RADIO_MOUSE && !conRepulsion && despMax !== 0) {
+        ox.fill(0); oy.fill(0); vx.fill(0); vy.fill(0);
+        despMax = 0;
+      }
+      var nuevoMax = 0;
+
+      var colActual = -1;
+      for (var i = 0; i < N; i++) {
+        var x = bx[i] * ca + bz[i] * sa;
+        var z = -bx[i] * sa + bz[i] * ca;
+        var y = by[i];
+
+        var k = 1.9 / (1.9 + z);
+        var sx = CX + x * Rc * k + despX;
+        var sy = CY + y * Rc * k + despY;
+
+        if (RADIO_MOUSE) {
+          var dx = sx + ox[i] - mx, dy = sy + oy[i] - my;
+          var d2 = dx * dx + dy * dy;
+          if (d2 < RADIO_MOUSE * RADIO_MOUSE) {
+            var d = Math.sqrt(d2) || 1;
+            var f = (1 - d / RADIO_MOUSE); f = f * f * 3.2;
+            vx[i] += (dx / d) * f; vy[i] += (dy / d) * f;
+          }
+          vx[i] = (vx[i] - ox[i] * 0.028) * 0.8;
+          vy[i] = (vy[i] - oy[i] * 0.028) * 0.8;
+          ox[i] += vx[i]; oy[i] += vy[i];
+          sx += ox[i]; sy += oy[i];
+          var mo = (ox[i] < 0 ? -ox[i] : ox[i]) + (oy[i] < 0 ? -oy[i] : oy[i]);
+          if (mo > nuevoMax) nuevoMax = mo;
+        }
+
+        if (sx < -4 || sx > W + 4 || sy < -4 || sy > H + 4) continue;
+
+        var rho = Math.sqrt(x * x + y * y);
+        var a = (0.32 + rho * rho * 1.25) * (z < 0 ? 1 : 0.88) * bri[i] * dim;
+        /* Una lectura de tabla y una multiplicación por partícula por cuadro */
+        if (!ES_MOVIL && !MODO_LIGERO) a *= 0.78 + 0.22 * senoRapido(tt * vel[i] + fas[i]);
+        if (a <= 0.015) continue;
+
+        if (col[i] !== colActual) { colActual = col[i]; ctx.fillStyle = PALETA[colActual]; }
+        ctx.globalAlpha = a > 1 ? 1 : a;
+        var s = tam[i] * k;
+        ctx.fillRect(sx, sy, s, s);
+      }
+
+      if (conRepulsion) despMax = nuevoMax;
+
+      ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    LOOP.add(tick, function() { return true; });
+  })();
+</script>
+</body>
+</html>

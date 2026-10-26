@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="alternate" hreflang="es" href="https://vortex-it.com/como-trabajamos.html">
+  <link rel="alternate" hreflang="en" href="https://vortex-it.com/en/how-we-work.html">
+  <link rel="alternate" hreflang="x-default" href="https://vortex-it.com/como-trabajamos.html">
+  <title>Vortex — How we work</title>
+  <meta name="description" content="We understand the business, design the strategy, build the solution and keep evolving. That is how Vortex IT supports each organization through change.">
+    <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+/* Móvil o cualquier cosa con dedo en vez de puntero */
+var ES_MOVIL = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
+var CPU_BAJA = (navigator.hardwareConcurrency || 4) <= 4;
+var CALIDAD  = ES_MOVIL ? (CPU_BAJA ? 0.18 : 0.3) : (CPU_BAJA ? 0.65 : 1);
+
+/* macOS resuelve el scroll y los sticky en el compositor con inercia,
+   mientras GSAP aplica los transform en el hilo principal: ese desfasaje
+   es lo que se ve como temblor. Se detecta para corregirlo. */
+var ES_MAC = /Mac|iPad|iPhone|iPod/.test(navigator.platform || '') ||
+             (navigator.userAgent.indexOf('Mac') !== -1);
+
+/* Safari (cualquier plataforma) entra al mismo perfil liviano: es el que
+   más sufre el backdrop-filter, el fondo fijo y el degradado animado. */
+var ES_SAFARI = /^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i
+                  .test(navigator.userAgent || '');
+if (ES_SAFARI) ES_MAC = true;
+
+/* Interruptor para probar sin tener una Mac:
+   ?perfil=mac    fuerza el modo Mac (para ver los cambios visuales)
+   ?perfil=normal lo desactiva aunque estés en Mac (para comparar) */
+var _perfilForzado = new URLSearchParams(location.search).get('perfil');
+if (_perfilForzado === 'mac')    ES_MAC = true;
+if (_perfilForzado === 'normal') ES_MAC = false;
+
+/* ── MODO LIGERO ──
+   Mac, Safari y las máquinas de pocos núcleos entran acá. Es el interruptor
+   que usan todos los canvas del sitio para bajar partículas, saltear frames
+   y evitar el desenfoque por frame. */
+var MODO_LIGERO = ES_MAC || CPU_BAJA;
+
+/* En pantallas Retina, dibujar los canvas al doble multiplica por cuatro el
+   trabajo por frame. En modo ligero se baja a 1.35x: sigue viéndose nítido
+   —a 1x los puntos quedaban gruesos— y cuesta la mitad que a 2x. */
+var DPR_MAX = ES_MOVIL ? 1 : (MODO_LIGERO ? 1.35 : (window.devicePixelRatio > 1.5 ? 1.5 : 2));
+
+/* Cuánto se recorta la cantidad de partículas de cada efecto. Con 0.6 el
+   orbe conserva su densidad; por debajo se empezaba a ver ralo. */
+var FACTOR_PART = MODO_LIGERO ? 0.6 : (ES_MOVIL ? 0.4 : 1);
+function cuantasPart(n) { return Math.max(3, Math.round(n * FACTOR_PART)); }
+
+/* La clase se pone en <html> y no en <body>, porque <body> todavía no
+   existe cuando esto corre. Es lo que apaga backdrop-filter, el degradado
+   animado y el encaje de scroll antes del primer pintado. */
+if (ES_MAC) document.documentElement.classList.add('es-mac');
+</script>
+  <link rel="stylesheet" href="/assets/vortex.css?v=23">
+  <style>
+    /* ============================================================
+       CÓMO TRABAJAMOS
+       Misma mecánica que Soluciones: una sección por pantalla, los
+       elementos aparecen solos al entrar y el detalle se despliega
+       con "Conocé más".
+    ============================================================ */
+
+    html{scroll-snap-type:y mandatory}
+    /* El footer también tiene que ser punto de anclaje: si no, el encaje
+       devuelve al último bloque y no se llega a verlo */
+    .site-footer{scroll-snap-align:end;scroll-snap-stop:normal}
+    @media(max-width:900px),(pointer:coarse){html{scroll-snap-type:none}}
+
+    main,.site-footer{position:relative;z-index:1}
+
+    /* ── PORTADA ── */
+    .page-hero{min-height:100vh;min-height:100svh;padding:130px 48px 60px;display:flex;flex-direction:column;justify-content:center;text-align:center;scroll-snap-align:start;scroll-snap-stop:always}
+    .page-hero h1{font-size:clamp(3.2rem,min(7vw,9vh),6rem);font-weight:500;color:#a0d232;text-transform:uppercase;line-height:1.05;margin-bottom:clamp(26px,5vh,60px)}
+    .ct-lead{font-size:clamp(1.25rem,min(2.4vw,3.2vh),2rem);font-weight:400;line-height:1.45;color:#fff;max-width:min(1020px,94%);margin:0 auto clamp(16px,2.4vh,28px)}
+    .ct-sub{font-size:clamp(1rem,min(1.8vw,2.4vh),1.35rem);font-weight:300;line-height:1.6;color:rgba(255,255,255,.72);max-width:min(940px,94%);margin:0 auto}
+    .ct-sub + .ct-sub{margin-top:clamp(10px,1.6vh,18px)}
+    .ct-iconos-intro{display:flex;justify-content:center;padding-bottom:clamp(48px,7vh,76px);gap:clamp(18px,4vw,74px);flex-wrap:wrap;margin-top:clamp(44px,9vh,110px)}
+
+    .ct-icono-intro{position:relative;width:clamp(92px,min(13vw,17vh),172px);height:clamp(92px,min(13vw,17vh),172px);display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:.86;transition:transform .32s cubic-bezier(.22,.61,.36,1),opacity .32s ease}
+    .ct-icono-intro img{width:100%;height:100%;object-fit:contain;position:relative;z-index:1}
+    /* Luz violeta detrás del ícono, igual que en la constelación de la home.
+       'closest-side' hace que el gradiente llegue a cero justo en el borde de
+       la caja: sin eso queda un círculo recortado y duro. */
+    .ct-icono-intro::before{content:'';position:absolute;inset:-70%;background:radial-gradient(circle closest-side,rgba(163,116,245,.46) 0%,rgba(132,76,222,.26) 22%,rgba(96,50,180,.13) 40%,rgba(70,36,140,.05) 60%,rgba(57,31,82,0) 80%);opacity:0;transform:scale(.78);transition:opacity .34s ease,transform .34s ease;pointer-events:none;z-index:0}
+    .ct-icono-intro:hover{transform:scale(1.1);opacity:1}
+    .ct-icono-intro:hover::before{opacity:1;transform:scale(1)}
+    /* El título debajo de cada ícono. Va posicionado y no en el flujo para no
+       agrandar la caja del ícono, que es la que define el halo violeta y la que
+       se escala en el hover. El padding de abajo del contenedor le hace lugar. */
+    .ct-icono-tit{position:absolute;top:calc(100% + 14px);left:50%;transform:translateX(-50%);
+      width:max(130%,120px);text-align:center;font-family:'Rubik',sans-serif;
+      font-size:clamp(11px,1.05vw,14px);font-weight:400;line-height:1.3;
+      color:rgba(160,210,50,.78);pointer-events:none}
+
+    /* Partículas orbitando cada ícono: el contenedor gira y el punto va en su
+       borde, así el radio acompaña el tamaño del ícono */
+    .ct-chispa{position:absolute;inset:calc(var(--r) * -1%);border-radius:50%;animation:ctGira var(--d) linear infinite;animation-delay:var(--t);pointer-events:none;z-index:2}
+    .ct-chispa.rev{animation-direction:reverse}
+    .ct-chispa::before{content:'';position:absolute;top:0;left:50%;width:var(--s);height:var(--s);margin-left:calc(var(--s) / -2);border-radius:50%;background:rgba(214,190,255,.95);box-shadow:0 0 7px 1px rgba(163,116,245,.7);opacity:var(--o);transition:opacity .34s ease}
+    .ct-chispa.verde::before{background:rgba(160,210,50,.9);box-shadow:0 0 7px 1px rgba(160,210,50,.55)}
+    .ct-icono-intro:hover .ct-chispa::before{opacity:1}
+    @keyframes ctGira{from{transform:rotate(var(--a))}to{transform:rotate(calc(var(--a) + 360deg))}}
+
+    /* ── UNA ETAPA POR PANTALLA ── */
+        /* Acá el recorte sí hace falta: las partículas en rulitos giran por fuera
+       del contorno de la card y sin él se irían a las secciones vecinas. Pero
+       recortaba también el halo violeta —que se extiende 250 px— y se veía
+       cortado en seco cuando la card se corre a la izquierda al abrirse.
+       'overflow: clip' con margen recorta igual pero deja pasar esos 260 px.
+       La línea de 'hidden' queda antes como respaldo para navegadores viejos
+       que no entienden 'clip' y la ignoran. */
+    .paso-bloque{height:100vh;height:100svh;
+      overflow:hidden;
+      overflow:clip;
+      overflow-clip-margin:260px;
+      padding:clamp(155px,22vh,250px) 0 40px;scroll-snap-align:start;scroll-snap-stop:always;scroll-margin-top:72px}
+    .paso-inner{max-width:1240px;margin:0 auto;padding:0 48px;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;align-content:start}
+
+    /* Columna izquierda: arranca centrada y se corre al abrir el detalle */
+        /* Antes la card arrancaba centrada y "Conocé más" la corría a la
+       izquierda. Ahora la información está siempre a la vista, así que la
+       card se queda en su columna desde el principio. */
+    .paso-left{display:flex;flex-direction:column;gap:clamp(18px,3vh,34px);align-self:start;align-items:center}
+
+    /* Caja de la card: sostiene la luz violeta y las partículas, que quedan
+       por detrás (z-index 0 contra el 1 de la card) */
+    .paso-card-caja{position:relative;width:100%}
+    /* La luz sale del rectángulo mismo, no de un punto detrás: es un halo que
+       irradia desde el contorno de la card, con los colores de los íconos. */
+    .paso-card-caja::before{content:'';position:absolute;inset:0;border-radius:18px;pointer-events:none;z-index:0;
+      box-shadow:0 0 38px 4px rgba(163,116,245,.24),
+                 0 0 84px 22px rgba(132,76,222,.155),
+                 0 0 160px 56px rgba(96,50,180,.09),
+                 0 0 250px 104px rgba(70,36,140,.042);
+      opacity:0;transform:scale(.96);transition:opacity .8s ease,transform .8s cubic-bezier(.22,.61,.36,1)}
+    .paso-bloque.visible .paso-card-caja::before{opacity:1;transform:scale(1)}
+
+    /* Partículas dando la vuelta al rectángulo de la card, en rulitos.
+       Tres capas encadenadas: la externa mueve en X, la del medio en Y
+       (desfasadas un cuarto de vuelta, de ahí el recorrido rectangular) y la
+       interna gira sobre sí misma, que es lo que dibuja el rulo. Al ser
+       porcentajes de la propia caja, el recorrido se adapta al tamaño de la
+       card sin cálculos y sin deformar el punto.
+       La curva de tiempo hace que en las esquinas un eje frene mientras el
+       otro arranca: el giro queda redondeado en vez de en ángulo recto. */
+    .paso-chispa{position:absolute;inset:calc(var(--r) * -1%);pointer-events:none;z-index:0;animation:pasoX var(--d) cubic-bezier(.3,.15,.7,.85) infinite;animation-delay:var(--t);animation-play-state:paused}
+    .paso-chispa i{position:absolute;inset:0;display:block;animation:pasoY var(--d) cubic-bezier(.3,.15,.7,.85) infinite;animation-delay:var(--t);animation-play-state:paused}
+    .paso-chispa b{position:absolute;top:50%;left:50%;width:var(--rz);height:var(--rz);margin:calc(var(--rz) / -2) 0 0 calc(var(--rz) / -2);display:block;animation:pasoRulo var(--dr) linear infinite;animation-delay:var(--tr);animation-play-state:paused}
+    .paso-bloque.visible .paso-chispa,
+    .paso-bloque.visible .paso-chispa i,
+    .paso-bloque.visible .paso-chispa b{animation-play-state:running}
+    .paso-chispa.rev,.paso-chispa.rev i{animation-direction:reverse}
+    .paso-chispa.rulo-rev b{animation-direction:reverse}
+    .paso-chispa b::before{content:'';position:absolute;top:0;left:50%;width:var(--s);height:var(--s);margin-left:calc(var(--s) / -2);border-radius:50%;background:rgba(214,190,255,.95);box-shadow:0 0 7px 1px rgba(163,116,245,.7);opacity:0;transition:opacity .8s ease}
+    .paso-chispa.verde b::before{background:rgba(160,210,50,.9);box-shadow:0 0 7px 1px rgba(160,210,50,.55)}
+    .paso-bloque.visible .paso-chispa b::before{opacity:var(--o);transition-delay:.25s}
+
+    /* Vuelta completa al rectángulo: arriba → derecha → abajo → izquierda */
+    @keyframes pasoX{0%{transform:translateX(-50%)}25%{transform:translateX(50%)}50%{transform:translateX(50%)}75%{transform:translateX(-50%)}100%{transform:translateX(-50%)}}
+    @keyframes pasoY{0%{transform:translateY(-50%)}25%{transform:translateY(-50%)}50%{transform:translateY(50%)}75%{transform:translateY(50%)}100%{transform:translateY(-50%)}}
+    /* El rulo: giro chico y rápido montado sobre el recorrido grande */
+    @keyframes pasoRulo{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+    .paso-card{position:relative;z-index:1;width:100%;display:flex;flex-direction:column;gap:clamp(20px,2.8vh,32px);background:rgba(255,255,255,.05);border:none;border-radius:18px;padding:clamp(38px,5vh,60px) clamp(36px,3.4vw,54px);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+    .paso-card-head{display:flex;align-items:center;justify-content:space-between;gap:18px}
+    .paso-titulo-wrap{display:flex;flex-direction:column;gap:6px}
+    .paso-num{font-family:'Rubik',sans-serif;font-size:clamp(.8rem,min(1.2vw,1.6vh),1.05rem);font-weight:400;letter-spacing:.22em;color:rgba(160,210,50,.65)}
+    .paso-nombre{font-family:'Rubik',sans-serif;font-size:clamp(1.6rem,min(2.9vw,4vh),2.7rem);font-weight:500;color:#a0d232;text-transform:uppercase;text-align:left;line-height:1.1}
+    .paso-card-icono{width:clamp(104px,min(12.5vw,17vh),164px);height:clamp(104px,min(12.5vw,17vh),164px);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .paso-card-icono img{width:100%;height:100%;object-fit:contain}
+    .paso-frase{font-size:clamp(1.05rem,min(1.7vw,2.3vh),1.4rem);font-weight:400;line-height:1.4;color:#fff}
+    .paso-desc{font-size:clamp(.98rem,min(1.5vw,2vh),1.22rem);line-height:1.55;font-weight:300;color:rgba(255,255,255,.75)}
+    .paso-desc + .paso-desc{margin-top:-8px}
+
+    
+    /* Columna derecha: qué analizamos / diseñamos / integramos + resultado */
+    .paso-right{display:flex;flex-direction:column;gap:30px;align-self:start}
+    .paso-col-titulo{font-family:'Rubik',sans-serif;font-size:clamp(15px,1.3vw,18px);font-weight:400;text-transform:uppercase;color:#a0d232;padding-bottom:9px;margin-bottom:14px;border-bottom:1px solid rgba(160,210,50,.22)}
+    .paso-lista{list-style:none;display:flex;flex-direction:column;gap:8px}
+    .paso-lista li{font-size:clamp(.92rem,1.3vw,1.08rem);font-weight:300;color:rgba(255,255,255,.78);padding-left:18px;position:relative}
+    .paso-lista li::before{content:'·';position:absolute;left:0;color:#a0d232;font-size:1.2em;line-height:1}
+    .paso-col-resultado .paso-col-titulo{border-bottom-color:rgba(160,210,50,.35)}
+    .paso-resultado{font-size:clamp(.95rem,1.35vw,1.12rem);font-weight:400;color:#fff}
+
+    /* ── APARICIÓN POR SECCIÓN ── */
+    .paso-bloque .paso-card,
+    .paso-bloque .paso-col,
+    .ct-cierre .ct-cierre-1,
+    .ct-cierre .ct-cierre-2,
+    .ct-cierre .ct-cierre-btn-wrap{opacity:0;transform:translateY(26px);transition:opacity .65s cubic-bezier(.22,.61,.36,1),transform .65s cubic-bezier(.22,.61,.36,1)}
+    .paso-bloque.visible .paso-card,
+    .paso-bloque.visible .paso-col,
+    .ct-cierre.visible .ct-cierre-1,
+    .ct-cierre.visible .ct-cierre-2,
+    .ct-cierre.visible .ct-cierre-btn-wrap{opacity:1;transform:none}
+    /* Al entrar la sección: primero la card y detrás las dos columnas */
+    .paso-bloque.visible .paso-card{transition-delay:.05s}
+    .paso-bloque.visible .paso-right .paso-col:nth-child(1){transition-delay:.26s}
+    .paso-bloque.visible .paso-right .paso-col:nth-child(2){transition-delay:.44s}
+
+    .page-hero h1,.page-hero .ct-lead,.page-hero .ct-sub,.page-hero .ct-iconos-intro{opacity:0;transform:translateY(22px);transition:opacity .65s cubic-bezier(.22,.61,.36,1),transform .65s cubic-bezier(.22,.61,.36,1)}
+    .page-hero.visible h1{opacity:1;transform:none;transition-delay:.05s}
+    .page-hero.visible .ct-lead{opacity:1;transform:none;transition-delay:.22s}
+    /* nth-of-type cuenta párrafos, no clases: el 1.º es .ct-lead */
+    .page-hero.visible .ct-sub:nth-of-type(2){opacity:1;transform:none;transition-delay:.38s}
+    .page-hero.visible .ct-sub:nth-of-type(3){opacity:1;transform:none;transition-delay:.5s}
+    .page-hero.visible .ct-iconos-intro{opacity:1;transform:none;transition-delay:.66s}
+
+    /* ── CIERRE ── */
+    .ct-cierre{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:clamp(22px,4vh,48px);padding:100px 24px 60px;scroll-snap-align:start;scroll-snap-stop:always}
+    .ct-cierre-1{font-size:clamp(2rem,min(4.8vw,6.4vh),4rem);text-transform:uppercase;line-height:1.15}
+    .ct-cierre-1a{font-weight:400;color:#fff}
+    .ct-cierre-1b{font-weight:600;color:#a0d232}
+    .ct-cierre-2{font-size:clamp(1.15rem,min(2.2vw,3vh),1.85rem);font-weight:300;line-height:1.5;color:rgba(255,255,255,.85);max-width:min(1000px,94%)}
+    .ct-cierre-btn-wrap{margin-top:clamp(8px,1.6vh,20px)}
+    .ct-cierre-btn{display:inline-block;padding:14px 36px;background:#a0d232;color:#000;font-family:'Rubik',sans-serif;font-size:14px;font-weight:500;text-transform:uppercase;letter-spacing:.04em;text-decoration:none;border-radius:6px;border:1px solid #a0d232;transition:background .2s,color .2s}
+    .ct-cierre-btn:hover{background:#000;color:#a0d232}
+
+    @media(prefers-reduced-motion:reduce){
+      .ct-chispa,.paso-chispa,.paso-chispa i,.paso-chispa b{animation:none}
+      .paso-bloque .paso-card,.paso-bloque .paso-col,
+      .ct-cierre-1,.ct-cierre-2,.ct-cierre-btn-wrap,
+      .page-hero h1,.page-hero .ct-lead,.page-hero .ct-sub,.page-hero .ct-iconos-intro{opacity:1;transform:none;transition:none}
+    }
+
+    /* ── RESPONSIVO ── */
+    @media(max-width:900px){
+      html{scroll-snap-type:none}
+      .paso-bloque{height:auto;min-height:auto;padding:80px 0;overflow:visible}
+      .paso-inner{grid-template-columns:1fr;gap:24px;padding:0 24px}
+      /* ── LOS CUATRO ÍCONOS: CUADRÍCULA DE 2 × 2 ──
+         En una sola fila no entran: entraban tres y el cuarto se iba abajo,
+         montándose sobre los títulos de la fila de arriba. Pasa eso porque
+         el título va posicionado, no en el flujo, así que no ocupa lugar y
+         la fila siguiente no lo esquiva. La separación entre filas es la
+         que le hace sitio: dos renglones de título más el aire de arriba. */
+      .ct-iconos-intro{
+        display:grid;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        justify-items:center;
+        gap:58px 12px;
+        width:min(330px,100%);
+        margin-left:auto;
+        margin-right:auto;
+        padding-bottom:56px;
+      }
+    }
+    @media(max-width:768px){
+      .page-hero{min-height:auto;padding:120px 24px 48px}
+      .paso-card{padding:26px}
+      .ct-cierre{min-height:auto;padding:80px 24px}
+    }
+
+    /* Pantallas bajas: todo entra igual en una pantalla */
+    @media(max-height:820px) and (min-width:901px){
+      .paso-bloque{padding:clamp(132px,18vh,182px) 0 32px}
+      .paso-inner{gap:40px}
+      .page-hero{padding:110px 60px 40px}
+      .page-hero h1{font-size:clamp(2.6rem,min(5.6vw,7.4vh),4.4rem);margin-bottom:clamp(20px,4vh,42px)}
+      .ct-lead{font-size:clamp(1.05rem,min(1.9vw,2.6vh),1.5rem)}
+      .ct-sub{font-size:clamp(.92rem,min(1.5vw,2vh),1.15rem)}
+      .ct-iconos-intro{margin-top:clamp(34px,6vh,70px)}
+      .ct-icono-intro{width:clamp(78px,min(10vw,14vh),124px);height:clamp(78px,min(10vw,14vh),124px)}
+      .paso-card{padding:32px 34px;gap:20px}
+      .paso-right{gap:20px}
+      .paso-nombre{font-size:clamp(1.4rem,min(2.4vw,3.4vh),2.1rem)}
+      .paso-card-icono{width:clamp(84px,min(10vw,14vh),120px);height:clamp(84px,min(10vw,14vh),120px)}
+      .paso-frase{font-size:clamp(.98rem,min(1.5vw,2vh),1.2rem)}
+      .paso-desc{font-size:clamp(.9rem,min(1.3vw,1.8vh),1.05rem)}
+      .paso-col-titulo{font-size:clamp(13px,1.1vw,15px);margin-bottom:10px;padding-bottom:7px}
+      .paso-lista{gap:5px}
+      .paso-lista li{font-size:clamp(.85rem,1.15vw,.98rem)}
+    }
+
+    /* En Mac el desenfoque de la card y el encaje forzado cuestan caro */
+    .es-mac .paso-card{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(28,22,40,.82)}
+    .es-mac{scroll-snap-type:none}
+  </style>
+</head>
+<body>
+
+
+  <!-- FLECHA: LLEVA A LA SECCIÓN SIGUIENTE -->
+  <button class="flecha-baja" id="flecha-baja" type="button"
+          data-cursor="Down" aria-label="Go to the next section">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <line x1="12" y1="4" x2="12" y2="20"></line>
+      <polyline points="6 14 12 20 18 14"></polyline>
+    </svg>
+  </button>
+
+  <!-- HEADER -->
+  <header class="site-header" id="site-header">
+    <a href="/en/" class="header-logo" aria-label="Vortex IT">
+      <img src="/assets/Logo%20VX_blanco%20y%20violeta.svg" alt="Vortex IT" class="logo-img">
+    </a>
+
+    <nav aria-label="Main navigation">
+      <ul class="header-nav" id="header-nav">
+        <li><a href="/en/">Home</a></li>
+        <li><a href="/en/solutions.html">Solutions</a></li>
+        <li><a href="/en/how-we-work.html" class="active">How we work</a></li>
+        <li><a href="/en/about.html">About Vortex</a></li>
+        <li><a href="/en/blog.html">Blog</a></li>
+        <li><a href="/en/platforms.html">Platforms</a></li>
+        <li><a href="/en/contact.html" class="nav-cta" data-cursor="Let&#039;s talk">Let's talk</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-right">
+      <!-- Conmutador de idioma: son links reales a la misma página en el
+           otro idioma, no botones. Así se puede compartir la dirección y
+           Google puede seguirlos. -->
+      <div class="lang-switch">
+        <a class="lang-btn"
+           href="/como-trabajamos.html" hreflang="es" lang="es">ES</a>
+        <span class="lang-sep">|</span>
+        <a class="lang-btn active"
+           href="/en/how-we-work.html" hreflang="en" lang="en">EN</a>
+      </div>
+      <div class="social-links">
+        <a href="https://www.linkedin.com/company/vortex-it-ok" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="https://www.instagram.com/vortex.it/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@vortexit" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#333"/></svg>
+        </a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+<main>
+
+  <!-- PORTADA -->
+  <div class="page-hero">
+    <h1>How we work</h1>
+    <p class="ct-lead">Transformation is not just about deploying technology.</p>
+    <p class="ct-sub">It means understanding the business, defining what needs to change, designing the right strategy<br>and building solutions ready to evolve.</p>
+    <p class="ct-sub">At <strong>VORTEX</strong> we combine business insight, technology and artificial intelligence<br>to support every stage of that journey.</p>
+
+    <div class="ct-iconos-intro">
+      <a class="ct-icono-intro" href="#entendemos" data-cursor="See more" aria-label="We understand the business">
+        <img src="/assets/boton_rompecabezas.webp" alt="We understand the business"><span class="ct-icono-tit">We understand<br>the business</span>
+      </a>
+      <a class="ct-icono-intro" href="#estrategia" data-cursor="See more" aria-label="We design the strategy">
+        <img src="/assets/boton_brujula.webp" alt="We design the strategy"><span class="ct-icono-tit">We design<br>the strategy</span>
+      </a>
+      <a class="ct-icono-intro" href="#desarrollamos" data-cursor="See more" aria-label="We build the solution">
+        <img src="/assets/boton_engranaje.webp" alt="We build the solution"><span class="ct-icono-tit">We build<br>the solution</span>
+      </a>
+      <a class="ct-icono-intro" href="#evolucionamos" data-cursor="See more" aria-label="We keep evolving">
+        <img src="/assets/boton_crecimiento.webp" alt="We keep evolving"><span class="ct-icono-tit">We keep<br>evolving</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- 01 — ENTENDEMOS EL NEGOCIO -->
+  <div class="paso-bloque" id="entendemos">
+    <div class="paso-inner">
+      <div class="paso-left">
+        <div class="paso-card-caja">
+          <div class="paso-card">
+          <div class="paso-card-head">
+            <div class="paso-titulo-wrap">
+              <p class="paso-num">01 —</p>
+              <h2 class="paso-nombre">We understand<br>the business</h2>
+            </div>
+            <div class="paso-card-icono"><img src="/assets/boton_rompecabezas.webp" alt="" aria-hidden="true"></div>
+          </div>
+          <p class="paso-frase">Before designing a solution, we work out what actually needs to change.</p>
+          <p class="paso-desc">We look at the organization's goals, processes, platforms and challenges to find where the opportunities for change are and which capabilities the business needs to build.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="paso-right" id="det-entendemos">
+        <div class="paso-col">
+          <p class="paso-col-titulo">We analyze</p>
+          <ul class="paso-lista">
+            <li>Strategic objectives.</li>
+            <li>Critical processes.</li>
+            <li>Platforms and architecture.</li>
+            <li>Data and information sources.</li>
+            <li>The needs of the people and of the business.</li>
+          </ul>
+        </div>
+        <div class="paso-col paso-col-resultado">
+          <p class="paso-col-titulo">The outcome</p>
+          <p class="paso-resultado">A clear picture of the challenge and of the opportunities worth pursuing.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 — DISEÑAMOS LA ESTRATEGIA -->
+  <div class="paso-bloque" id="estrategia">
+    <div class="paso-inner">
+      <div class="paso-left">
+        <div class="paso-card-caja">
+          <div class="paso-card">
+          <div class="paso-card-head">
+            <div class="paso-titulo-wrap">
+              <p class="paso-num">02 —</p>
+              <h2 class="paso-nombre">We design<br>the strategy</h2>
+            </div>
+            <div class="paso-card-icono"><img src="/assets/boton_brujula.webp" alt="" aria-hidden="true"></div>
+          </div>
+          <p class="paso-frase">We map the route before choosing the technology.</p>
+          <p class="paso-desc">From that understanding of the business, we design a strategy that sets out the priorities, capabilities and solutions needed to reach the agreed goals.</p>
+          <p class="paso-desc">Artificial intelligence is built in from the outset wherever it can add new capabilities, improve processes or change how decisions get made.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="paso-right" id="det-estrategia">
+        <div class="paso-col">
+          <p class="paso-col-titulo">We design</p>
+          <ul class="paso-lista">
+            <li>Transformation strategies.</li>
+            <li>New processes and operating models.</li>
+            <li>Architectures and platforms.</li>
+            <li>Digital and AI capabilities.</li>
+            <li>Priorities and an evolution roadmap.</li>
+          </ul>
+        </div>
+        <div class="paso-col paso-col-resultado">
+          <p class="paso-col-titulo">The outcome</p>
+          <p class="paso-resultado">A strategy aligned to the business, and a concrete route to deliver it.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 — DESARROLLAMOS LA SOLUCIÓN -->
+  <div class="paso-bloque" id="desarrollamos">
+    <div class="paso-inner">
+      <div class="paso-left">
+        <div class="paso-card-caja">
+          <div class="paso-card">
+          <div class="paso-card-head">
+            <div class="paso-titulo-wrap">
+              <p class="paso-num">03 —</p>
+              <h2 class="paso-nombre">We build<br>the solution</h2>
+            </div>
+            <div class="paso-card-icono"><img src="/assets/boton_engranaje.webp" alt="" aria-hidden="true"></div>
+          </div>
+          <p class="paso-frase">We turn the strategy into capabilities that work.</p>
+          <p class="paso-desc">We design and build solutions that bring together technology, data and artificial intelligence, focused on the processes and needs already identified.</p>
+          <p class="paso-desc">This is not about installing a tool: we build platforms and solutions ready to evolve as the needs of the business change.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="paso-right" id="det-desarrollamos">
+        <div class="paso-col">
+          <p class="paso-col-titulo">We bring together</p>
+          <ul class="paso-lista">
+            <li>Technology and architecture.</li>
+            <li>Data and artificial intelligence.</li>
+            <li>Applications and platforms.</li>
+            <li>Process automation.</li>
+            <li>Integrations and APIs.</li>
+          </ul>
+        </div>
+        <div class="paso-col paso-col-resultado">
+          <p class="paso-col-titulo">The outcome</p>
+          <p class="paso-resultado">Solutions in production, ready to grow alongside the business.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 — EVOLUCIONAMOS CONTINUAMENTE -->
+  <div class="paso-bloque" id="evolucionamos">
+    <div class="paso-inner">
+      <div class="paso-left">
+        <div class="paso-card-caja">
+          <div class="paso-card">
+          <div class="paso-card-head">
+            <div class="paso-titulo-wrap">
+              <p class="paso-num">04 —</p>
+              <h2 class="paso-nombre">We keep<br>evolving</h2>
+            </div>
+            <div class="paso-card-icono"><img src="/assets/boton_crecimiento.webp" alt="" aria-hidden="true"></div>
+          </div>
+          <p class="paso-frase">Transformation does not end when the solution goes live.</p>
+          <p class="paso-desc">We measure results, fold in what we learn and adjust the solutions to meet new needs, new data and new opportunities.</p>
+          <p class="paso-desc">Evolving continuously is what keeps platforms, processes and capabilities in step with a business that never stops changing.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="paso-right" id="det-evolucionamos">
+        <div class="paso-col">
+          <p class="paso-col-titulo">We evolve</p>
+          <ul class="paso-lista">
+            <li>We measure results.</li>
+            <li>We look at new challenges.</li>
+            <li>We add new capabilities.</li>
+            <li>We refine processes and solutions.</li>
+            <li>We adapt platforms to new needs.</li>
+          </ul>
+        </div>
+        <div class="paso-col paso-col-resultado">
+          <p class="paso-col-titulo">The outcome</p>
+          <p class="paso-resultado">A lasting ability to evolve.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CIERRE -->
+  <div class="ct-cierre" id="cierre">
+    <p class="ct-cierre-1">
+      <span class="ct-cierre-1a">Transformation is not a project with an end date.</span><br>
+      <span class="ct-cierre-1b">It is an organization's ability to keep evolving.</span>
+    </p>
+    <div class="ct-cierre-btn-wrap">
+      <a class="ct-cierre-btn" href="/en/contact.html" data-cursor="Let&#039;s talk">Let's talk &rarr;</a>
+    </div>
+  </div>
+
+</main>
+
+
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo-wrap">
+          <img src="/assets/Logo%20VX_blanco%20y%20violeta.svg" alt="Vortex IT" class="logo-img">
+        </div>
+        <p class="footer-logo-desc">Founded in Córdoba, Argentina. We operate across Latin America, Europe and the United States.</p>
+      </div>
+
+      <div>
+        <p class="footer-col-title">Vortex IT</p>
+        <ul class="footer-links">
+          <li><a href="/en/">Home</a></li>
+          <li><a href="/en/solutions.html">Solutions</a></li>
+          <li><a href="/en/how-we-work.html">How we work</a></li>
+          <li><a href="/en/about.html">About Vortex</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="footer-col-title">Community</p>
+        <ul class="footer-links">
+          <li><a href="/en/blog.html">Blog</a></li>
+          <li><a href="/en/platforms.html">Platforms</a></li>
+          <li><a href="/en/careers.html">Careers</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="footer-col-title">Let's talk</p>
+        <ul class="footer-contact-list">
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <a href="mailto:info@vortex-it.com">info@vortex-it.com</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 014.69 12 19.79 19.79 0 011.61 3.42 2 2 0 013.6 1.24h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.91 8.96a16 16 0 006.02 6.02l.95-.95a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0121.73 16.92z"/></svg>
+            <a href="tel:+5493515104734">+54 9 351 510-4734</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.122 1.523 5.855L.057 23.943l6.272-1.443A11.953 11.953 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.656-.51-5.176-1.4l-.37-.22-3.725.857.884-3.617-.242-.373A9.956 9.956 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+            <a href="https://wa.me/5493515104734" target="_blank" rel="noopener">WhatsApp</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            <a href="https://www.linkedin.com/company/vortex-it-ok" target="_blank" rel="noopener">LinkedIn</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            <a href="https://www.instagram.com/vortex.it/" target="_blank" rel="noopener">Instagram</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 Vortex IT. All rights reserved.</p>
+      <div class="footer-social">
+        <a href="https://www.linkedin.com/company/vortex-it-ok" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="https://www.instagram.com/vortex.it/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@vortexit" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#333"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+<script src="/assets/vortex.js?v=23"></script>
+<script>
+  /* ── PARTÍCULAS ALREDEDOR DE LOS ÍCONOS DE LA PORTADA ── */
+  (function() {
+    var iconos = document.querySelectorAll('.ct-icono-intro');
+    var POR_ICONO = cuantasPart(8);
+    iconos.forEach(function(el) {
+      for (var i = 0; i < POR_ICONO; i++) {
+        var ch = document.createElement('span');
+        ch.className = 'ct-chispa'
+          + (Math.random() < 0.5 ? ' rev' : '')
+          + (Math.random() < 0.3 ? ' verde' : '');
+        var dur = 9 + Math.random() * 11;
+        ch.style.setProperty('--a', (Math.random() * 360).toFixed(1) + 'deg');
+        ch.style.setProperty('--r', (6 + Math.random() * 26).toFixed(1));
+        ch.style.setProperty('--d', dur.toFixed(1) + 's');
+        ch.style.setProperty('--t', (-Math.random() * dur).toFixed(1) + 's');
+        ch.style.setProperty('--s', (2 + Math.random() * 2.4).toFixed(1) + 'px');
+        ch.style.setProperty('--o', (0.28 + Math.random() * 0.42).toFixed(2));
+        el.appendChild(ch);
+      }
+    });
+  })();
+
+  /* ── PARTÍCULAS ALREDEDOR DE CADA CARD ──
+     Las mismas de los íconos, pero dando la vuelta al rectángulo de la card.
+     Cada una tiene su propia distancia al borde, velocidad, sentido y punto
+     de partida (el retraso negativo), así nunca marchan en fila. */
+  (function() {
+    var cajas = document.querySelectorAll('.paso-card-caja');
+    if (!cajas.length) return;
+    /* Cada partícula son tres elementos con animación propia: 26 por card
+       eran más de 300 capas animadas a la vez. Se mantienen en todos lados,
+       pero en cantidad razonable. */
+    var POR_CARD = ES_MOVIL ? 8 : (MODO_LIGERO ? 10 : 22);
+
+    cajas.forEach(function(caja) {
+      for (var i = 0; i < POR_CARD; i++) {
+        var ch = document.createElement('span');
+        ch.className = 'paso-chispa'
+          + (Math.random() < 0.5 ? ' rev' : '')
+          + (Math.random() < 0.5 ? ' rulo-rev' : '')
+          + (Math.random() < 0.3 ? ' verde' : '');
+
+        /* La vuelta al rectángulo es lenta a propósito: para que el rulo se
+           lea como rulo, el giro chico tiene que avanzar más rápido que el
+           recorrido grande. */
+        var dur  = 80 + Math.random() * 60;
+        var rulo = 3.4 + Math.random() * 3.2;
+
+        ch.style.setProperty('--r',  (2 + Math.random() * 13).toFixed(1));
+        ch.style.setProperty('--d',  dur.toFixed(1) + 's');
+        ch.style.setProperty('--t',  (-Math.random() * dur).toFixed(1) + 's');
+        ch.style.setProperty('--dr', rulo.toFixed(2) + 's');
+        ch.style.setProperty('--tr', (-Math.random() * rulo).toFixed(2) + 's');
+        ch.style.setProperty('--rz', (20 + Math.random() * 28).toFixed(0) + 'px');
+        ch.style.setProperty('--s',  (2 + Math.random() * 2.4).toFixed(1) + 'px');
+        ch.style.setProperty('--o',  (0.3 + Math.random() * 0.45).toFixed(2));
+
+        var i2 = document.createElement('i');
+        i2.appendChild(document.createElement('b'));
+        ch.appendChild(i2);
+        caja.appendChild(ch);
+      }
+    });
+  })();
+
+
+  /* ── APARICIÓN DE CADA SECCIÓN ──
+     Al entrar en pantalla, sus elementos se encadenan solos (los retrasos
+     están en el CSS). Al salir se resetea, así la secuencia se repite. */
+  (function() {
+    var secciones = document.querySelectorAll('.paso-bloque, .page-hero, .ct-cierre');
+    var io = new IntersectionObserver(function(entradas) {
+      entradas.forEach(function(e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+        } else {
+          e.target.classList.remove('visible');
+        }
+      });
+    }, { threshold: 0.45 });
+    secciones.forEach(function(sec) { io.observe(sec); });
+  })();
+</script>
+</body>
+</html>

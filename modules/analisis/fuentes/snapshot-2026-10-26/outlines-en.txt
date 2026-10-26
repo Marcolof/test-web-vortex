@@ -1,0 +1,901 @@
+==================== p_en__about.html.html
+
+[header id=site-header class=site-header]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+
+[nav id= class=]
+   - Home
+   - Solutions
+   - How we work
+   - About Vortex
+   - Blog
+   - Platforms
+   - Let's talk
+   [cta] ES -> /sobre-vortex.html
+   [cta] EN -> /en/about.html
+
+[main id= class=]
+
+[section id=quienes-somos class=sv-hero]
+   img alt='Vortex' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+# About
+   · Who we are
+   · Technology that supportshow businesses evolve.
+   · At VORTEX we bring together business insight, technology and innovation to design and build solutions that answer the challenges each organization faces.
+   · We are not justtechnology suppliers. We are strategic partnersin innovation.
+
+[div id=sv-orbe-caja class=sv-hero-orbe]
+
+[section id=principios class=sv-seccion sv-constel-zona]
+## Our principles
+   · Six ideas that shape how we think,decide and build.
+   img alt='Strategy first' src=/assets/icono-estrategia.webp
+   · 01. Strategyfirst
+   img alt='AI-First from the start' src=/assets/icono-ai-first.webp
+   · 02. AI-Firstfrom the start
+   img alt='Redesign to transform' src=/assets/icono-redisenar.webp
+   · 03. Redesign totransform
+   img alt='Technology that evolves' src=/assets/icono-tecnologia.webp
+   · 04. Technologythat evolves
+   img alt='People amplified' src=/assets/icono-personas.webp
+   · 05. Peopleamplified
+   img alt='Continuous evolution' src=/assets/icono-evolucion.webp
+   · 06. Continuousevolution
+   [btn] ×
+   img alt='' src=
+   · Tap each icon to read what it means
+
+[section id=liderazgo class=sv-seccion sv-liderazgo]
+## Leadership
+   · The people behind the VORTEX vision.
+   · Our leadership team combines experience in business, technology and innovation to meet our clients' challenges and drive the company forward.
+   img alt='Jorge Daniel Nieves Castillo' src=/assets/equipo/jorge-nieves.webp
+### Jorge Daniel Nieves Castillo
+   · Chief Innovation Officer
+   · Co-founder of Vortex
+   · BSc in Information SystemsPostgraduate in Business Administration
+   img alt='Matías Cortés' src=/assets/equipo/matias-cortes.webp
+### Matías Cortés
+   · Chief Technology Officer
+   · Co-founder of Vortex
+   · Software ArchitectPostgraduate in Business Administration
+   img alt='Ariel Castro' src=/assets/equipo/ariel-castro.webp
+### Ariel Castro
+   · Chief Executive Officer
+   · Co-founder of Vortex
+   · Systems EngineerPostgraduate in Business Administration
+
+[section id=liderazgo-2 class=sv-seccion sv-liderazgo]
+   · Leadership
+   · The people behind the VORTEX vision.
+   · Our leadership team combines experience in business, technology and innovation to meet our clients' challenges and drive the company forward.
+   img alt='Mauricio Vélez' src=/assets/equipo/mauricio-velez.webp
+### Mauricio Vélez
+   · Director, Vortex Andean Region
+   · Economist with specialist studies in Commercial Management
+   img alt='Edwin Leiton' src=/assets/equipo/edwin-leiton.webp
+### Edwin Leiton
+   · Director, Vortex Central America
+   · Specialist in the commercializationof ICT solutions
+   img alt='Guillermo Bellini' src=/assets/equipo/guillermo-bellini.webp
+### Guillermo Bellini
+   · PMO Manager
+   · Solutions architect specializing in agile methodologies and IT resource allocation.
+
+[section id=liderazgo-3 class=sv-seccion sv-liderazgo]
+   · Leadership
+   · The people behind the VORTEX vision.
+   · Our leadership team combines experience in business, technology and innovation to meet our clients' challenges and drive the company forward.
+   img alt='Ignacio Bravo' src=/assets/equipo/ignacio-bravo.webp
+### Ignacio Bravo
+   · UX/UI Director
+   · Co-founder of QuickPass
+   · Tech manager specializing in interaction design, interfaces and app/web prototype layout.
+   img alt='Pablo Moroni' src=/assets/equipo/pablo-moroni.webp
+### Pablo Moroni
+   · Development Director
+   · Co-founder of QuickPass
+   · Front-end tech manager, architect specializing in React, React Native and Firebase.
+   img alt='Lucas Spinozzi' src=/assets/equipo/lucas-spinozzi.webp
+### Lucas Spinozzi
+   · Development Director
+   · Co-founder of QuickPass
+   · Back-end tech manager, architect specializing in Node.js, AWS and Google.
+
+[div id=trabaja class=sv-cierre]
+   · Careers
+   · The future gets built as a team, too
+   · We look for people who want to learn, create and take on the challenges that come with technological change. If you would like to be part of VORTEX, we want to meet you.
+   [cta] Send us your CV -> /en/careers.html
+
+[footer id= class=site-footer]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+   · Founded in Córdoba, Argentina. We operate across Latin America, Europe and the United States.
+   · Vortex IT
+   - Home
+   - Solutions
+   - How we work
+   - About Vortex
+   · Community
+   - Blog
+   - Platforms
+   - Careers
+   · Let's talk
+   - info@vortex-it.com
+   - +54 9 351 510-4734
+   - WhatsApp
+   - LinkedIn
+   - Instagram
+   · © 2026 Vortex IT. All rights reserved.
+==================== p_en__blog.html.html
+
+[header id=site-header class=site-header]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+
+[nav id= class=]
+   - Home
+   - Solutions
+   - How we work
+   - About Vortex
+   - Blog
+   - Platforms
+   - Let's talk
+   [cta] ES -> /blog.html
+   [cta] EN -> /en/blog.html
+
+[main id= class=]
+# Blog
+   · Ideas and analysis on artificial intelligence, digital transformationand technology applied to business.
+   · Articles are published in Spanish.
+   img alt='' src=/assets/portadas/portada-435c030195.png
+## Argentina ¿última en adopción de IA?
+   img alt='' src=/assets/portadas/portada-565eb12ba4.png
+## El riesgo de la IA y el circo para la tribuna
+   img alt='' src=/assets/portadas/portada-16b6f4c66e.png
+## El 71% de las empresas latinoamericanas adoptó IA. El 30% la puso a trabajar.
+   img alt='' src=/assets/portadas/portada-da2870e4e3.png
+## Stripe pagó US$7.500 millones por resolver un problema que muchas empresas todavía no admiten tener
+   img alt='' src=/assets/portadas/portada-562fff63ee.png
+## EL PROBLEMA NO ES LA IA. Es el proceso que nadie se animó a cambiar.
+   img alt='' src=/assets/portadas/portada-5d0732b05c.png
+## ¿Y si el problema de la deuda no fuera solamente la mora?
+   img alt='' src=/assets/portadas/portada-5d0c6fcf53.png
+## Identidad, permisos y trazabilidad: lo que un agente de IA necesita antes de operar en producción
+   img alt='' src=/assets/portadas/portada-7f7e7e0329.png
+## Forward-Deployed Engineers: por qué la implementación volvió al centro de la conversación
+   img alt='' src=/assets/portadas/portada-a5654a66d5.png
+## La obsesión por los pilotos de IA está frenando la transformación del negocio
+   img alt='' src=/assets/portadas/portada-9ecacf15cd.png
+## ¿Y si mañana Estados Unidos apaga la IA para Argentina?
+   img alt='' src=/assets/portadas/portada-fc50044781.png
+## ¿Y si el “humano en el loop” ya es el problema, no la solución?
+   img alt='' src=/assets/portadas/portada-98c03ab49f.png
+## En 2024 dije que la IA iba a cambiar el software. Me quedé corto.
+   img alt='' src=/assets/portadas/portada-ef9617b285.png
+## Mythos acaba de encontrar vulnerabilidades de 27 años en sistemas que creíamos seguros.
+   img alt='' src=/assets/portadas/portada-095ad09702.jpg
+## Los procesos de negocio, como los conocías, ya murieron. Lo que viene no es automatización.
+   img alt='' src=/assets/portadas/portada-8ee90d8de5.png
+## IA y despidos: la tentación en la que muchas empresas pueden caer
+   img alt='' src=/assets/portadas/portada-c5a476da84.png
+## El fin de las implementaciones eternas: hacia el software que se autoconfigura (ERP/CRM/WMS)
+   img alt='' src=/assets/portadas/portada-e9baa87f9a.png
+## De “pilotos eternos” a EBITDA: el índice de madurez de IA para empresas de LATAM
+   img alt='' src=/assets/portadas/portada-41a2020f1d.png
+## Del software prêt-à-porter al tailor-made digital
+   img alt='' src=/assets/portadas/portada-99e608fe01.jpg
+## De la promesa a la práctica: ¿por qué la IA no despega en muchas empresas?
+   img alt='' src=/assets/portadas/portada-c7e93deee3.jpg
+## IA y Transformación Digital en LATAM: tendencias que tenés que conocer
+   img alt='' src=/assets/portadas/portada-5025618677.jpg
+## Más que agentes y PoCs: por qué la IA exige un rediseño organizacional en LATAM
+   · Want to talk about any of these topicsapplied to your business? Let's talk.
+   [cta] Tell us your challenge -> /en/contact.html
+
+[footer id= class=site-footer]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+   · Founded in Córdoba, Argentina. We operate across Latin America, Europe and the United States.
+   · Vortex IT
+   - Home
+   - Solutions
+   - How we work
+   - About Vortex
+   · Community
+   - Blog
+   - Platforms
+   - Careers
+   · Let's talk
+   - info@vortex-it.com
+   - +54 9 351 510-4734
+   - WhatsApp
+   - LinkedIn
+   - Instagram
+   · © 2026 Vortex IT. All rights reserved.
+==================== p_en__careers.html.html
+
+[header id=site-header class=site-header]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+
+[nav id= class=]
+   - Home
+   - Solutions
+   - How we work
+   - About Vortex
+   - Blog
+   - Platforms
+   - Let's talk
+   [cta] ES -> /trabaja-con-nosotros.html
+   [cta] EN -> /en/careers.html
+
+[main id= class=]
+# Careers
+   · The future gets built as a team, too.
+   · We look for people who want to learn, create and take on the challenges that come with technological change. Tell us who you are and leave us your CV.
+   FORM action=None
+   input name=abierto type=hidden ph=''
+   lbl Do not fill in
+   input name=sitio_web type=text ph=''
+   lbl Name
+   input name=nombre type=text ph='Name'
+   lbl Email *
+   input name=email type=email ph='Email'
+   lbl WhatsApp number
+   input name=whatsapp type=tel ph='Leave your WhatsApp so we can reach you quickly'
+   lbl Which role are you applying for? *
+   input name=puesto type=text ph='Java developer, full-stack developer, front-end developer, etc.'
+   lbl LinkedIn profile
+   input name=linkedin type=text ph='Paste the link to your profile'
+   lbl Comments
+   textarea name=comentarios type=None ph='Leave us a comment'
+   lbl Your CV *
+
+[div id=tcn-archivo class=tcn-archivo]
+   input name=cv type=file ph=''
+   · Attach your CVPDF or Word, up to 8 MB.
+   · By submitting, you allow Vortex IT to store your details and CV for the sole purpose of assessing your application. You can ask us to delete them at info@vortex-it.com.
+   [btn] Send application
+
+[footer id= class=site-footer]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+   · Founded in Córdoba, Argentina. We operate across Latin America, Europe and the United States.
+   · Vortex IT
+   - Home
+   - Solutions
+   - How we work
+   - About Vortex
+   · Community
+   - Blog
+   - Platforms
+   - Careers
+   · Let's talk
+   - info@vortex-it.com
+   - +54 9 351 510-4734
+   - WhatsApp
+   - LinkedIn
+   - Instagram
+   · © 2026 Vortex IT. All rights reserved.
+==================== p_en__contact.html.html
+
+[header id=site-header class=site-header]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+
+[nav id= class=]
+   - Home
+   - Solutions
+   - How we work
+   - About Vortex
+   - Blog
+   - Platforms
+   - Let's talk
+   [cta] ES -> /hablemos.html
+   [cta] EN -> /en/contact.html
+
+[main id= class=]
+# Let's talk
+   · Got a business challenge?
+   · Tell us what you need to solve, what you want to improve or what initiative you are weighing up. Our team will review it and get in touch.
+
+[div id=formulario class=hb-marco]
+   FORM action=None
+   input name=abierto type=hidden ph=''
+   lbl Do not fill in
+   input name=sitio_web type=text ph=''
+   · Tell us about your challenge
+## Contact details
+   lbl Full name *
+   input name=nombre type=text ph=''
+   lbl Company *
+   input name=empresa type=text ph=''
+   lbl Job title / role *
+   input name=cargo type=text ph=''
+   lbl Work email *
+   input name=email type=email ph=''
+   lbl Country *
+   select name=pais type=None ph=''
+## Your initiative
+   lbl How can we help? *
+   select name=ayuda type=None ph=''
+   lbl What stage is your initiative at? (optional)
+   select name=etapa type=None ph=''
+   lbl Tell us briefly about your challenge (optional)
+   textarea name=mensaje type=None ph='What do you need to solve, improve or build?'
+   · What do you need to solve, improve or build?
+   · By submitting, you allow Vortex IT to store this information for the sole purpose of answering your enquiry. You can ask us to delete it at info@vortex-it.com.
+   [btn] Send enquiry
+
+[footer id= class=site-footer]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+   · Founded in Córdoba, Argentina. We operate across Latin America, Europe and the United States.
+   · Vortex IT
+   - Home
+   - Solutions
+   - How we work
+   - About Vortex
+   · Community
+   - Blog
+   - Platforms
+   - Careers
+   · Let's talk
+   - info@vortex-it.com
+   - +54 9 351 510-4734
+   - WhatsApp
+   - LinkedIn
+   - Instagram
+   · © 2026 Vortex IT. All rights reserved.
+==================== p_en__how-we-work.html.html
+
+[header id=site-header class=site-header]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+
+[nav id= class=]
+   - Home
+   - Solutions
+   - How we work
+   - About Vortex
+   - Blog
+   - Platforms
+   - Let's talk
+   [cta] ES -> /como-trabajamos.html
+   [cta] EN -> /en/how-we-work.html
+
+[main id= class=]
+# How we work
+   · Transformation is not just about deploying technology.
+   · It means understanding the business, defining what needs to change, designing the right strategyand building solutions ready to evolve.
+   · At VORTEX we combine business insight, technology and artificial intelligenceto support every stage of that journey.
+   img alt='We understand the business' src=/assets/boton_rompecabezas.webp
+   img alt='We design the strategy' src=/assets/boton_brujula.webp
+   img alt='We build the solution' src=/assets/boton_engranaje.webp
+   img alt='We keep evolving' src=/assets/boton_crecimiento.webp
+
+[div id=entendemos class=paso-bloque]
+   · 01 —
+## We understandthe business
+   img alt='' src=/assets/boton_rompecabezas.webp
+   · Before designing a solution, we work out what actually needs to change.
+   · We look at the organization's goals, processes, platforms and challenges to find where the opportunities for change are and which capabilities the business needs to build.
+
+[div id=det-entendemos class=paso-right]
+   · We analyze
+   - Strategic objectives.
+   - Critical processes.
+   - Platforms and architecture.
+   - Data and information sources.
+   - The needs of the people and of the business.
+   · The outcome
+   · A clear picture of the challenge and of the opportunities worth pursuing.
+
+[div id=estrategia class=paso-bloque]
+   · 02 —
+## We designthe strategy
+   img alt='' src=/assets/boton_brujula.webp
+   · We map the route before choosing the technology.
+   · From that understanding of the business, we design a strategy that sets out the priorities, capabilities and solutions needed to reach the agreed goals.
+   · Artificial intelligence is built in from the outset wherever it can add new capabilities, improve processes or change how decisions get made.
+
+[div id=det-estrategia class=paso-right]
+   · We design
+   - Transformation strategies.
+   - New processes and operating models.
+   - Architectures and platforms.
+   - Digital and AI capabilities.
+   - Priorities and an evolution roadmap.
+   · The outcome
+   · A strategy aligned to the business, and a concrete route to deliver it.
+
+[div id=desarrollamos class=paso-bloque]
+   · 03 —
+## We buildthe solution
+   img alt='' src=/assets/boton_engranaje.webp
+   · We turn the strategy into capabilities that work.
+   · We design and build solutions that bring together technology, data and artificial intelligence, focused on the processes and needs already identified.
+   · This is not about installing a tool: we build platforms and solutions ready to evolve as the needs of the business change.
+
+[div id=det-desarrollamos class=paso-right]
+   · We bring together
+   - Technology and architecture.
+   - Data and artificial intelligence.
+   - Applications and platforms.
+   - Process automation.
+   - Integrations and APIs.
+   · The outcome
+   · Solutions in production, ready to grow alongside the business.
+
+[div id=evolucionamos class=paso-bloque]
+   · 04 —
+## We keepevolving
+   img alt='' src=/assets/boton_crecimiento.webp
+   · Transformation does not end when the solution goes live.
+   · We measure results, fold in what we learn and adjust the solutions to meet new needs, new data and new opportunities.
+   · Evolving continuously is what keeps platforms, processes and capabilities in step with a business that never stops changing.
+
+[div id=det-evolucionamos class=paso-right]
+   · We evolve
+   - We measure results.
+   - We look at new challenges.
+   - We add new capabilities.
+   - We refine processes and solutions.
+   - We adapt platforms to new needs.
+   · The outcome
+   · A lasting ability to evolve.
+
+[div id=cierre class=ct-cierre]
+   · Transformation is not a project with an end date. It is an organization's ability to keep evolving.
+   [cta] Let's talk → -> /en/contact.html
+
+[footer id= class=site-footer]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+   · Founded in Córdoba, Argentina. We operate across Latin America, Europe and the United States.
+   · Vortex IT
+   - Home
+   - Solutions
+   - How we work
+   - About Vortex
+   · Community
+   - Blog
+   - Platforms
+   - Careers
+   · Let's talk
+   - info@vortex-it.com
+   - +54 9 351 510-4734
+   - WhatsApp
+   - LinkedIn
+   - Instagram
+   · © 2026 Vortex IT. All rights reserved.
+==================== p_en__index.html
+
+[header id=site-header class=site-header]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+
+[nav id= class=]
+   - Home
+   - Solutions
+   - How we work
+   - About Vortex
+   - Blog
+   - Platforms
+   - Let's talk
+   [cta] ES -> /
+   [cta] EN -> /en/
+
+[main id= class=]
+
+[section id=inicio class=hero-wrapper]
+   img alt='' src=/assets/cohete.webp
+
+[div id=hero-titulo class=hero-titulo-svg]
+   · We drive the evolution of organizations through AI-First digital transformation strategies.
+   [btn] See our vision
+
+[section id=vision class=vision-section]
+
+[div id=vision-sticky class=vision-sticky]
+## Our vision
+   · Technology is not the starting point.The business is.
+   · That is why we combine strategy and artificial intelligenceto turn challenges into opportunities for growth.
+
+[div id=vision-img class=vision-img-wrap]
+   img alt='Watch the Vortex IT video' src=tps://i.ytimg.com/vi/s-Rfc8M-V60/maxresdefault.jpg
+
+[section id=soluciones class=soluciones-section]
+## Solutions
+   · Designed to turn strategy into results.
+   img alt='Web and mobile applications' src=/assets/sol-apps.webp
+   img alt='Artificial intelligence and innovation' src=/assets/sol-ia.webp
+   img alt='Automation with RPA + AI' src=/assets/sol-rpa.webp
+   img alt='Application and data integration' src=/assets/sol-integracion.webp
+
+[section id=como-trabajamos class=constel-section]
+
+[div id=constel-inner class=constel-inner]
+## How we work
+
+[div id=cn1 class=constel-item]
+   img alt='' src=/assets/boton_rompecabezas.webp
+
+[div id=cn2 class=constel-item]
+   img alt='' src=/assets/boton_brujula.webp
+
+[div id=cn3 class=constel-item]
+   img alt='' src=/assets/boton_engranaje.webp
+
+[div id=cn4 class=constel-item]
+   img alt='' src=/assets/boton_crecimiento.webp
+   [btn] ×
+   img alt='' src=
+   [cta] Learn more -> /en/how-we-work.html
+
+[section id=clientes class=clientes-section]
+## Trusted by
+   · Clients
+
+[div id=track-clientes class=logos-track]
+   img alt='Galicia' src=/assets/Galicia.svg
+   img alt='Carrefour' src=/assets/Carrefour_Blanco.svg
+   img alt='Correo Argentino' src=/assets/Correo%20Argentino.svg
+   img alt='DirecTV' src=/assets/DirecTV.svg
+   img alt='Naranja X' src=/assets/NaranjaX.svg
+   img alt='Arcor' src=/assets/Arcor.svg
+   img alt='Galicia' src=/assets/Galicia.svg
+   img alt='Carrefour' src=/assets/Carrefour_Blanco.svg
+   img alt='Correo Argentino' src=/assets/Correo%20Argentino.svg
+   img alt='DirecTV' src=/assets/DirecTV.svg
+   img alt='Naranja X' src=/assets/NaranjaX.svg
+   img alt='Arcor' src=/assets/Arcor.svg
+   · Partners
+
+[div id=track-partners class=logos-track]
+   img alt='Google' src=/assets/Google.svg
+   img alt='Red Hat' src=/assets/RedHat.svg
+   img alt='Mercado Libre' src=/assets/Mercado%20Libre_Blanco.svg
+   img alt='BeAware' src=/assets/Be%20Aware.svg
+   img alt='Rocketbot' src=/assets/Rocketbot.svg
+   img alt='AWS' src=/assets/AWS.svg
+   img alt='Oracle' src=/assets/Oracle.svg
+   img alt='Google' src=/assets/Google.svg
+   img alt='Red Hat' src=/assets/RedHat.svg
+   img alt='Mercado Libre' src=/assets/Mercado%20Libre_Blanco.svg
+   img alt='BeAware' src=/assets/Be%20Aware.svg
+   img alt='Rocketbot' src=/assets/Rocketbot.svg
+   img alt='AWS' src=/assets/AWS.svg
+   img alt='Oracle' src=/assets/Oracle.svg
+   · Members of
+   img alt='CESSI' src=/assets/Logo%20Cessi.svg
+   img alt='Córdoba Technology Cluster' src=/assets/C%C3%B3rdoba%20Cluster.svg
+
+[section id=plataformas class=plataformas-section]
+
+[div id=plat-p1 class=plataformas-sticky plataformas-pantalla]
+## Platforms
+   · Solutions built by Vortex for specific industries.
+
+[div id=esc-qp class=plat-escena]
+   img alt='QuickPass' src=/assets/logoQP.svg
+   - Digital ticketing
+   - Loyalty
+   - Wallet & cashless
+   - Analytics
+   img alt='' src=/assets/mock-quickpass-a1.webp?v=2
+   img alt='' src=/assets/mock-quickpass-a2.webp?v=2
+   img alt='' src=/assets/mock-quickpass-a3.webp?v=2
+   img alt='' src=/assets/mock-quickpass-b1.webp?v=2
+   img alt='' src=/assets/mock-quickpass-b2.webp?v=2
+   img alt='' src=/assets/mock-quickpass-b3.webp?v=2
+   img alt='' src=/assets/mock-quickpass-b4.webp?v=2
+   [cta] Explore QuickPass -> https://quickpass.app/
+
+[div id=esc-lx class=plat-escena plat-escena-inv]
+   img alt='Loyalix' src=/assets/logoLX.svg
+   - Points programs
+   - Personalization
+   - Smart coupons
+   - Analytics
+   img alt='' src=/assets/mock-loyalix-a1.webp?v=2
+   img alt='' src=/assets/mock-loyalix-a2.webp?v=2
+   img alt='' src=/assets/mock-loyalix-a3.webp?v=2
+   img alt='' src=/assets/mock-loyalix-a4.webp?v=2
+   img alt='' src=/assets/mock-loyalix-b1.webp?v=2
+   img alt='' src=/assets/mock-loyalix-b2.webp?v=2
+   img alt='' src=/assets/mock-loyalix-b3.webp?v=2
+   img alt='' src=/assets/mock-loyalix-b4.webp?v=2
+   [cta] Explore Loyalix -> https://loyalix.app/
+
+[div id=plat-p2 class=plataformas-sticky plataformas-pantalla]
+   · Platforms
+   · Solutions built by Vortex for specific industries.
+
+[div id=esc-om class=plat-escena]
+   img alt='Omnia Talents' src=/assets/logoOmnia.svg
+   - Resume analysis
+   - AI interviews
+   - Identity verification
+   - Professional development
+   img alt='' src=/assets/mock-omnia.webp?v=2
+   [cta] Explore Omnia Talents -> https://omniatalents.com/
+
+[div id=esc-rx class=plat-escena plat-escena-inv]
+   img alt='Rutex AI' src=/assets/logoRutex.svg
+   - Model management
+   - Cost control
+   - Security
+   - Traceability
+   img alt='' src=/assets/mock-rutex.webp?v=3
+   [cta] Explore Rutex AI -> /en/contact.html
+
+[section id=hablemos class=cierre-section]
+
+[div id=stats-intro-wrap class=]
+   · More than 25 years driving the evolution of businesses through technology and innovation.
+
+[div id=stats-track-wrap class=]
+
+[div id=stats-track class=stats-grid]
+
+[div id=globo-wrap class=globo-container]
+
+[div id=stats-origen-wrap class=stats-origen-wrap]
+   · Founded in Córdoba, Argentina, we deliver projects for clients across Latin America, the United States and Europe.
+## Digital transformation is not a technical project. It is a strategic decision.
+   · If you are working out how to bring in artificial intelligence, automate processes or speed up your organization's evolution, let's talk.
+
+[div id=cta-btn-wrap class=cta-btn-wrap]
+   [cta] Book a call -> /en/contact.html#formulario
+
+[footer id= class=site-footer]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+   · Founded in Córdoba, Argentina. We operate across Latin America, Europe and the United States.
+   · Vortex IT
+   - Home
+   - Solutions
+   - How we work
+   - About Vortex
+   · Community
+   - Blog
+   - Platforms
+   - Careers
+   · Let's talk
+   - info@vortex-it.com
+   - +54 9 351 510-4734
+   - WhatsApp
+   - LinkedIn
+   - Instagram
+   · © 2026 Vortex IT. All rights reserved.
+==================== p_en__platforms.html.html
+
+[header id=site-header class=site-header]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+
+[nav id= class=]
+   - Home
+   - Solutions
+   - How we work
+   - About Vortex
+   - Blog
+   - Platforms
+   - Let's talk
+   [cta] ES -> /plataformas.html
+   [cta] EN -> /en/platforms.html
+
+[main id= class=]
+
+[section id=plataformas class=pl-hero]
+# Platforms
+   · From real-world challenges to platformsthat keep evolving.
+   · At VORTEX we don't only build solutions for our clients. We also build products of our own, starting from specific needs we identify across industries.
+   · We know the context, we understand the processes, and we turn those challenges into platforms that grow and evolve alongside the business.
+
+[div id=pl-orbe-caja class=pl-hero-orbe]
+
+[section id=quickpass class=pl-seccion]
+   img alt='QuickPass' src=/assets/logoQP.svg
+## QuickPass
+   · From the challenge of running an event to a platform for the entire experience.
+   · Events and live entertainment need far more than ticket sales. The operation brings together admission, ticketing, payments, spending, users and experience, and all of it has to work as one.
+   · That is where QUICKPASS came from: a platform designed specifically for the live entertainment and events industry.
+### What it does
+   - Digital ticketing
+   - Access control
+   - Wallet & cashless
+   - Loyalty
+   - Analytics
+   - User management
+   · A platform that evolves with the industry QUICKPASS keeps adding capabilities as the needs of events, their operators and their audiences change.
+   [cta] Explore QuickPass → -> https://quickpass.app/
+   img alt='' src=/assets/mock-quickpass-a1.webp?v=2
+   img alt='' src=/assets/mock-quickpass-b1.webp?v=2
+
+[section id=loyalix class=pl-seccion]
+   img alt='Loyalix' src=/assets/Logo%20horizontal.png
+## Loyalix
+   · From loyalty programs to smarter customer relationships.
+   · Brands need to know their customers better, tailor their rewards, and turn every interaction into a chance to strengthen the relationship.
+   · That challenge led to LOYALIX, a loyalty platform for designing personalized experiences and running rewards programs from a single place.
+### What it does
+   - Points programs
+   - Coupons and promotions
+   - Personalization
+   - Segmentation
+   - Analytics
+   - Integration with existing platforms
+   · A platform that adapts to each brand LOYALIX can plug into an existing app or ecosystem through APIs, or be deployed as a bespoke solution under the brand's own identity.
+   [cta] Explore Loyalix → -> https://loyalix.app/
+   img alt='' src=/assets/mock-loyalix-a1.webp?v=2
+   img alt='' src=/assets/mock-loyalix-b1.webp?v=2
+
+[section id=omnia class=pl-seccion]
+   img alt='Omnia Talents' src=/assets/logoOmnia.svg
+## Omnia Talents
+   · From reviewing resumes to running smarter hiring processes with AI.
+   · HR teams need to analyze profiles, verify candidates and keep every stage of the process moving. As applications pile up, reviewing each profile takes more and more time and coordination.
+   · That challenge led to OmnIA Talents, a platform that brings artificial intelligence into recruiting, candidate verification and professional development.
+### What it does
+   - Resume analysis
+   - Candidate screening
+   - Asynchronous AI interviews
+   - Identity verification
+   - Profile-based recommendations
+   - Professional development
+   · A platform that strengthens talent management OmnIA Talents speeds up the evaluation stages and organizes the information that matters, to support both hiring and people's development.
+   [cta] Explore Omnia Talents → -> https://omniatalents.com/
+   img alt='' src=/assets/mock-omnia.webp?v=2
+
+[section id=rutex class=pl-seccion]
+   img alt='Rutex AI' src=/assets/logoRutex.svg
+## Rutex AI
+   · From using AI models to managing how they are used, all in one place.
+   · As companies bring in artificial intelligence, they need to manage the models they use, keep costs in check, and maintain the quality, security and traceability of every interaction.
+   · That challenge led to RUTEX AI, an enterprise AI platform that centralizes how model usage is managed and makes it easier to control across the organization.
+### What it does
+   - Centralized model management
+   - Cost control
+   - Performance monitoring
+   - Quality management
+   - Security
+   - Interaction traceability
+   · A platform for managing enterprise AI RUTEX AI centralizes the administration of artificial intelligence usage and improves visibility and control as adoption spreads across the company.
+   [cta] Explore Rutex AI → -> /en/contact.html
+   img alt='' src=/assets/mock-rutex.webp?v=3
+
+[footer id= class=site-footer]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+   · Founded in Córdoba, Argentina. We operate across Latin America, Europe and the United States.
+   · Vortex IT
+   - Home
+   - Solutions
+   - How we work
+   - About Vortex
+   · Community
+   - Blog
+   - Platforms
+   - Careers
+   · Let's talk
+   - info@vortex-it.com
+   - +54 9 351 510-4734
+   - WhatsApp
+   - LinkedIn
+   - Instagram
+   · © 2026 Vortex IT. All rights reserved.
+==================== p_en__solutions.html.html
+
+[header id=site-header class=site-header]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+
+[nav id= class=]
+   - Home
+   - Solutions
+   - How we work
+   - About Vortex
+   - Blog
+   - Platforms
+   - Let's talk
+   [cta] ES -> /soluciones.html
+   [cta] EN -> /en/solutions.html
+
+[main id= class=]
+# Solutions
+   · We bring strategy, artificial intelligence and technology togetherto support the evolution of your business.
+   img alt='Inteligencia artificial e innovación' src=/assets/sol-ia.webp
+   img alt='Automatización con RPA e IA' src=/assets/sol-rpa.webp
+   img alt='Aplicaciones web & mobile' src=/assets/sol-apps.webp
+   img alt='Integración de aplicaciones y datos' src=/assets/sol-integracion.webp
+
+[div id=ia class=solucion-bloque]
+   · 01 —
+## Artificial intelligenceand innovation
+   img alt='Inteligencia artificial e innovación' src=/assets/sol-ia.webp
+   · We apply artificial intelligence and advanced analytics to improve decisions, optimize processes and build new capabilities out of your data.
+
+[div id=det-ia class=solucion-right]
+   · What we solve
+   - Decisions made on insufficient information.
+   - Data that goes unused.
+   - A need to apply AI to concrete problems.
+   · What we do
+   - Advanced analytics and predictive models.
+   - Generative AI, agents and intelligent assistants.
+   - Recommendation and optimization systems.
+   - Data architectures built for AI.
+   · Outcome
+   · Better decisions, smarter processes and new capabilities for the business.
+
+[div id=rpa class=solucion-bloque]
+   · 02 —
+## Automation withRPA and AI
+   img alt='Automatización con RPA e IA' src=/assets/sol-rpa.webp
+   · We automate tasks and workflows with RPA and artificial intelligence to simplify operations, reduce errors and free up capacity.
+
+[div id=det-rpa class=solucion-right]
+   · What we solve
+   - Manual, repetitive tasks.
+   - Operational errors.
+   - Slow, costly processes.
+   · What we do
+   - End-to-end process automation.
+   - RPA implementation.
+   - AI embedded into automated workflows.
+   - Process orchestration.
+   · Outcome
+   · Higher productivity, fewer errors and more efficient processes.
+
+[div id=apps class=solucion-bloque]
+   · 03 —
+## Web & mobileapplications
+   img alt='Aplicaciones web & mobile' src=/assets/sol-apps.webp
+   · We design and build web apps, mobile apps and digital products that answer real business needs and improve the experience for their users.
+
+[div id=det-apps class=solucion-right]
+   · What we solve
+   - Poor digital experiences.
+   - Platforms in need of modernization.
+   - A need for new digital products.
+   · What we do
+   - Web and mobile design and development.
+   - Business-driven UX/UI.
+   - Scalable architectures and APIs.
+   - Integration and evolution of digital products.
+   · Outcome
+   · Digital products that are robust, scalable and user-centered.
+
+[div id=integracion class=solucion-bloque]
+   · 04 —
+## Application anddata integration
+   img alt='Integración de aplicaciones y datos' src=/assets/sol-integracion.webp
+   · We integrate applications, platforms and data to connect systems, let information flow and build a single digital ecosystem.
+
+[div id=det-integracion class=solucion-right]
+   · What we solve
+   - Disconnected systems.
+   - Fragmented data.
+   - Poor interoperability between platforms.
+   · What we do
+   - Integration of APIs, applications and systems.
+   - Data architectures and pipelines.
+   - Data integration, synchronization and governance.
+   - Interoperability across platforms.
+   · Outcome
+   · Joined-up information, smoother processes and better decisions.
+
+[div id=cierre class=sol-cierre]
+   · Every business needsa different strategy.
+   · Tell us what you are aiming for and let us designhow to get there, together.
+   [cta] Tell us your challenge → -> /en/contact.html
+
+[footer id= class=site-footer]
+   img alt='Vortex IT' src=/assets/Logo%20VX_blanco%20y%20violeta.svg
+   · Founded in Córdoba, Argentina. We operate across Latin America, Europe and the United States.
+   · Vortex IT
+   - Home
+   - Solutions
+   - How we work
+   - About Vortex
+   · Community
+   - Blog
+   - Platforms
+   - Careers
+   · Let's talk
+   - info@vortex-it.com
+   - +54 9 351 510-4734
+   - WhatsApp
+   - LinkedIn
+   - Instagram
+   · © 2026 Vortex IT. All rights reserved.

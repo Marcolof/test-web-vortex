@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="alternate" hreflang="es" href="https://vortex-it.com/blog.html">
+  <link rel="alternate" hreflang="en" href="https://vortex-it.com/en/blog.html">
+  <link rel="alternate" hreflang="x-default" href="https://vortex-it.com/blog.html">
+  <title>Vortex — Blog</title>
+  <meta name="description" content="Ideas y análisis sobre inteligencia artificial, transformación digital y tecnología aplicada al negocio, por el equipo de Vortex IT.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+/* Móvil o cualquier cosa con dedo en vez de puntero */
+var ES_MOVIL = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
+var CPU_BAJA = (navigator.hardwareConcurrency || 4) <= 4;
+var CALIDAD  = ES_MOVIL ? (CPU_BAJA ? 0.18 : 0.3) : (CPU_BAJA ? 0.65 : 1);
+
+/* macOS resuelve el scroll y los sticky en el compositor con inercia,
+   mientras GSAP aplica los transform en el hilo principal: ese desfasaje
+   es lo que se ve como temblor. Se detecta para corregirlo. */
+var ES_MAC = /Mac|iPad|iPhone|iPod/.test(navigator.platform || '') ||
+             (navigator.userAgent.indexOf('Mac') !== -1);
+
+/* Safari (cualquier plataforma) entra al mismo perfil liviano: es el que
+   más sufre el backdrop-filter, el fondo fijo y el degradado animado. */
+var ES_SAFARI = /^((?!chrome|chromium|android|crios|fxios|edg).)*safari/i
+                  .test(navigator.userAgent || '');
+if (ES_SAFARI) ES_MAC = true;
+
+/* Interruptor para probar sin tener una Mac:
+   ?perfil=mac    fuerza el modo Mac (para ver los cambios visuales)
+   ?perfil=normal lo desactiva aunque estés en Mac (para comparar) */
+var _perfilForzado = new URLSearchParams(location.search).get('perfil');
+if (_perfilForzado === 'mac')    ES_MAC = true;
+if (_perfilForzado === 'normal') ES_MAC = false;
+
+/* ── MODO LIGERO ──
+   Mac, Safari y las máquinas de pocos núcleos entran acá. Es el interruptor
+   que usan todos los canvas del sitio para bajar partículas, saltear frames
+   y evitar el desenfoque por frame. */
+var MODO_LIGERO = ES_MAC || CPU_BAJA;
+
+/* En pantallas Retina, dibujar los canvas al doble multiplica por cuatro el
+   trabajo por frame. En modo ligero se baja a 1.35x: sigue viéndose nítido
+   —a 1x los puntos quedaban gruesos— y cuesta la mitad que a 2x. */
+var DPR_MAX = ES_MOVIL ? 1 : (MODO_LIGERO ? 1.35 : (window.devicePixelRatio > 1.5 ? 1.5 : 2));
+
+/* Cuánto se recorta la cantidad de partículas de cada efecto. Con 0.6 el
+   orbe conserva su densidad; por debajo se empezaba a ver ralo. */
+var FACTOR_PART = MODO_LIGERO ? 0.6 : (ES_MOVIL ? 0.4 : 1);
+function cuantasPart(n) { return Math.max(3, Math.round(n * FACTOR_PART)); }
+
+/* La clase se pone en <html> y no en <body>, porque <body> todavía no
+   existe cuando esto corre. Es lo que apaga backdrop-filter, el degradado
+   animado y el encaje de scroll antes del primer pintado. */
+if (ES_MAC) document.documentElement.classList.add('es-mac');
+</script>
+  <link rel="stylesheet" href="/assets/vortex.css?v=23">
+  <style>
+    main { position: relative; z-index: 1; }
+
+    /* ── HERO ── */
+    .blog-hero {
+      min-height: 62vh;
+      padding: clamp(150px, 20vh, 230px) 48px clamp(40px, 6vh, 80px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .blog-hero h1 {
+      font-size: clamp(3.2rem, min(7vw, 9vh), 6rem);
+      font-weight: 500;
+      color: #a0d232;
+      text-transform: uppercase;
+      line-height: 1.05;
+      margin-bottom: clamp(24px, 4vh, 48px);
+    }
+
+    .blog-hero p {
+      font-size: clamp(1.15rem, min(2.2vw, 3vh), 1.7rem);
+      font-weight: 300;
+      line-height: 1.5;
+      color: #fff;
+      max-width: min(900px, 92%);
+      margin: 0 auto;
+    }
+
+    /* ── GRILLA DE ARTÍCULOS ── */
+    .blog-lista {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 48px clamp(80px, 12vh, 140px);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(24px, 3vw, 40px);
+    }
+
+    .blog-card {
+      display: flex;
+      flex-direction: column;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      overflow: hidden;
+      text-decoration: none;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      transition: transform 0.3s cubic-bezier(.22,.61,.36,1),
+                  border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .blog-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(160,210,50,0.4);
+      box-shadow: 0 18px 44px rgba(0,0,0,0.5), 0 0 0 1px rgba(160,210,50,0.12);
+    }
+
+    /* El primero ocupa dos columnas */
+    .blog-card.destacada { grid-column: span 2; }
+
+    /* ── Tapa: imagen propia o degradado de identidad ── */
+    .blog-tapa {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      background: #0c0714;
+      flex-shrink: 0;
+    }
+
+    .blog-card.destacada .blog-tapa { aspect-ratio: 21 / 9; }
+
+    .blog-tapa img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s cubic-bezier(.22,.61,.36,1);
+    }
+
+    .blog-card:hover .blog-tapa img { transform: scale(1.04); }
+
+    /* Degradado cuando el artículo no trae imagen */
+    .blog-tapa-gen {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 28% 32%, rgba(138,80,220,0.55) 0%, transparent 58%),
+        radial-gradient(circle at 76% 74%, rgba(160,210,50,0.20) 0%, transparent 55%),
+        linear-gradient(140deg, #1a1026 0%, #0a0612 100%);
+    }
+
+    /* Marca de agua con la inicial, para que no queden todas iguales */
+    .blog-tapa-gen::after {
+      content: attr(data-letra);
+      position: absolute;
+      right: 6%;
+      bottom: -14%;
+      font-family: 'Rubik', sans-serif;
+      font-size: clamp(90px, 12vw, 190px);
+      font-weight: 500;
+      line-height: 1;
+      color: rgba(255,255,255,0.05);
+      pointer-events: none;
+    }
+
+    /* ── Cuerpo ── */
+    .blog-cuerpo {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: clamp(24px, 2.4vw, 34px);
+      flex: 1;
+    }
+
+    .blog-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.45);
+    }
+
+    .blog-fuente {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 11px;
+      border: 1px solid rgba(160,210,50,0.35);
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #a0d232;
+    }
+
+    .blog-titulo {
+      font-family: 'Rubik', sans-serif;
+      font-size: clamp(1.15rem, 1.7vw, 1.5rem);
+      font-weight: 500;
+      line-height: 1.28;
+      color: #fff;
+    }
+
+    .blog-card.destacada .blog-titulo { font-size: clamp(1.4rem, 2.4vw, 2.1rem); }
+
+    .blog-bajada {
+      font-size: clamp(0.92rem, 1.1vw, 1.05rem);
+      font-weight: 300;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .blog-leer {
+      margin-top: auto;
+      padding-top: 6px;
+      font-size: 13px;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #a0d232;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: gap 0.25s ease;
+    }
+
+    .blog-card:hover .blog-leer { gap: 14px; }
+
+    /* ── Aparición al entrar en pantalla ── */
+    .blog-card {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .blog-card.visible {
+      opacity: 1;
+      transform: none;
+      transition: opacity 0.7s cubic-bezier(.22,.61,.36,1),
+                  transform 0.7s cubic-bezier(.22,.61,.36,1);
+    }
+
+    .blog-card.visible:hover { transform: translateY(-6px); }
+
+    /* ── Sin artículos ── */
+    .blog-vacio {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 80px 24px;
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* ── Cierre ── */
+    .blog-cierre {
+      text-align: center;
+      padding: 0 24px clamp(90px, 14vh, 150px);
+    }
+
+    .blog-cierre p {
+      font-size: clamp(1.2rem, min(2.4vw, 3.2vh), 1.9rem);
+      font-weight: 300;
+      color: #fff;
+      margin-bottom: 28px;
+    }
+
+    .blog-cierre strong { font-weight: 500; color: #a0d232; }
+
+    /* ── Responsivo ── */
+    @media (max-width: 1100px) {
+      .blog-lista { grid-template-columns: repeat(2, 1fr); padding-left: 32px; padding-right: 32px; }
+      .blog-card.destacada { grid-column: span 2; }
+    }
+
+    @media (max-width: 700px) {
+      .blog-hero { padding: 120px 24px 40px; min-height: auto; }
+      .blog-lista { grid-template-columns: 1fr; padding-left: 24px; padding-right: 24px; }
+      .blog-card.destacada { grid-column: auto; }
+      .blog-card.destacada .blog-tapa { aspect-ratio: 16 / 9; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .blog-card { opacity: 1; transform: none; transition: none; }
+    }
+    /* Aviso solo visible en la versión en inglés (en español el texto
+       está vacío, así que el párrafo queda sin contenido). */
+    .blog-nota:empty{display:none}
+    .blog-nota{margin-top:14px;font-size:13px;font-weight:300;color:rgba(255,255,255,.45)}
+
+  </style>
+</head>
+<body>
+
+
+  <!-- FLECHA: LLEVA A LA SECCIÓN SIGUIENTE -->
+  <button class="flecha-baja" id="flecha-baja" type="button"
+          data-cursor="Bajar" aria-label="Ir a la sección siguiente">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <line x1="12" y1="4" x2="12" y2="20"></line>
+      <polyline points="6 14 12 20 18 14"></polyline>
+    </svg>
+  </button>
+
+  <!-- HEADER -->
+  <header class="site-header" id="site-header">
+    <a href="/" class="header-logo" aria-label="Vortex IT">
+      <img src="/assets/Logo%20VX_blanco%20y%20violeta.svg" alt="Vortex IT" class="logo-img">
+    </a>
+
+    <nav aria-label="Navegación principal">
+      <ul class="header-nav" id="header-nav">
+        <li><a href="/">Inicio</a></li>
+        <li><a href="/soluciones.html">Soluciones</a></li>
+        <li><a href="/como-trabajamos.html">Cómo trabajamos</a></li>
+        <li><a href="/sobre-vortex.html">Sobre Vortex</a></li>
+        <li><a href="/blog.html" class="active">Blog</a></li>
+        <li><a href="/plataformas.html">Plataformas</a></li>
+        <li><a href="/hablemos.html" class="nav-cta" data-cursor="Hablemos">Hablemos</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-right">
+      <!-- Conmutador de idioma: son links reales a la misma página en el
+           otro idioma, no botones. Así se puede compartir la dirección y
+           Google puede seguirlos. -->
+      <div class="lang-switch">
+        <a class="lang-btn active"
+           href="/blog.html" hreflang="es" lang="es">ES</a>
+        <span class="lang-sep">|</span>
+        <a class="lang-btn"
+           href="/en/blog.html" hreflang="en" lang="en">EN</a>
+      </div>
+      <div class="social-links">
+        <a href="https://www.linkedin.com/company/vortex-it-ok" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="https://www.instagram.com/vortex.it/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@vortexit" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#333"/></svg>
+        </a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+<main>
+
+  <div class="blog-hero">
+    <h1>Blog</h1>
+    <p>Ideas y análisis sobre inteligencia artificial, transformación digital<br>y tecnología aplicada al negocio.</p>
+      <p class="blog-nota"></p>
+  </div>
+
+  <div class="blog-lista">
+                <a class="blog-card destacada" href="https://www.linkedin.com/pulse/argentina-%C3%BAltima-en-adopci%C3%B3n-de-ia-jorge-daniel-nieves-castillo-chkff/"
+         target="_blank" rel="noopener" data-cursor="Leer">
+        <div class="blog-tapa">
+                      <img src="/assets/portadas/portada-435c030195.png" alt="" loading="lazy" decoding="async">
+                  </div>
+        <div class="blog-cuerpo">
+          <div class="blog-meta">
+            <span class="blog-fuente">LinkedIn</span>
+                          <span>30 de septiembre de 2026</span>
+                      </div>
+          <h2 class="blog-titulo">Argentina ¿última en adopción de IA?</h2>
+                    <span class="blog-leer">Leer el artículo            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </a>
+            <a class="blog-card" href="https://www.linkedin.com/pulse/el-riesgo-de-la-ia-y-circo-para-tribuna-jorge-daniel-nieves-castillo-tahuf/"
+         target="_blank" rel="noopener" data-cursor="Leer">
+        <div class="blog-tapa">
+                      <img src="/assets/portadas/portada-565eb12ba4.png" alt="" loading="lazy" decoding="async">
+                  </div>
+        <div class="blog-cuerpo">
+          <div class="blog-meta">
+            <span class="blog-fuente">LinkedIn</span>
+                          <span>18 de septiembre de 2026</span>
+                      </div>
+          <h2 class="blog-titulo">El riesgo de la IA y el circo para la tribuna</h2>
+                    <span class="blog-leer">Leer el artículo            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </a>
+            <a class="blog-card" href="https://www.linkedin.com/pulse/el-71-de-las-empresas-latinoamericanas-adopt%C3%B3-ia-30-nieves-castillo-560if/"
+         target="_blank" rel="noopener" data-cursor="Leer">
+        <div class="blog-tapa">
+                      <img src="/assets/portadas/portada-16b6f4c66e.png" alt="" loading="lazy" decoding="async">
+                  </div>
+        <div class="blog-cuerpo">
+          <div class="blog-meta">
+            <span class="blog-fuente">LinkedIn</span>
+                          <span>17 de septiembre de 2026</span>
+                      </div>
+          <h2 class="blog-titulo">El 71% de las empresas latinoamericanas adoptó IA. El 30% la puso a trabajar.</h2>
+                    <span class="blog-leer">Leer el artículo            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </a>
+            <a class="blog-card" href="https://www.linkedin.com/pulse/stripe-pag%C3%B3-us7500-millones-por-resolver-un-problema-nieves-castillo-a9rtf/"
+         target="_blank" rel="noopener" data-cursor="Leer">
+        <div class="blog-tapa">
+                      <img src="/assets/portadas/portada-da2870e4e3.png" alt="" loading="lazy" decoding="async">
+                  </div>
+        <div class="blog-cuerpo">
+          <div class="blog-meta">
+            <span class="blog-fuente">LinkedIn</span>
+                          <span>8 de septiembre de 2026</span>
+                      </div>
+          <h2 class="blog-titulo">Stripe pagó US$7.500 millones por resolver un problema que muchas empresas todavía no admiten tener</h2>
+                    <span class="blog-leer">Leer el artículo            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </a>
+            <a class="blog-card" href="https://www.linkedin.com/pulse/el-problema-es-la-ia-proceso-que-nadie-se-anim%C3%B3-nieves-castillo-xl07f/"
+         target="_blank" rel="noopener" data-cursor="Leer">
+        <div class="blog-tapa">
+                      <img src="/assets/portadas/portada-562fff63ee.png" alt="" loading="lazy" decoding="async">
+                  </div>
+        <div class="blog-cuerpo">
+          <div class="blog-meta">
+            <span class="blog-fuente">LinkedIn</span>
+                          <span>3 de septiembre de 2026</span>
+                      </div>
+          <h2 class="blog-titulo">EL PROBLEMA NO ES LA IA. Es el proceso que nadie se animó a cambiar.</h2>
+                    <span class="blog-leer">Leer el artículo            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </a>
+            <a class="blog-card" href="https://www.linkedin.com/pulse/y-si-el-problema-de-la-deuda-fuera-solamente-mora-nieves-castillo-uibuf/"
+         target="_blank" rel="noopener" data-cursor="Leer">
+        <div class="blog-tapa">
+                      <img src="/assets/portadas/portada-5d0732b05c.png" alt="" loading="lazy" decoding="async">
+                  </div>
+        <div class="blog-cuerpo">
+          <div class="blog-meta">
+            <span class="blog-fuente">LinkedIn</span>
+                          <span>22 de agosto de 2026</span>
+                      </div>
+          <h2 class="blog-titulo">¿Y si el problema de la deuda no fuera solamente la mora?</h2>
+                    <span class="blog-leer">Leer el artículo            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </a>
+            <a class="blog-card" href="https://www.linkedin.com/pulse/identidad-permisos-y-trazabilidad-lo-que-un-agente-de-jorge-daniel-riovf/"
+         target="_blank" rel="noopener" data-cursor="Leer">
+        <div class="blog-tapa">
+                      <img src="/assets/portadas/portada-5d0c6fcf53.png" alt="" loading="lazy" decoding="async">
+                  </div>
+        <div class="blog-cuerpo">
+          <div class="blog-meta">
+            <span class="blog-fuente">LinkedIn</span>
+                          <span>19 de agosto de 2026</span>
+                      </div>
+          <h2 class="blog-titulo">Identidad, permisos y trazabilidad: lo que un agente de IA necesita antes de operar en producción</h2>
+                    <span class="blog-leer">Leer el artículo            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </a>
+            <a class="blog-card" href="https://www.linkedin.com/pulse/forward-deployed-engineers-por-qu%C3%A9-la-implementaci%C3%B3n-nieves-castillo-igv3f/"
+         target="_blank" rel="noopener" data-cursor="Leer">
+        <div class="blog-tapa">
+                      <img src="/assets/portadas/portada-7f7e7e0329.png" alt="" loading="lazy" decoding="async">
+                  </div>
+        <div class="blog-cuerpo">
+          <div class="blog-meta">
+            <span class="blog-fuente">LinkedIn</span>
+                          <span>12 de agosto de 2026</span>
+                      </div>
+          <h2 class="blog-titulo">Forward-Deployed Engineers: por qué la implementación volvió al centro de la conversación</h2>
+                    <span class="blog-leer">Leer el artículo            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </a>
+            <a class="blog-card" href="https://www.linkedin.com/pulse/la-obsesi%C3%B3n-por-los-pilotos-de-ia-est%C3%A1-frenando-del-nieves-castillo-94cyf/"
+         target="_blank" rel="noopener" data-cursor="Leer">
+        <div class="blog-tapa">
+                      <img src="/assets/portadas/portada-a5654a66d5.png" alt="" loading="lazy" decoding="async">
+                  </div>
+        <div class="blog-cuerpo">
+          <div class="blog-meta">
+            <span class="blog-fuente">LinkedIn</span>
+                          <span>31 de julio de 2026</span>
+                      </div>
+          <h2 class="blog-titulo">La obsesión por los pilotos de IA está frenando la transformación del negocio</h2>
+                    <span class="blog-leer">Leer el artículo            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </a>
+            <a class="blog-card" href="https://www.linkedin.com/pulse/y-si-ma%C3%B1ana-estados-unidos-apaga-la-ia-para-argentina-jorge-daniel-yjztf/"
+         target="_blank" rel="noopener" data-cursor="Leer">
+        <div class="blog-tapa">
+                      <img src="/assets/portadas/portada-9ecacf15cd.png" alt="" loading="lazy" decoding="async">
+                  </div>
+        <div class="blog-cuerpo">
+          <div class="blog-meta">
+            <span class="blog-fuente">LinkedIn</span>
+                          <span>18 de junio de 2026</span>
+                      </div>
+          <h2 class="blog-titulo">¿Y si mañana Estados Unidos apaga la IA para Argentina?</h2>
+                    <span class="blog-leer">Leer el artículo            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </a>
+            <a class="blog-card" href="https://www.linkedin.com/pulse/y-si-el-humano-en-loop-ya-es-problema-la-soluci%C3%B3n-nieves-castillo-vepqf/"
+         target="_blank" rel="noopener" data-cursor="Leer">
+        <div class="blog-tapa">
+                      <img src="/assets/portadas/portada-fc50044781.png" alt="" loading="lazy" decoding="async">
+                  </div>
+        <div class="blog-cuerpo">
+          <div class="blog-meta">
+            <span class="blog-fuente">LinkedIn</span>
+                          <span>25 de mayo de 2026</span>
+                      </div>
+          <h2 class="blog-titulo">¿Y si el “humano en el loop” ya es el problema, no la solución?</h2>
+                    <span class="blog-leer">Leer el artículo            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </a>
+            <a class="blog-card" href="https://www.linkedin.com/pulse/en-2024-dije-que-la-ia-iba-cambiar-el-software-me-nieves-castillo-pvsrf/"
+         target="_blank" rel="noopener" data-cursor="Leer">
+        <div class="blog-tapa">
+                      <img src="/assets/portadas/portada-98c03ab49f.png" alt="" loading="lazy" decoding="async">
+                  </div>
+        <div class="blog-cuerpo">
+          <div class="blog-meta">
+            <span class="blog-fuente">LinkedIn</span>
+                          <span>6 de mayo de 2026</span>
+                      </div>
+          <h2 class="blog-titulo">En 2024 dije que la IA iba a cambiar el software. Me quedé corto.</h2>
+                    <span class="blog-leer">Leer el artículo            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </a>
+            <a class="blog-card" href="https://www.linkedin.com/pulse/mythos-acaba-de-encontrar-vulnerabilidades-27-a%C3%B1os-en-jorge-daniel-win2f/"
+         target="_blank" rel="noopener" data-cursor="Leer">
+        <div class="blog-tapa">
+                      <img src="/assets/portadas/portada-ef9617b285.png" alt="" loading="lazy" decoding="async">
+                  </div>
+        <div class="blog-cuerpo">
+          <div class="blog-meta">
+            <span class="blog-fuente">LinkedIn</span>
+                          <span>8 de abril de 2026</span>
+                      </div>
+          <h2 class="blog-titulo">Mythos acaba de encontrar vulnerabilidades de 27 años en sistemas que creíamos seguros.</h2>
+                    <span class="blog-leer">Leer el artículo            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </a>
+            <a class="blog-card" href="https://www.linkedin.com/pulse/los-procesos-de-negocio-como-conoc%C3%ADas-ya-murieron-lo-nieves-castillo-nnt6f/"
+         target="_blank" rel="noopener" data-cursor="Leer">
+        <div class="blog-tapa">
+                      <img src="/assets/portadas/portada-095ad09702.jpg" alt="" loading="lazy" decoding="async">
+                  </div>
+        <div class="blog-cuerpo">
+          <div class="blog-meta">
+            <span class="blog-fuente">LinkedIn</span>
+                          <span>1 de abril de 2026</span>
+                      </div>
+          <h2 class="blog-titulo">Los procesos de negocio, como los conocías, ya murieron. Lo que viene no es automatización.</h2>
+                    <span class="blog-leer">Leer el artículo            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </a>
+            <a class="blog-card" href="https://www.linkedin.com/pulse/ia-y-despidos-la-tentaci%C3%B3n-en-que-muchas-empresas-nieves-castillo-vj4ue/"
+         target="_blank" rel="noopener" data-cursor="Leer">
+        <div class="blog-tapa">
+                      <img src="/assets/portadas/portada-8ee90d8de5.png" alt="" loading="lazy" decoding="async">
+                  </div>
+        <div class="blog-cuerpo">
+          <div class="blog-meta">
+            <span class="blog-fuente">LinkedIn</span>
+                          <span>10 de marzo de 2026</span>
+                      </div>
+          <h2 class="blog-titulo">IA y despidos: la tentación en la que muchas empresas pueden caer</h2>
+                    <span class="blog-leer">Leer el artículo            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </a>
+            <a class="blog-card" href="https://www.linkedin.com/pulse/el-fin-de-las-implementaciones-eternas-hacia-software-jorge-daniel-rymxf/"
+         target="_blank" rel="noopener" data-cursor="Leer">
+        <div class="blog-tapa">
+                      <img src="/assets/portadas/portada-c5a476da84.png" alt="" loading="lazy" decoding="async">
+                  </div>
+        <div class="blog-cuerpo">
+          <div class="blog-meta">
+            <span class="blog-fuente">LinkedIn</span>
+                          <span>20 de enero de 2026</span>
+                      </div>
+          <h2 class="blog-titulo">El fin de las implementaciones eternas: hacia el software que se autoconfigura (ERP/CRM/WMS)</h2>
+                    <span class="blog-leer">Leer el artículo            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </a>
+            <a class="blog-card" href="https://www.linkedin.com/pulse/de-pilotos-eternos-ebitda-el-%C3%ADndice-madurez-ia-para-nieves-castillo-rramf/"
+         target="_blank" rel="noopener" data-cursor="Leer">
+        <div class="blog-tapa">
+                      <img src="/assets/portadas/portada-e9baa87f9a.png" alt="" loading="lazy" decoding="async">
+                  </div>
+        <div class="blog-cuerpo">
+          <div class="blog-meta">
+            <span class="blog-fuente">LinkedIn</span>
+                          <span>27 de diciembre de 2025</span>
+                      </div>
+          <h2 class="blog-titulo">De “pilotos eternos” a EBITDA: el índice de madurez de IA para empresas de LATAM</h2>
+                    <span class="blog-leer">Leer el artículo            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </a>
+            <a class="blog-card" href="https://www.linkedin.com/pulse/del-software-pr%C3%AAt-%C3%A0-porter-al-tailor-made-digital-la-nieves-castillo-7dv5e/"
+         target="_blank" rel="noopener" data-cursor="Leer">
+        <div class="blog-tapa">
+                      <img src="/assets/portadas/portada-41a2020f1d.png" alt="" loading="lazy" decoding="async">
+                  </div>
+        <div class="blog-cuerpo">
+          <div class="blog-meta">
+            <span class="blog-fuente">LinkedIn</span>
+                          <span>17 de diciembre de 2025</span>
+                      </div>
+          <h2 class="blog-titulo">Del software prêt-à-porter al tailor-made digital</h2>
+                    <span class="blog-leer">Leer el artículo            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </a>
+            <a class="blog-card" href="https://www.linkedin.com/pulse/de-la-promesa-pr%C3%A1ctica-por-qu%C3%A9-ia-despega-en-muchas-nieves-castillo-ffigc/"
+         target="_blank" rel="noopener" data-cursor="Leer">
+        <div class="blog-tapa">
+                      <img src="/assets/portadas/portada-99e608fe01.jpg" alt="" loading="lazy" decoding="async">
+                  </div>
+        <div class="blog-cuerpo">
+          <div class="blog-meta">
+            <span class="blog-fuente">LinkedIn</span>
+                          <span>7 de noviembre de 2025</span>
+                      </div>
+          <h2 class="blog-titulo">De la promesa a la práctica: ¿por qué la IA no despega en muchas empresas?</h2>
+                    <span class="blog-leer">Leer el artículo            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </a>
+            <a class="blog-card" href="https://www.linkedin.com/pulse/ia-y-transformaci%C3%B3n-digital-en-latam-tendencias-que-nieves-castillo-nfyaf/"
+         target="_blank" rel="noopener" data-cursor="Leer">
+        <div class="blog-tapa">
+                      <img src="/assets/portadas/portada-c7e93deee3.jpg" alt="" loading="lazy" decoding="async">
+                  </div>
+        <div class="blog-cuerpo">
+          <div class="blog-meta">
+            <span class="blog-fuente">LinkedIn</span>
+                          <span>23 de octubre de 2025</span>
+                      </div>
+          <h2 class="blog-titulo">IA y Transformación Digital en LATAM: tendencias que tenés que conocer</h2>
+                    <span class="blog-leer">Leer el artículo            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </a>
+            <a class="blog-card" href="https://www.linkedin.com/pulse/maacutes-que-agentes-y-pocs-por-queacute-la-ia-exige-nieves-castillo-x5kpf/"
+         target="_blank" rel="noopener" data-cursor="Leer">
+        <div class="blog-tapa">
+                      <img src="/assets/portadas/portada-5025618677.jpg" alt="" loading="lazy" decoding="async">
+                  </div>
+        <div class="blog-cuerpo">
+          <div class="blog-meta">
+            <span class="blog-fuente">LinkedIn</span>
+                          <span>3 de octubre de 2025</span>
+                      </div>
+          <h2 class="blog-titulo">Más que agentes y PoCs: por qué la IA exige un rediseño organizacional en LATAM</h2>
+                    <span class="blog-leer">Leer el artículo            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </a>
+            </div>
+
+  <div class="blog-cierre">
+    <p>¿Querés conversar sobre alguno de estos temas<br>aplicado a tu negocio? <strong>Hablemos.</strong></p>
+    <a class="btn-primary" href="/hablemos.html" data-cursor="Hablemos">Contanos tu desafío</a>
+  </div>
+
+</main>
+
+
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo-wrap">
+          <img src="/assets/Logo%20VX_blanco%20y%20violeta.svg" alt="Vortex IT" class="logo-img">
+        </div>
+        <p class="footer-logo-desc">Con origen en Córdoba, Argentina. Operamos en LATAM, Europa y Estados Unidos.</p>
+      </div>
+
+      <div>
+        <p class="footer-col-title">Vortex IT</p>
+        <ul class="footer-links">
+          <li><a href="/">Inicio</a></li>
+          <li><a href="/soluciones.html">Soluciones</a></li>
+          <li><a href="/como-trabajamos.html">Cómo trabajamos</a></li>
+          <li><a href="/sobre-vortex.html">Sobre Vortex</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="footer-col-title">Comunidad</p>
+        <ul class="footer-links">
+          <li><a href="/blog.html">Blog</a></li>
+          <li><a href="/plataformas.html">Plataformas</a></li>
+          <li><a href="/trabaja-con-nosotros.html">Trabajá con nosotros</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="footer-col-title">Hablemos</p>
+        <ul class="footer-contact-list">
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <a href="mailto:info@vortex-it.com">info@vortex-it.com</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 014.69 12 19.79 19.79 0 011.61 3.42 2 2 0 013.6 1.24h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.91 8.96a16 16 0 006.02 6.02l.95-.95a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0121.73 16.92z"/></svg>
+            <a href="tel:+5493515104734">+54 9 351 510-4734</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.122 1.523 5.855L.057 23.943l6.272-1.443A11.953 11.953 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.656-.51-5.176-1.4l-.37-.22-3.725.857.884-3.617-.242-.373A9.956 9.956 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+            <a href="https://wa.me/5493515104734" target="_blank" rel="noopener">WhatsApp</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            <a href="https://www.linkedin.com/company/vortex-it-ok" target="_blank" rel="noopener">LinkedIn</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            <a href="https://www.instagram.com/vortex.it/" target="_blank" rel="noopener">Instagram</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 Vortex IT. Todos los derechos reservados.</p>
+      <div class="footer-social">
+        <a href="https://www.linkedin.com/company/vortex-it-ok" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="https://www.instagram.com/vortex.it/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@vortexit" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#333"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+<script src="/assets/vortex.js?v=23"></script>
+<script>
+  /* Las cards aparecen al entrar en pantalla, escalonadas por fila */
+  (function() {
+    var cards = document.querySelectorAll('.blog-card');
+    var io = new IntersectionObserver(function(entradas) {
+      entradas.forEach(function(e) {
+        if (!e.isIntersecting) return;
+        var i = Array.prototype.indexOf.call(cards, e.target);
+        e.target.style.transitionDelay = ((i % 3) * 0.1).toFixed(2) + 's';
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+    cards.forEach(function(c) { io.observe(c); });
+  })();
+</script>
+</body>
+</html>
